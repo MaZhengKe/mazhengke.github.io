@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>pico VR 合成层</title>
+    <link href="/2022/12/08/pico-overlay/"/>
+    <url>/2022/12/08/pico-overlay/</url>
+    
+    <content type="html"><![CDATA[<h1 id="Pico-合成层"><a href="#Pico-合成层" class="headerlink" title="Pico 合成层"></a>Pico 合成层</h1><p>最近在开发一个Unity内的360 3D视频播放器，查找资料后发现了这么个东东。实际体验后效果还是很好的，尤其是对于需要在VR中渲染视频、UI等平面、曲面、天空盒等等。会清晰很多。</p><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>这里pico的文档说的很详细了，再结合我观察他们的log总结一下。</p><p>如果使用Unity的渲染管线去渲染，是先把全部的物体（包括UI）先渲染到两张（或一组，取决与你是singlePass还是multPass）的Eye Buffer 上，这个buffer的分辨率取决于你设定的渲染分辨率。然后再通过异步时间扭曲线程（Asynchronous Timewarp，ATW）对 Eye Buffer 进行畸变、采样、合成等处理，以此渲染到屏幕上。</p><p><img src="/images/screenshot_192.168.2.64_5555.png" alt="Unity的eye buffer或者叫渲染目标，是一个正常的矩形。这里的输出显然是经过了ATW处理后的图形。"></p><p>而如果使用Pico提供的api来调用VR 合成层技术，相当于直接把纹理交给ATW 线程，或者理解为把纹理当成一个新的Eye Buffer。这样少采样一次，自然减少了失真。<br>而且最关键的是这里不仅可以使用Unity内的纹理或者RenderTexture。更可以直接使用外部 Android Surface，比如Android 播放器视频纹理。这就大大提高了可玩性。</p><h2 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h2><p>具体的使用见官方文档。这里提几个官方没提及的坑。</p><ul><li>如果使用Underlay模式，即将纹理呈现在 Eye Buffer 后面。在URP管线下，记得最后的片元着色器的返回要改为 <code>fixed4 col = fixed4(1, 1, 1, 0);</code></li><li>使用Underlay模式时要关闭天空盒，或者自定义天空盒，保留透明像素。</li><li>同时记得大部分后处理都不能使用了，因为它们会破坏透明通道。（反正在VR场景下使用后处理也是很耗费性能的做法）</li><li>这里的清晰度和Unity的渲染分辨率就完全无关了，因为不会渲染到Unity的ColorBuffer上去。</li><li>因为是独立渲染的，所以没有抗锯齿（但影响不大，因为他渲染相当于是以物理屏幕的分辨率去渲染的，VR的像素密度很高了实际看不出有太大锯齿）</li></ul><p>下面贴几张效果图，请点击放大后比较：</p><p><img src="/images/screenshot_192.168.2.64_5555_05.png"></p><p>尤其是上面按钮处的文字</p><p><img src="/images/screenshot_192.168.2.64_5555_03.png"><br>这里的线在VR中头部运动时，差异更加明显。</p><p>除此之外，在解码高码率视频等方面，效率也会有一定提升。</p><h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><p>因为这完全破坏了Unity原有的开发逻辑，开发成本上会有所提高，尤其的各种层之间的排序问题，要事先考虑清楚。<br>大部分后处理无法使用。</p><p>除此之外，目前还是有一些BUG，比如如果用全景视频充当天空盒，Pico的SDK（2.1.2版本）目前还是会报错。等待修复吧</p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>ChatGPT</title>
     <link href="/2022/12/05/ChatGPT/"/>
     <url>/2022/12/05/ChatGPT/</url>
