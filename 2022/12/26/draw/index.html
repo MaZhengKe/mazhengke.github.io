@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://kuanmi.top/images/drawsdf.png">
 <meta property="article:published_time" content="2022-12-26T00:39:56.000Z">
-<meta property="article:modified_time" content="2022-12-28T03:30:55.891Z">
+<meta property="article:modified_time" content="2022-12-29T02:25:37.532Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://kuanmi.top/images/drawsdf.png">
@@ -222,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3k 字
+          4.5k 字
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
         
-          26 分钟
+          38 分钟
         
       </span>
     
@@ -295,7 +295,6 @@
 float4 uv &#x3D; float4(0, 0, 0, 1);
 uv.xy &#x3D; float2(1, _ProjectionParams.x) * (OUT.uv.xy * 2 - 1);
 OUT.positionHCS &#x3D; uv;</code></pre></div></figure>
-
 <p>最后再使用这张RT去渲染就好了。</p>
 <p>简单贴一下</p>
 <figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">CBUFFER_START(UnityPerMaterial)
@@ -402,9 +401,61 @@ if(aa&lt;0)
 </ul>
 <p>深度优先虽然简单，但对于512*512这种体量的数据都会堆栈溢出。还是改成bfs吧。</p>
 <p>用一个队列来保存相邻的像素，广度优先遍历，一旦发现与外边界连通就全记为false，反之说明这个连通区域是封闭的。</p>
-<p>因为全部搜索都是在二维UV平面进行的，所以要求模型的UV只能有一块，且接缝处无法算作闭合区域。<br>因为这里涉及了对GPU贴图的读写，效率只能说马马虎虎。也许可以使用computeShader来实现，但目前我还是想不到。</p>
+<p>因为全部搜索都是在二维UV平面进行的，所以要求模型的UV只能有一块，且接缝处无法算作闭合区域。<br>因为这里涉及了对GPU贴图的读写，效率只能说马马虎虎。也许可以使用computeShader来实现，<del>但目前我还是想不到。</del></p>
 <p><img src="/images/draw3.gif" srcset="/img/loading.gif" lazyload alt="封闭区域判断与绘制"></p>
+<h2 id="计算着色器实现"><a href="#计算着色器实现" class="headerlink" title="计算着色器实现"></a>计算着色器实现</h2><p>鼓捣了半天，又把计算着色器翻出来看了看。<br>很少用到，之前写SSR时用过一次，然后就忘干净了。这次为了优化之前写的封闭区域判断，即泛洪算法，尝试用computeShader来实现一次，加深一下印象。</p>
+<h3 id="泛洪算法"><a href="#泛洪算法" class="headerlink" title="泛洪算法"></a>泛洪算法</h3><p>画图工具中的油漆桶工具，以及PS中的魔棒工具都属于典型的泛洪算法的用例。如果是用CPU实现，那就是之前写的简单的DFS或者BFS都可以，既然在Unity中实现，那就不能错过用GPU实现的机会了。</p>
+<h3 id="GPU泛洪"><a href="#GPU泛洪" class="headerlink" title="GPU泛洪"></a>GPU泛洪</h3><p>首先是精确的GPU泛洪，从一个点出发，颜色设置为白色，然后对每个像素，如果它是白色，那就把他四周不是黑色的像素也置为白色，就这样一直循环N遍，就可以得到类似下图的效果了：</p>
+<p><img src="/images/fill.png" srcset="/img/loading.gif" lazyload alt="原图"></p>
+<p><img src="/images/draw4.gif" srcset="/img/loading.gif" lazyload alt="GPU泛洪"></p>
+<p>再结合之前的喷涂的贴图，就可以快速的从边缘开始泛洪，以此来判断封闭区域了。</p>
+<p><img src="/images/draw5.gif" srcset="/img/loading.gif" lazyload alt="GPU泛洪分步骤演示"><br>改成用GPU算果然快了很多，尤其是省略了从GPU读取像素到内存的开销，可以说不在一个数量级上。<br>如果还是要优化的话，我只能想到降低分辨率再上采样了，因为使用了SDF，所以低分辨率也可以接受。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#pragma kernel CSMain
+#pragma kernel CSClean
 
+#define thread_group_x 8
+#define thread_group_y 8
+#define thread_x 8
+#define thread_y 8
+
+&#x2F;&#x2F; Create a RenderTexture with enableRandomWrite flag and set it
+&#x2F;&#x2F; with cs.SetTexture
+RWTexture2D&lt;float4&gt; Result;
+Texture2D&lt;float4&gt; Source;
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+&#123;
+    if (Result[id.xy].a &lt; 0.5)
+    &#123;
+        float4 top &#x3D; Source[id.xy + uint2(0, 1)];
+        float4 bottom &#x3D; Source[id.xy + uint2(0, -1)];
+        float4 left &#x3D; Source[id.xy + uint2(-1, 0)];
+        float4 right &#x3D; Source[id.xy + uint2(1, 0)];
+
+        if (top.a &lt; 0.5)
+            Result[id.xy + uint2(0, 1)] &#x3D; float4(0, 0, 0, 0);
+
+        if (bottom.a &lt; 0.5)
+            Result[id.xy + uint2(0, -1)] &#x3D; float4(0, 0, 0, 0);
+
+        if (left.a &lt; 0.5)
+            Result[id.xy + uint2(-1, 0)] &#x3D; float4(0, 0, 0, 0);
+
+        if (right.a &lt; 0.5)
+            Result[id.xy + uint2(1, 0)] &#x3D; float4(0, 0, 0, 0);
+    &#125;
+&#125;
+
+
+[numthreads(8,8,1)]
+void CSClean(uint3 id : SV_DispatchThreadID)
+&#123;
+    if (id.x &#x3D;&#x3D; 0 || id.x &#x3D;&#x3D; 255 || id.y &#x3D;&#x3D; 0 || id.y &#x3D;&#x3D; 255)
+        Result[id.xy] &#x3D; float4(0, 0, 0, 0);
+    else
+        Result[id.xy] &#x3D; float4(1, 1, 1, 1);
+&#125;</code></pre></div></figure>
                 
               </div>
             
