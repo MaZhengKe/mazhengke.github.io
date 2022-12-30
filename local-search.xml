@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>XR开发的各种SDK以及相关概念</title>
+    <link href="/2022/12/29/openxr/"/>
+    <url>/2022/12/29/openxr/</url>
+    
+    <content type="html"><![CDATA[<p>简要记录一下几个常用的概念以及sdk的选择</p><h1 id="OpenXR"><a href="#OpenXR" class="headerlink" title="OpenXR"></a>OpenXR</h1><p><img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/OpenXR_logo.svg"><br><code>OpenXR</code>是一套由Khronos Group发起的跨平台的，通用的标准。简单来说就是定义了一套接口（不仅仅是接口），硬件厂商如steamvr、pico等实现这一套接口。unity或者虚幻等等引擎再适配这套接口，大家就可以用同一套标准去开发，省去了为不同平台适配的麻烦。<br>仅PC上绝大多数VR都为<code>OpenXR</code>提供了运行环境，如<code>steamVR</code>、<code>Windows Mixed Reality</code>等，安卓端的Pico以及oculus也都适配了<code>OpenXR</code><br>但缺点是无法调用某些特定平台的特定的接口，比如steamVR可以在加载时预先传输个天空盒当作loading，steamVR还有自己的手部骨骼动画，pico也有自己的比如VR合成层等功能是无法通过openxr来调用的。<br>如果采用OpenXR开发安卓端VR还有个很大优势就是可是用PC端的VR来调试功能，大大提高开发效率。</p><h1 id="Unity-XR-Plugin-Architecture"><a href="#Unity-XR-Plugin-Architecture" class="headerlink" title="Unity XR Plugin Architecture"></a>Unity XR Plugin Architecture</h1><p>Unity 2019.3 之后，官方提供了一个叫做XR插件框架的东东，通过包管理器安装，大大简化了XR开发的流程，在此基础之上，各大硬件厂商开发自己的适配Unity的XR开发SDK，如Steam的<code>OpenVR</code>，pico的<code>picoVR</code>，Oculus的<code>Oculus XR Plugin</code>、微软的<code>Windows Mixed Reality</code>等等，当然还有官方自己为了openxr开发的<code>OpenXR Plugin</code>。</p><h1 id="OpenXR-Plugin"><a href="#OpenXR-Plugin" class="headerlink" title="OpenXR Plugin"></a>OpenXR Plugin</h1><p>由Unity官方开发的，适配了<code>openxr</code>以及<code>unity XR Plugin Architecture</code>的插件，Unity还为这个插件开发了<code>XR Interaction Toolkit</code>作为最基础的XR交互。</p><h1 id="XR-Interaction-Toolkit"><a href="#XR-Interaction-Toolkit" class="headerlink" title="XR Interaction Toolkit"></a>XR Interaction Toolkit</h1><p>适配了OpenXR，实现了基础的XR交互的官方插件，包含了常用的射线、抓取、UI交互（仅限UGUI，不支持UIToolkit）、传送等等基础功能，同时留下了丰富的接口方便开发者自己实现想要的功能。</p><h1 id="OpenVR"><a href="#OpenVR" class="headerlink" title="OpenVR"></a>OpenVR</h1><p>和<code>OpenXR</code>很像，但完全不是一码事，这个是V社开发的为了各个硬件厂商适配SteamVR的标准，同时提供了<code>OpenVR Loader</code>来适配Unity的<code>Unity XR Plugin Architecture</code>。包含在<code>SteamVR Plugin</code>中。</p><h1 id="SteamVR-Plugin"><a href="#SteamVR-Plugin" class="headerlink" title="SteamVR Plugin"></a>SteamVR Plugin</h1><p>V社开发的一套SDK，包含了<code>OpenVR</code>插件来适配<code>unity XR Plugin</code>，同时还有一系列的其他与SteamVR交互的接口，如输入绑定、手部骨骼、loading天空盒子、Vive Trakcer等等。<br><del>但是已经快两年没有更新了。</del></p><h1 id="Pico"><a href="#Pico" class="headerlink" title="Pico"></a>Pico</h1><p>pico提供了两套SDK，一套是纯粹的<code>PICO Unity OpenXR Plugin</code>，即实现了<code>OpenXR</code>的SDK，同时还有一套叫做<code>PICO Unity Integration SDK</code>，这里就包含了其他特定与Pico平台的功能，如平台用户相关的、注视点渲染、VR 合成层等等。但二者都兼容了<code>XR Interaction Toolkit</code>，对于开发还是很友好的。</p><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>所以在开发前要想清楚，到底是要适配多平台，还是想要某个平台特定的功能，二者<del>不可</del>很难兼得。</p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>喷涂、绘制与填充</title>
     <link href="/2022/12/26/draw/"/>
     <url>/2022/12/26/draw/</url>
