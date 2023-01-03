@@ -16,23 +16,23 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="简要记录一下几个常用的概念以及sdk的选择 OpenXROpenXR是一套由Khronos Group发起的跨平台的，通用的标准。简单来说就是定义了一套接口（不仅仅是接口），硬件厂商如steamvr、pico等实现这一套接口。unity或者虚幻等等引擎再适配这套接口，大家就可以用同一套标准去开发，省去了为不同平台适配的麻烦。仅PC上绝大多数VR都为OpenXR提供了运行环境，如steamVR、Wi">
+    <meta name="description" content="UI总是会有很多奇奇怪怪的圆角矩形，虽然要在UIToolkit中实现是很简单的事情，但目前还是不太成熟，还是要用UGUI。在UGUI中要实现大致有三种方法，这里用Shader来实现一下。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="XR开发的各种SDK以及相关概念">
-<meta property="og:url" content="https://kuanmi.top/2022/12/29/openxr/index.html">
+<meta property="og:title" content="圆角描边矩形">
+<meta property="og:url" content="https://kuanmi.top/2023/01/02/UIShader/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="简要记录一下几个常用的概念以及sdk的选择 OpenXROpenXR是一套由Khronos Group发起的跨平台的，通用的标准。简单来说就是定义了一套接口（不仅仅是接口），硬件厂商如steamvr、pico等实现这一套接口。unity或者虚幻等等引擎再适配这套接口，大家就可以用同一套标准去开发，省去了为不同平台适配的麻烦。仅PC上绝大多数VR都为OpenXR提供了运行环境，如steamVR、Wi">
+<meta property="og:description" content="UI总是会有很多奇奇怪怪的圆角矩形，虽然要在UIToolkit中实现是很简单的事情，但目前还是不太成熟，还是要用UGUI。在UGUI中要实现大致有三种方法，这里用Shader来实现一下。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/3/3a/OpenXR_logo.svg">
-<meta property="article:published_time" content="2022-12-29T19:29:40.000Z">
-<meta property="article:modified_time" content="2022-12-30T04:23:14.547Z">
+<meta property="og:image" content="https://kuanmi.top/images/Ran.png">
+<meta property="article:published_time" content="2023-01-02T16:44:56.000Z">
+<meta property="article:modified_time" content="2023-01-03T02:46:50.795Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://upload.wikimedia.org/wikipedia/commons/3/3a/OpenXR_logo.svg">
+<meta name="twitter:image" content="https://kuanmi.top/images/Ran.png">
   
   
   
-  <title>XR开发的各种SDK以及相关概念 - KuanMi</title>
+  <title>圆角描边矩形 - KuanMi</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -193,13 +193,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+     style="background: url('/images/Ran.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="XR开发的各种SDK以及相关概念"></span>
+            <span id="subtitle" data-typed-text="圆角描边矩形"></span>
           
         </div>
 
@@ -210,8 +210,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-12-30 03:29" pubdate>
-          2022年12月30日 凌晨
+        <time datetime="2023-01-03 00:44" pubdate>
+          2023年1月3日 凌晨
         </time>
       </span>
     
@@ -222,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.3k 字
+          2.7k 字
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
         
-          11 分钟
+          23 分钟
         
       </span>
     
@@ -281,20 +281,143 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">XR开发的各种SDK以及相关概念</h1>
+            <h1 style="display: none">圆角描边矩形</h1>
             
             
               <div class="markdown-body">
                 
-                <p>简要记录一下几个常用的概念以及sdk的选择</p>
-<h1 id="OpenXR"><a href="#OpenXR" class="headerlink" title="OpenXR"></a>OpenXR</h1><p><img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/OpenXR_logo.svg" srcset="/img/loading.gif" lazyload><br><code>OpenXR</code>是一套由Khronos Group发起的跨平台的，通用的标准。简单来说就是定义了一套接口（不仅仅是接口），硬件厂商如steamvr、pico等实现这一套接口。unity或者虚幻等等引擎再适配这套接口，大家就可以用同一套标准去开发，省去了为不同平台适配的麻烦。<br>仅PC上绝大多数VR都为<code>OpenXR</code>提供了运行环境，如<code>steamVR</code>、<code>Windows Mixed Reality</code>等，安卓端的Pico以及oculus也都适配了<code>OpenXR</code><br>但缺点是无法调用某些特定平台的特定的接口，比如steamVR可以在加载时预先传输个天空盒当作loading，steamVR还有自己的手部骨骼动画，pico也有自己的比如VR合成层等功能是无法通过openxr来调用的。<br>如果采用OpenXR开发安卓端VR还有个很大优势就是可是用PC端的VR来调试功能，大大提高开发效率。</p>
-<h1 id="Unity-XR-Plugin-Architecture"><a href="#Unity-XR-Plugin-Architecture" class="headerlink" title="Unity XR Plugin Architecture"></a>Unity XR Plugin Architecture</h1><p>Unity 2019.3 之后，官方提供了一个叫做XR插件框架的东东，通过包管理器安装，大大简化了XR开发的流程，在此基础之上，各大硬件厂商开发自己的适配Unity的XR开发SDK，如Steam的<code>OpenVR</code>，pico的<code>picoVR</code>，Oculus的<code>Oculus XR Plugin</code>、微软的<code>Windows Mixed Reality</code>等等，当然还有官方自己为了openxr开发的<code>OpenXR Plugin</code>。</p>
-<h1 id="OpenXR-Plugin"><a href="#OpenXR-Plugin" class="headerlink" title="OpenXR Plugin"></a>OpenXR Plugin</h1><p>由Unity官方开发的，适配了<code>openxr</code>以及<code>unity XR Plugin Architecture</code>的插件，Unity还为这个插件开发了<code>XR Interaction Toolkit</code>作为最基础的XR交互。</p>
-<h1 id="XR-Interaction-Toolkit"><a href="#XR-Interaction-Toolkit" class="headerlink" title="XR Interaction Toolkit"></a>XR Interaction Toolkit</h1><p>适配了OpenXR，实现了基础的XR交互的官方插件，包含了常用的射线、抓取、UI交互（仅限UGUI，不支持UIToolkit）、传送等等基础功能，同时留下了丰富的接口方便开发者自己实现想要的功能。</p>
-<h1 id="OpenVR"><a href="#OpenVR" class="headerlink" title="OpenVR"></a>OpenVR</h1><p>和<code>OpenXR</code>很像，但完全不是一码事，这个是V社开发的为了各个硬件厂商适配SteamVR的标准，同时提供了<code>OpenVR Loader</code>来适配Unity的<code>Unity XR Plugin Architecture</code>。包含在<code>SteamVR Plugin</code>中。</p>
-<h1 id="SteamVR-Plugin"><a href="#SteamVR-Plugin" class="headerlink" title="SteamVR Plugin"></a>SteamVR Plugin</h1><p>V社开发的一套SDK，包含了<code>OpenVR</code>插件来适配<code>unity XR Plugin</code>，同时还有一系列的其他与SteamVR交互的接口，如输入绑定、手部骨骼、loading天空盒子、Vive Trakcer等等。<br><del>但是已经快两年没有更新了。</del></p>
-<h1 id="Pico"><a href="#Pico" class="headerlink" title="Pico"></a>Pico</h1><p>pico提供了两套SDK，一套是纯粹的<code>PICO Unity OpenXR Plugin</code>，即实现了<code>OpenXR</code>的SDK，同时还有一套叫做<code>PICO Unity Integration SDK</code>，这里就包含了其他特定与Pico平台的功能，如平台用户相关的、注视点渲染、VR 合成层等等。但二者都兼容了<code>XR Interaction Toolkit</code>，对于开发还是很友好的。</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>所以在开发前要想清楚，到底是要适配多平台，还是想要某个平台特定的功能，二者<del>不可</del>很难兼得。</p>
+                <p>UI总是会有很多奇奇怪怪的圆角矩形，虽然要在UIToolkit中实现是很简单的事情，但目前还是不太成熟，还是要用UGUI。在UGUI中要实现大致有三种方法，这里用Shader来实现一下。</p>
+<span id="more"></span>
+<h1 id="单纯圆角图片"><a href="#单纯圆角图片" class="headerlink" title="单纯圆角图片"></a>单纯圆角图片</h1><p>这是最麻烦且没必要的一种，针对不同分辨率和曲率要UI给出不同的图片，效率很低</p>
+<h1 id="9切片"><a href="#9切片" class="headerlink" title="9切片"></a>9切片</h1><p><img src="https://docs.unity3d.com/cn/current/uploads/Main/9SliceSprites-0.png" srcset="/img/loading.gif" lazyload alt="9SliceSprites"><br>把图片分割成9个部分，每个部分有不同的UV平铺与重复的方式，但是要实现像素级别的点对点，就需要准备不同分辨率的切片圆角矩形，也很麻烦</p>
+<h1 id="Shader实现"><a href="#Shader实现" class="headerlink" title="Shader实现"></a>Shader实现</h1><p>直接用SDF实现，一劳永逸。保证点对点的准确度，即使再搞什么圆角加描边也能快速实现。</p>
+<h2 id="UI-shader"><a href="#UI-shader" class="headerlink" title="UI shader"></a>UI shader</h2><p>UI的shader与一般的差别不大，只是对一些命名有点小要求。</p>
+<ul>
+<li>传入的主贴图名称为<code>_MainTex</code>当然如果你不想用Image传入的就随便了。</li>
+<li>同时还会传入颜色<code>float4 color    : COLOR;</code></li>
+<li>默认的一些配置<ul>
+<li>ZClip True</li>
+<li>ZTest Always</li>
+<li>ZWrite Off</li>
+<li>Cull Off</li>
+</ul>
+</li>
+<li>UGUI传入的顶点并不仅仅是一个面片，根据不同的设置，它会生成特定的网格传入GPU，而且UV分布也不一定是均匀的，所以要用特定的简单Sprite。</li>
+</ul>
+<h2 id="SDF"><a href="#SDF" class="headerlink" title="SDF"></a>SDF</h2><p>从shaderToy上抄一个</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float sdRoundedBox(in float2 p, in float2 b, in float4 r)
+&#123;
+    r.xy &#x3D; (p.x &gt; 0.0) ? r.xy : r.zw;
+    r.x &#x3D; (p.y &gt; 0.0) ? r.x : r.y;
+    float2 q &#x3D; abs(p) - b + r.x;
+    return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r.x;
+&#125;</code></pre></div></figure>
+<h2 id="Shader"><a href="#Shader" class="headerlink" title="Shader"></a>Shader</h2><p>最后贴一下Shader<br><img src="/images/Ran.png" srcset="/img/loading.gif" lazyload alt="圆角描边矩形"></p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">Shader &quot;Unlit&#x2F;UITest&quot;
+&#123;
+    Properties
+    &#123;
+        _OutlineColor(&quot;Outline Color&quot;, Color) &#x3D; (1,0,0,1)
+        [PerRendererData] _MainTex(&quot;Base Map&quot;, 2D) &#x3D; &quot;white&quot;
+        _scale(&quot;Scale width&#x2F;height&quot;, float) &#x3D; 1.0
+        _width(&quot;Outline Width&quot;, float) &#x3D; 1.0
+        _Radius(&quot;Radius&quot;, Vector) &#x3D; (0.1, 0.1, 0.1, 0.1)
+    &#125;
+
+    SubShader
+    &#123;
+        Tags
+        &#123;
+            &quot;RenderType&quot; &#x3D; &quot;Transparent&quot;
+            &quot;RenderPipeline&quot; &#x3D; &quot;UniversalPipeline&quot;
+            &quot;Queue&quot;&#x3D;&quot;Transparent&quot;
+        &#125;
+
+        Pass
+        &#123;
+            Name &quot;Default&quot;
+            Blend SrcAlpha OneMinusSrcAlpha
+            ZClip True
+            ZTest Always
+            ZWrite Off
+            Cull Off
+
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+
+            #include &quot;Packages&#x2F;com.unity.render-pipelines.universal&#x2F;ShaderLibrary&#x2F;Core.hlsl&quot;
+
+            struct Attributes
+            &#123;
+                float4 positionOS : POSITION;
+                float4 color : COLOR;
+                float2 uv : TEXCOORD0;
+            &#125;;
+
+            struct Varyings
+            &#123;
+                float4 positionHCS : SV_POSITION;
+                float4 color : COLOR;
+                float2 uv : TEXCOORD0;
+            &#125;;
+
+            TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
+
+            CBUFFER_START(UnityPerMaterial)
+            float4 _MainTex_ST;
+            float4 _OutlineColor;
+            float _scale;
+            float _width;
+            float4 _Radius;
+            CBUFFER_END
+
+            Varyings vert(Attributes IN)
+            &#123;
+                Varyings OUT;
+                OUT.positionHCS &#x3D; TransformObjectToHClip(IN.positionOS.xyz);
+                OUT.color &#x3D; IN.color;
+
+                OUT.uv &#x3D; TRANSFORM_TEX(IN.uv, _MainTex);
+                return OUT;
+            &#125;
+
+            float sdRoundedBox(in float2 p, in float2 b, in float4 r)
+            &#123;
+                r.xy &#x3D; (p.x &gt; 0.0) ? r.xy : r.zw;
+                r.x &#x3D; (p.y &gt; 0.0) ? r.x : r.y;
+                float2 q &#x3D; abs(p) - b + r.x;
+                return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r.x;
+            &#125;
+
+            float boxDist(float2 p, float2 size, float radius)
+            &#123;
+                size -&#x3D; float2(radius,radius);
+                float2 d &#x3D; abs(p) - size;
+                return min(max(d.x, d.y), 0.0) + length(max(d, 0.0)) - radius;
+            &#125;
+
+            half4 frag(Varyings IN) : SV_Target
+            &#123;
+                half4 color &#x3D; SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv) * IN.color;
+
+                float2 uv &#x3D; (IN.uv * 2 - 1) ;
+                uv.x *&#x3D; _scale;
+
+                float d &#x3D; sdRoundedBox(uv, float2(_scale,1), _Radius);
+
+                if (d &gt; 0.0)
+                    color &#x3D; half4(0, 0, 0, 0);
+                else if (d &gt; - _width)
+                    color &#x3D; _OutlineColor;
+
+                return color;
+            &#125;
+            ENDHLSL
+        &#125;
+    &#125;
+&#125;</code></pre></div></figure>
 
                 
               </div>
@@ -312,8 +435,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>XR开发的各种SDK以及相关概念</div>
-      <div>https://kuanmi.top/2022/12/29/openxr/</div>
+      <div>圆角描边矩形</div>
+      <div>https://kuanmi.top/2023/01/02/UIShader/</div>
     </div>
     <div class="license-meta">
       
@@ -325,7 +448,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年12月30日</div>
+          <div>2023年1月3日</div>
         </div>
       
       
@@ -355,18 +478,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/01/02/UIShader/" title="圆角描边矩形">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">圆角描边矩形</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2022/12/26/draw/" title="喷涂、绘制与填充">
-                        <span class="hidden-mobile">喷涂、绘制与填充</span>
+                      <a href="/2022/12/29/openxr/" title="XR开发的各种SDK以及相关概念">
+                        <span class="hidden-mobile">XR开发的各种SDK以及相关概念</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
