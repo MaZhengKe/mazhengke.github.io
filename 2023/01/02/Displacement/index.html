@@ -16,23 +16,23 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="UI总是会有很多奇奇怪怪的圆角矩形，虽然要在UIToolkit中实现是很简单的事情，但目前还是不太成熟，还是要用UGUI。在UGUI中要实现大致有三种方法，这里用Shader来实现一下。">
+    <meta name="description" content="根据虚幻提供的最佳实践在VR中，由于法线贴图不会考虑到双目显示和运动，它提供的效果和视差贴图比起来差距很大。对应到Unity中，在HDRP的Lit着色器下，指的就是HeightMap。下面罗列一下使用HeightMap的一些注意事项。 置换模式大体分两类，一种是将高度图映射到顶点上，顶点置换，还一种是在像素级别的置换。 顶点置换简单易懂，效果也很好，缺点是要求模型有很多顶点才有比较好的效果。 或者">
 <meta property="og:type" content="article">
-<meta property="og:title" content="圆角描边矩形">
-<meta property="og:url" content="https://kuanmi.top/2023/01/02/UIShader/index.html">
+<meta property="og:title" content="高度置换贴图">
+<meta property="og:url" content="https://kuanmi.top/2023/01/02/Displacement/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="UI总是会有很多奇奇怪怪的圆角矩形，虽然要在UIToolkit中实现是很简单的事情，但目前还是不太成熟，还是要用UGUI。在UGUI中要实现大致有三种方法，这里用Shader来实现一下。">
+<meta property="og:description" content="根据虚幻提供的最佳实践在VR中，由于法线贴图不会考虑到双目显示和运动，它提供的效果和视差贴图比起来差距很大。对应到Unity中，在HDRP的Lit着色器下，指的就是HeightMap。下面罗列一下使用HeightMap的一些注意事项。 置换模式大体分两类，一种是将高度图映射到顶点上，顶点置换，还一种是在像素级别的置换。 顶点置换简单易懂，效果也很好，缺点是要求模型有很多顶点才有比较好的效果。 或者">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://kuanmi.top/images/Ran.png">
-<meta property="article:published_time" content="2023-01-02T16:44:56.000Z">
-<meta property="article:modified_time" content="2023-01-03T02:57:09.192Z">
+<meta property="og:image" content="https://kuanmi.top/images/PDis.png">
+<meta property="article:published_time" content="2023-01-02T19:11:50.000Z">
+<meta property="article:modified_time" content="2023-01-09T01:11:35.026Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://kuanmi.top/images/Ran.png">
+<meta name="twitter:image" content="https://kuanmi.top/images/PDis.png">
   
   
   
-  <title>圆角描边矩形 - KuanMi</title>
+  <title>高度置换贴图 - KuanMi</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -193,13 +193,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/images/Ran.png') no-repeat center center; background-size: cover;">
+     style="background: url('/images/PDis.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="圆角描边矩形"></span>
+            <span id="subtitle" data-typed-text="高度置换贴图"></span>
           
         </div>
 
@@ -210,7 +210,7 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-01-03 00:44" pubdate>
+        <time datetime="2023-01-03 03:11" pubdate>
           2023年1月3日 凌晨
         </time>
       </span>
@@ -222,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.8k 字
+          781 字
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
         
-          24 分钟
+          7 分钟
         
       </span>
     
@@ -281,145 +281,19 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">圆角描边矩形</h1>
+            <h1 style="display: none">高度置换贴图</h1>
             
             
               <div class="markdown-body">
                 
-                <p>UI总是会有很多奇奇怪怪的圆角矩形，虽然要在UIToolkit中实现是很简单的事情，但目前还是不太成熟，还是要用UGUI。在UGUI中要实现大致有三种方法，这里用Shader来实现一下。</p>
-<span id="more"></span>
-<h1 id="单纯圆角图片"><a href="#单纯圆角图片" class="headerlink" title="单纯圆角图片"></a>单纯圆角图片</h1><p>这是最麻烦且没必要的一种，针对不同分辨率和曲率要UI给出不同的图片，效率很低</p>
-<h1 id="9切片"><a href="#9切片" class="headerlink" title="9切片"></a>9切片</h1><p><img src="https://docs.unity3d.com/cn/current/uploads/Main/9SliceSprites-0.png" srcset="/img/loading.gif" lazyload alt="9SliceSprites"><br>把图片分割成9个部分，每个部分有不同的UV平铺与重复的方式，但是要实现像素级别的点对点，就需要准备不同分辨率的切片圆角矩形，也很麻烦</p>
-<h1 id="Shader实现"><a href="#Shader实现" class="headerlink" title="Shader实现"></a>Shader实现</h1><p>直接用SDF实现，一劳永逸。保证点对点的准确度，即使再搞什么圆角加描边也能快速实现。</p>
-<h2 id="UI-shader"><a href="#UI-shader" class="headerlink" title="UI shader"></a>UI shader</h2><p>UI的shader与一般的差别不大，只是对一些命名有点小要求。</p>
-<ul>
-<li>传入的主贴图名称为<code>_MainTex</code>当然如果你不想用Image传入的就随便了。</li>
-<li>同时还会传入颜色<code>float4 color    : COLOR;</code></li>
-<li>默认的一些配置<ul>
-<li>ZClip True</li>
-<li>ZTest Always</li>
-<li>ZWrite Off</li>
-<li>Cull Off</li>
-</ul>
-</li>
-<li>UGUI传入的顶点并不仅仅是一个面片，根据不同的设置，它会生成特定的网格传入GPU，而且UV分布也不一定是均匀的，所以要用特定的简单Sprite。</li>
-</ul>
-<h2 id="SDF"><a href="#SDF" class="headerlink" title="SDF"></a>SDF</h2><p>从shaderToy上抄一个</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float sdRoundedBox(in float2 p, in float2 b, in float4 r)
-&#123;
-    r.xy &#x3D; (p.x &gt; 0.0) ? r.xy : r.zw;
-    r.x &#x3D; (p.y &gt; 0.0) ? r.x : r.y;
-    float2 q &#x3D; abs(p) - b + r.x;
-    return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r.x;
-&#125;</code></pre></div></figure>
-<h2 id="Shader"><a href="#Shader" class="headerlink" title="Shader"></a>Shader</h2><p>最后贴一下Shader<br><img src="/images/Ran.png" srcset="/img/loading.gif" lazyload alt="圆角描边矩形"></p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">Shader &quot;Unlit&#x2F;UITest&quot;
-&#123;
-    Properties
-    &#123;
-        _OutlineColor(&quot;Outline Color&quot;, Color) &#x3D; (1,0,0,1)
-        [PerRendererData] _MainTex(&quot;Base Map&quot;, 2D) &#x3D; &quot;white&quot;
-        _scale(&quot;Scale width&#x2F;height&quot;, float) &#x3D; 1.0
-        _width(&quot;Outline Width&quot;, float) &#x3D; 1.0
-        _Radius(&quot;Radius&quot;, Vector) &#x3D; (0.1, 0.1, 0.1, 0.1)
-    &#125;
-
-    SubShader
-    &#123;
-        Tags
-        &#123;
-            &quot;RenderType&quot; &#x3D; &quot;Transparent&quot;
-            &quot;RenderPipeline&quot; &#x3D; &quot;UniversalPipeline&quot;
-            &quot;Queue&quot;&#x3D;&quot;Transparent&quot;
-        &#125;
-
-        Pass
-        &#123;
-            Name &quot;Default&quot;
-            Blend SrcAlpha OneMinusSrcAlpha
-            ZClip True
-            ZTest Always
-            ZWrite Off
-            Cull Off
-
-            HLSLPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-
-            #include &quot;Packages&#x2F;com.unity.render-pipelines.universal&#x2F;ShaderLibrary&#x2F;Core.hlsl&quot;
-
-            struct Attributes
-            &#123;
-                float4 positionOS : POSITION;
-                float4 color : COLOR;
-                float2 uv : TEXCOORD0;
-            &#125;;
-
-            struct Varyings
-            &#123;
-                float4 positionHCS : SV_POSITION;
-                float4 color : COLOR;
-                float2 uv : TEXCOORD0;
-            &#125;;
-
-            TEXTURE2D(_MainTex);
-            SAMPLER(sampler_MainTex);
-
-            CBUFFER_START(UnityPerMaterial)
-            float4 _MainTex_ST;
-            float4 _OutlineColor;
-            float _scale;
-            float _width;
-            float4 _Radius;
-            CBUFFER_END
-
-            Varyings vert(Attributes IN)
-            &#123;
-                Varyings OUT;
-                OUT.positionHCS &#x3D; TransformObjectToHClip(IN.positionOS.xyz);
-                OUT.color &#x3D; IN.color;
-
-                OUT.uv &#x3D; TRANSFORM_TEX(IN.uv, _MainTex);
-                return OUT;
-            &#125;
-
-            float sdRoundedBox(in float2 p, in float2 b, in float4 r)
-            &#123;
-                r.xy &#x3D; (p.x &gt; 0.0) ? r.xy : r.zw;
-                r.x &#x3D; (p.y &gt; 0.0) ? r.x : r.y;
-                float2 q &#x3D; abs(p) - b + r.x;
-                return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r.x;
-            &#125;
-
-            float boxDist(float2 p, float2 size, float radius)
-            &#123;
-                size -&#x3D; float2(radius,radius);
-                float2 d &#x3D; abs(p) - size;
-                return min(max(d.x, d.y), 0.0) + length(max(d, 0.0)) - radius;
-            &#125;
-
-            half4 frag(Varyings IN) : SV_Target
-            &#123;
-                half4 color &#x3D; SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv) * IN.color;
-
-                float2 uv &#x3D; (IN.uv * 2 - 1) ;
-                uv.x *&#x3D; _scale;
-
-                float d &#x3D; sdRoundedBox(uv, float2(_scale,1), _Radius);
-
-                if (d &gt; 0.0)
-                    color &#x3D; half4(0, 0, 0, 0);
-                else if (d &gt; - _width)
-                    color &#x3D; _OutlineColor;
-
-                return color;
-            &#125;
-            ENDHLSL
-        &#125;
-    &#125;
-&#125;</code></pre></div></figure>
-
-<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>这里的SDF可以简单替换其他各种奇奇怪怪的类型，比如参考这个链接<a target="_blank" rel="noopener" href="https://iquilezles.org/articles/distfunctions2d/">distfunctions2d</a>。再结合一些变化的参数就可以做出动画效果了。</p>
+                <p>根据虚幻提供的<a target="_blank" rel="noopener" href="https://docs.unrealengine.com/5.1/zh-CN/xr-best-practices-in-unreal-engine/">最佳实践</a>在VR中，由于法线贴图不会考虑到双目显示和运动，它提供的效果和视差贴图比起来差距很大。对应到Unity中，在HDRP的Lit着色器下，指的就是HeightMap。<br>下面罗列一下使用HeightMap的一些注意事项。</p>
+<h1 id="置换模式"><a href="#置换模式" class="headerlink" title="置换模式"></a>置换模式</h1><p>大体分两类，一种是将高度图映射到顶点上，顶点置换，还一种是在像素级别的置换。</p>
+<h2 id="顶点置换"><a href="#顶点置换" class="headerlink" title="顶点置换"></a>顶点置换</h2><p>简单易懂，效果也很好，缺点是要求模型有很多顶点才有比较好的效果。</p>
+<p>或者使用曲面细分，增加很多的顶点，效果也不错，缺点是当头显摄像机移动时，细分的顶点会发生变动，体现在视觉上就是模型的顶点在跳动。<br><img src="/images/TDis.png" srcset="/img/loading.gif" lazyload alt="曲面细分+置换"></p>
+<h2 id="像素置换"><a href="#像素置换" class="headerlink" title="像素置换"></a>像素置换</h2><p>后者在较高的迭代次数下，效果也不错。<br>具体的实现可以参考<a target="_blank" rel="noopener" href="https://learnopengl-cn.github.io/05%20Advanced%20Lighting/05%20Parallax%20Mapping/">视差贴图</a>。<br>Unity的HDRP具体采用的方案叫做陡峭视差映射(Steep Parallax Mapping)。<br>这里贴一张关键的图：<br><img src="https://learnopengl-cn.github.io/img/05/05/parallax_mapping_steep_parallax_mapping_diagram.png" srcset="/img/loading.gif" lazyload alt="陡峭视差映射"></p>
+<p>这里要注意在使用时，有两个关键的参数不要忘记：<code>Primitive Length</code> <code>Primitive Width</code>，表示实际物体的长和宽。如果没有正确填写，就会出现物体下沉或者漂浮的情况。同时为了准确的显示高度对深度的影响，<code>Depth Offset</code>也要开启，这会修改实际写入深度图的深度。写入的深度同时也会影响各种平面空间的效果，比如屏幕空间阴影。</p>
+<p><img src="/images/PDis.png" srcset="/img/loading.gif" lazyload alt="像素级别置换"></p>
+<h1 id="URP呢"><a href="#URP呢" class="headerlink" title="URP呢"></a>URP呢</h1><p>URP虽然也提供了HeightMap，但从效果来看，应该只是简单的视差贴图映射，和HDRP默认的陡峭视差映射差距很大。<br><img src="/images/URPDis.png" srcset="/img/loading.gif" lazyload alt="URP默认的视差贴图映射"><br>但如果使用ShaderGraph，还是提供了两种视差映射。<br><img src="/images/Para.png" srcset="/img/loading.gif" lazyload alt="ShaderGraph提供的两种节点"><br>前者就是简单的视差映射，后者的效果就和HDRP一样。<br>但很遗憾，这里虽然给出了<code>Depth Offset</code>，但目前的URP的节点还无法使用。<br>也就是说目前（2022.2.0），想要在URP下使用PDO（Pixel Depth Offset），只有自己写了，这里有个<a target="_blank" rel="noopener" href="https://forum.unity.com/threads/pdo-pixel-depth-offset-in-pallax-occlusion-mapping-ndoe.1132408/">栗子</a>。<br>这里挖个坑，等到BlockShader成熟了，就用BlockShader写一遍。</p>
 
                 
               </div>
@@ -437,8 +311,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>圆角描边矩形</div>
-      <div>https://kuanmi.top/2023/01/02/UIShader/</div>
+      <div>高度置换贴图</div>
+      <div>https://kuanmi.top/2023/01/02/Displacement/</div>
     </div>
     <div class="license-meta">
       
@@ -480,18 +354,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/01/02/Displacement/" title="高度置换贴图">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">高度置换贴图</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2022/12/29/openxr/" title="XR开发的各种SDK以及相关概念">
-                        <span class="hidden-mobile">XR开发的各种SDK以及相关概念</span>
+                      <a href="/2023/01/02/UIShader/" title="圆角描边矩形">
+                        <span class="hidden-mobile">圆角描边矩形</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
