@@ -16,23 +16,23 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="根据虚幻提供的最佳实践在VR中，由于法线贴图不会考虑到双目显示和运动，它提供的效果和视差贴图比起来差距很大。对应到Unity中，在HDRP的Lit着色器下，指的就是HeightMap。下面罗列一下使用HeightMap的一些注意事项。 置换模式大体分两类，一种是将高度图映射到顶点上，顶点置换，还一种是在像素级别的置换。 顶点置换简单易懂，效果也很好，缺点是要求模型有很多顶点才有比较好的效果。 或者">
+    <meta name="description" content="记录一些读UIToolkit文档时的关键点，仅当备忘录。 VisualTree由VisualElement构成的具有层级结构的数据集合。 VisualElement一个基类，包含样式表、布局数据以及事件处理器。内置了各种实现  Buttons Toggles Text input fields  panel面板是视觉树的父对象，视觉树要连接到面板才能渲染。面板要么属于一个编辑器窗口，要么属于一个运">
 <meta property="og:type" content="article">
-<meta property="og:title" content="高度置换贴图">
-<meta property="og:url" content="https://kuanmi.top/2023/01/02/Displacement/index.html">
+<meta property="og:title" content="uitoolkit杂记">
+<meta property="og:url" content="https://kuanmi.top/2023/01/27/uitoolkit/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="根据虚幻提供的最佳实践在VR中，由于法线贴图不会考虑到双目显示和运动，它提供的效果和视差贴图比起来差距很大。对应到Unity中，在HDRP的Lit着色器下，指的就是HeightMap。下面罗列一下使用HeightMap的一些注意事项。 置换模式大体分两类，一种是将高度图映射到顶点上，顶点置换，还一种是在像素级别的置换。 顶点置换简单易懂，效果也很好，缺点是要求模型有很多顶点才有比较好的效果。 或者">
+<meta property="og:description" content="记录一些读UIToolkit文档时的关键点，仅当备忘录。 VisualTree由VisualElement构成的具有层级结构的数据集合。 VisualElement一个基类，包含样式表、布局数据以及事件处理器。内置了各种实现  Buttons Toggles Text input fields  panel面板是视觉树的父对象，视觉树要连接到面板才能渲染。面板要么属于一个编辑器窗口，要么属于一个运">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://kuanmi.top/images/PDis.png">
-<meta property="article:published_time" content="2023-01-02T19:11:50.000Z">
-<meta property="article:modified_time" content="2023-01-09T01:11:35.026Z">
+<meta property="og:image" content="https://docs.unity3d.com/uploads/Main/UIBuilder/UIBuilderAnnotatedMainWindow.png">
+<meta property="article:published_time" content="2023-01-27T18:49:22.000Z">
+<meta property="article:modified_time" content="2023-01-28T02:49:22.469Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://kuanmi.top/images/PDis.png">
+<meta name="twitter:image" content="https://docs.unity3d.com/uploads/Main/UIBuilder/UIBuilderAnnotatedMainWindow.png">
   
   
   
-  <title>高度置换贴图 - KuanMi</title>
+  <title>uitoolkit杂记 - KuanMi</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -193,13 +193,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/images/PDis.png') no-repeat center center; background-size: cover;">
+     style="background: url('https://docs.unity3d.com/uploads/Main/UIBuilder/UIBuilderAnnotatedMainWindow.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="高度置换贴图"></span>
+            <span id="subtitle" data-typed-text="uitoolkit杂记"></span>
           
         </div>
 
@@ -210,8 +210,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-01-03 03:11" pubdate>
-          2023年1月3日 凌晨
+        <time datetime="2023-01-28 02:49" pubdate>
+          2023年1月28日 凌晨
         </time>
       </span>
     
@@ -222,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          781 字
+          2.4k 字
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
         
-          7 分钟
+          20 分钟
         
       </span>
     
@@ -281,20 +281,97 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">高度置换贴图</h1>
+            <h1 style="display: none">uitoolkit杂记</h1>
             
             
               <div class="markdown-body">
                 
-                <p>根据虚幻提供的<a target="_blank" rel="noopener" href="https://docs.unrealengine.com/5.1/zh-CN/xr-best-practices-in-unreal-engine/">最佳实践</a>在VR中，由于法线贴图不会考虑到双目显示和运动，它提供的效果和视差贴图比起来差距很大。对应到Unity中，在HDRP的Lit着色器下，指的就是HeightMap。<br>下面罗列一下使用HeightMap的一些注意事项。</p>
-<h1 id="置换模式"><a href="#置换模式" class="headerlink" title="置换模式"></a>置换模式</h1><p>大体分两类，一种是将高度图映射到顶点上，顶点置换，还一种是在像素级别的置换。</p>
-<h2 id="顶点置换"><a href="#顶点置换" class="headerlink" title="顶点置换"></a>顶点置换</h2><p>简单易懂，效果也很好，缺点是要求模型有很多顶点才有比较好的效果。</p>
-<p>或者使用曲面细分，增加很多的顶点，效果也不错，缺点是当头显摄像机移动时，细分的顶点会发生变动，体现在视觉上就是模型的顶点在跳动。<br><img src="/images/TDis.png" srcset="/img/loading.gif" lazyload alt="曲面细分+置换"></p>
-<h2 id="像素置换"><a href="#像素置换" class="headerlink" title="像素置换"></a>像素置换</h2><p>后者在较高的迭代次数下，效果也不错。<br>具体的实现可以参考<a target="_blank" rel="noopener" href="https://learnopengl-cn.github.io/05%20Advanced%20Lighting/05%20Parallax%20Mapping/">视差贴图</a>。<br>Unity的HDRP具体采用的方案叫做陡峭视差映射(Steep Parallax Mapping)。<br>这里贴一张关键的图：<br><img src="https://learnopengl-cn.github.io/img/05/05/parallax_mapping_steep_parallax_mapping_diagram.png" srcset="/img/loading.gif" lazyload alt="陡峭视差映射"></p>
-<p>这里要注意在使用时，有两个关键的参数不要忘记：<code>Primitive Length</code> <code>Primitive Width</code>，表示实际物体的长和宽。如果没有正确填写，就会出现物体下沉或者漂浮的情况。同时为了准确的显示高度对深度的影响，<code>Depth Offset</code>也要开启，这会修改实际写入深度图的深度。写入的深度同时也会影响各种平面空间的效果，比如屏幕空间阴影。</p>
-<p><img src="/images/PDis.png" srcset="/img/loading.gif" lazyload alt="像素级别置换"></p>
-<h1 id="URP呢"><a href="#URP呢" class="headerlink" title="URP呢"></a>URP呢</h1><p>URP虽然也提供了HeightMap，但从效果来看，应该只是简单的视差贴图映射，和HDRP默认的陡峭视差映射差距很大。<br><img src="/images/URPDis.png" srcset="/img/loading.gif" lazyload alt="URP默认的视差贴图映射"><br>但如果使用ShaderGraph，还是提供了两种视差映射。<br><img src="/images/Para.png" srcset="/img/loading.gif" lazyload alt="ShaderGraph提供的两种节点"><br>前者就是简单的视差映射，后者的效果就和HDRP一样。<br>但很遗憾，这里虽然给出了<code>Depth Offset</code>，但目前的URP的节点还无法使用。<br>也就是说目前（2022.2.0），想要在URP下使用PDO（Pixel Depth Offset），只有自己写了，这里有个<a target="_blank" rel="noopener" href="https://forum.unity.com/threads/pdo-pixel-depth-offset-in-pallax-occlusion-mapping-ndoe.1132408/">栗子</a>。<br>这里挖个坑，等到BlockShader成熟了，就用BlockShader写一遍。</p>
+                <p>记录一些读UIToolkit文档时的关键点，仅当备忘录。</p>
+<h1 id="VisualTree"><a href="#VisualTree" class="headerlink" title="VisualTree"></a>VisualTree</h1><p>由VisualElement构成的具有层级结构的数据集合。</p>
+<h1 id="VisualElement"><a href="#VisualElement" class="headerlink" title="VisualElement"></a>VisualElement</h1><p>一个基类，包含样式表、布局数据以及事件处理器。<br>内置了各种实现</p>
+<ul>
+<li>Buttons</li>
+<li>Toggles</li>
+<li>Text input fields</li>
+</ul>
+<h1 id="panel"><a href="#panel" class="headerlink" title="panel"></a>panel</h1><p>面板是视觉树的父对象，视觉树要连接到面板才能渲染。面板要么属于一个编辑器窗口，要么属于一个运行时的UIDocument。面板也处理焦点控制和为视觉树分发事件。</p>
+<h1 id="绘制数据"><a href="#绘制数据" class="headerlink" title="绘制数据"></a>绘制数据</h1><p>深度优先绘制</p>
+<h1 id="布局系统"><a href="#布局系统" class="headerlink" title="布局系统"></a>布局系统</h1><p>和Web那一套一样，基于Flexbox。</p>
+<h1 id="UI-Builder"><a href="#UI-Builder" class="headerlink" title="UI Builder"></a>UI Builder</h1><p>一个可视化的编写uxml和uss文件的工具</p>
+<h1 id="自定义元素"><a href="#自定义元素" class="headerlink" title="自定义元素"></a>自定义元素</h1><p>实现VisualElement<code>public class MyElement : VisualElement</code><br>元素都由工厂模式生成，所以需要对应的工厂类<code>UxmlFactory&lt;MyElement&gt;</code></p>
+<h1 id="定义元素特征"><a href="#定义元素特征" class="headerlink" title="定义元素特征"></a>定义元素特征</h1><p>实现<code>VisualElement.UxmlTraits</code>类<br>在<code>Init</code>中使用<code>((MyElement)ve).status = m_Status.GetValueFromBag(bag, cc);</code>读取数据。</p>
+<h1 id="加载UXML"><a href="#加载UXML" class="headerlink" title="加载UXML"></a>加载UXML</h1><p>模板加载到VisualTreeAsset<br><code>var template = AssetDatabase.LoadAssetAtPath&lt;VisualTreeAsset&gt;(&quot;path/to/file.uxml&quot;);</code><br>然后附加到父元素<br><code>template.CloneTree(parentElement, slots);</code></p>
+<h1 id="UQuery"><a href="#UQuery" class="headerlink" title="UQuery"></a>UQuery</h1><p>基于Jquery或Linq，如<br><code>root.Query(&quot;foo&quot;).Children&lt;Button&gt;().ForEach(//执行操作);</code></p>
+<h1 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h1><p>事件通知到每个元素<br>基类EventBase</p>
+<h2 id="分发事件"><a href="#分发事件" class="headerlink" title="分发事件"></a>分发事件</h2><p>监听来自操作系统或脚本的事件，使用<code>EventDispatcher</code>分发到元素。首先确定分发策略，然后执行。<br>事件有可能由额外事件，通过队列管理。</p>
+<h2 id="分发行为"><a href="#分发行为" class="headerlink" title="分发行为"></a>分发行为</h2><p>分为三个阶段</p>
+<ul>
+<li>涓滴</li>
+<li>冒泡</li>
+<li>可取消</li>
+</ul>
+<h2 id="事件传播"><a href="#事件传播" class="headerlink" title="事件传播"></a>事件传播</h2><p>事件分发选择目标后，计算传播路径。</p>
+<ul>
+<li>从根部向目标，涓滴阶段</li>
+<li>接收事件</li>
+<li>上升到根部，冒泡阶段</li>
+</ul>
+<h2 id="事件目标"><a href="#事件目标" class="headerlink" title="事件目标"></a>事件目标</h2><p>取决于事件类型，键盘则是当前获得焦点的元素。</p>
+<h2 id="捕获鼠标"><a href="#捕获鼠标" class="headerlink" title="捕获鼠标"></a>捕获鼠标</h2><p>任何时候只有一个元素具有捕获。捕获后，该元素是除了鼠标滚轮之外任何鼠标事件的目标。</p>
+<h2 id="焦点环和Tab顺序"><a href="#焦点环和Tab顺序" class="headerlink" title="焦点环和Tab顺序"></a>焦点环和Tab顺序</h2><p>默认DFS。</p>
+<h1 id="处理事件"><a href="#处理事件" class="headerlink" title="处理事件"></a>处理事件</h1><h2 id="注册事件回调"><a href="#注册事件回调" class="headerlink" title="注册事件回调"></a>注册事件回调</h2><p>传播路径上除目标外可以对一个事件接受两次，涓滴和冒泡。<br>默认是在目标和冒泡阶段执行。如要在涓滴时执行，使用<code>TrickleDown.TrickleDown</code>注册回调。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; 为涓滴阶段注册回调
+myElement.RegisterCallback&lt;MouseDownEvent&gt;(MyCallback, TrickleDown.TrickleDown);</code></pre></div></figure>
+<h2 id="发送自定义数据到事件回调"><a href="#发送自定义数据到事件回调" class="headerlink" title="发送自定义数据到事件回调"></a>发送自定义数据到事件回调</h2><figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F;将用户数据一起发送到回调
+myElement.RegisterCallback&lt;MouseDownEvent, MyType&gt;(MyCallbackWithData, myData);
+void MyCallbackWithData(MouseDownEvent evt, MyType data) &#123; &#x2F;* ...*&#x2F; &#125;</code></pre></div></figure>
+<h2 id="为控件处理输入事件"><a href="#为控件处理输入事件" class="headerlink" title="为控件处理输入事件"></a>为控件处理输入事件</h2><h3 id="捕获指针"><a href="#捕获指针" class="headerlink" title="捕获指针"></a>捕获指针</h3><p>使用CaptureEvents</p>
+<h3 id="使用操纵器处理事件"><a href="#使用操纵器处理事件" class="headerlink" title="使用操纵器处理事件"></a>使用操纵器处理事件</h3><h3 id="自定义控件"><a href="#自定义控件" class="headerlink" title="自定义控件"></a>自定义控件</h3><p>两种方式</p>
+<ul>
+<li>注册事件回调</li>
+<li>实现默认操作<br>区别</li>
+<li>回调在实例上注册，默认操作作为一个类的虚拟函数</li>
+<li>回调传播路径上所有元素都会执行。默认操作仅对事件目标执行</li>
+</ul>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">override void ExecuteDefaultActionAtTarget(EventBase evt)
+&#123;
+    &#x2F;&#x2F; 调用基函数。
+    base.ExecuteDefaultActionAtTarget(evt);
 
+    if (evt.GetEventTypeId() &#x3D;&#x3D; MouseDownEvent.TypeId())
+    &#123;
+        &#x2F;&#x2F; ...
+    &#125;
+    else if (evt.GetEventTypeId() &#x3D;&#x3D; MouseUpEvent.TypeId())
+    &#123;
+        &#x2F;&#x2F; ...
+    &#125;
+    &#x2F;&#x2F;更多事件类型
+&#125;</code></pre></div></figure>
+<h1 id="综合事件"><a href="#综合事件" class="headerlink" title="综合事件"></a>综合事件</h1><p>事件系统使用事件池。</p>
+<ol>
+<li>从事件池中获取一个事件对象</li>
+<li>填写事件属性</li>
+<li>包含在<code>using</code>中确保其返回到事件池</li>
+<li>事件传递给<code>element.SendEvent()</code></li>
+</ol>
+<p>要发送来自操作系统的事件，使用<code>UnityEngine.Event</code>初始化事件</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">void SynthesizeAndSendKeyDownEvent(IPanel panel, KeyCode code,
+     char character &#x3D; &#39;\0&#39;, EventModifiers modifiers &#x3D; EventModifiers.None)
+&#123;
+    &#x2F;&#x2F; Create a UnityEngine.Event to hold initialization data.
+    var evt &#x3D; new Event() &#123;
+        type &#x3D; EventType.KeyDownEvent,
+        keyCode &#x3D; code,
+        character &#x3D; character,
+        modifiers &#x3D; modifiers
+    &#125;;
+
+    using (KeyDownEvent keyDownEvent &#x3D; KeyDownEvent.GetPooled(evt))
+    &#123;
+        panel.visualTree.SendEvent(keyDownEvent);
+    &#125;
+&#125;</code></pre></div></figure>
                 
               </div>
             
@@ -311,8 +388,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>高度置换贴图</div>
-      <div>https://kuanmi.top/2023/01/02/Displacement/</div>
+      <div>uitoolkit杂记</div>
+      <div>https://kuanmi.top/2023/01/27/uitoolkit/</div>
     </div>
     <div class="license-meta">
       
@@ -324,7 +401,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年1月3日</div>
+          <div>2023年1月28日</div>
         </div>
       
       
@@ -354,18 +431,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/01/14/Hololens2-mrtk3/" title="Hololens2-mrtk3">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Hololens2-mrtk3</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/01/02/UIShader/" title="圆角描边矩形">
-                        <span class="hidden-mobile">圆角描边矩形</span>
+                      <a href="/2023/01/14/Hololens2-mrtk3/" title="Hololens2-mrtk3">
+                        <span class="hidden-mobile">Hololens2-mrtk3</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
