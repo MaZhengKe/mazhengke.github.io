@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>traefik</title>
+    <link href="/2023/01/27/traefik/"/>
+    <url>/2023/01/27/traefik/</url>
+    
+    <content type="html"><![CDATA[<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>之前都是用Nginx来做反代，最近发现了新的玩具<code>traefik</code>，来玩一下，看看对比NPM有什么优劣。</p><h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>这里就用Docker来安装</p><figure><div class="code-wrapper"><pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">version: &#39;3&#39;services:  reverse-proxy:    # The official v2 Traefik docker image    image: traefik:v2.9    # Enables the web UI and tells Traefik to listen to docker    command: --api.insecure&#x3D;true --providers.docker    ports:      # The HTTP port      - &quot;85:80&quot;      # The Web UI (enabled by --api.insecure&#x3D;true)      - &quot;8085:8080&quot;    volumes:      # So that Traefik can listen to the Docker events      - &#x2F;var&#x2F;run&#x2F;docker.sock:&#x2F;var&#x2F;run&#x2F;docker.sock</code></pre></div></figure><p>然后<code>docker compose up -d</code>，起容器<br>UFW开对应的端口就OK了。</p><h1 id="webUI"><a href="#webUI" class="headerlink" title="webUI"></a>webUI</h1><p><img src="/images/trae-UI.png" alt="trae-UI"><br>自带UI，还是很方便的</p><h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>Traefik 提供了多种配置方式，可以直接在容器的label中添加，也可以使用传统的配置文件的形式，更是提供了一大堆称为<code>Providers</code>的插件来做到动态更改配置。<br>比如：</p><figure><div class="code-wrapper"><pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">labels:  - &quot;traefik.enable&#x3D;true&quot;  - &quot;traefik.http.routers.unityacc.rule&#x3D;Host(&#96;acc.home.kuanmi.top&#96;)&quot;  - &quot;traefik.http.routers.unityacc.entrypoints&#x3D;web&quot;</code></pre></div></figure><p>如果要在配置文件中调用docker的服务，要使用@符号，如：</p><figure><div class="code-wrapper"><pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">http:  routers:    testRouters:      rule: &quot;Host(&#96;test.home.kuanmi.top&#96;)&quot;      service: whoami-traefik@docker</code></pre></div></figure><h1 id="https"><a href="#https" class="headerlink" title="https"></a>https</h1><p>证书方面也提供了Let’s Encrypt来自动生成和更新，由于这里无法访问80和443端口，就使用DNS的方式来自动生成。</p><figure><div class="code-wrapper"><pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">certificatesResolvers:  myresolver:    acme:      email: ma_zhengke@outlook.com      storage: &#x2F;etc&#x2F;traefik&#x2F;acme.json      dnsChallenge:        provider: alidns        delayBeforeCheck: 0</code></pre></div></figure><figure><div class="code-wrapper"><pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">http:  routers:    testRouters:      rule: &quot;Host(&#96;test.home.kuanmi.top&#96;)&quot;      service: whoami-traefik@docker      tls:        certresolver: myresolver</code></pre></div></figure><p>如果是要通配符的话：</p><figure><div class="code-wrapper"><pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">http:  routers:    unityacc:      rule: &quot;Host(&#96;unity.home.kuanmi.top&#96;)&quot;      entryPoints:        - &quot;web-secure&quot;      service: unityAcc-unityacc@docker      tls:        certresolver: myresolver        domains:          - main: &quot;home.kuanmi.top&quot;            sans:              - &quot;*.home.kuanmi.top&quot;</code></pre></div></figure><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>和Nginx对比的话，但就我能使用到的功能，二者相差不大，更多的功能还没有体验到，不敢妄下结论说二者的优劣。<br>唯一觉得有意思的一点是Traefik可以接入docker，使用label做到服务的发现（虽然还是要配置），方便不少。<br>但用NPM，同时给各个容器配置别名，其实也大差不差。<br>再加上一些nginx常用的便捷的如return 444等还不知道该怎么在Traefik中实现，目前还是沿用Nginx的配置不要变动了。</p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>uitoolkit杂记</title>
     <link href="/2023/01/27/uitoolkit/"/>
     <url>/2023/01/27/uitoolkit/</url>

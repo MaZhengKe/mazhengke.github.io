@@ -16,23 +16,23 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="记录一些读UIToolkit文档时的关键点，仅当备忘录。 VisualTree由VisualElement构成的具有层级结构的数据集合。 VisualElement一个基类，包含样式表、布局数据以及事件处理器。内置了各种实现  Buttons Toggles Text input fields  panel面板是视觉树的父对象，视觉树要连接到面板才能渲染。面板要么属于一个编辑器窗口，要么属于一个运">
+    <meta name="description" content="简介之前都是用Nginx来做反代，最近发现了新的玩具traefik，来玩一下，看看对比NPM有什么优劣。 安装这里就用Docker来安装 version: &#39;3&#39;  services:   reverse-proxy:     # The official v2 Traefik docker image     image: traefik:v2.9     # Enables t">
 <meta property="og:type" content="article">
-<meta property="og:title" content="uitoolkit杂记">
-<meta property="og:url" content="https://kuanmi.top/2023/01/27/uitoolkit/index.html">
+<meta property="og:title" content="traefik">
+<meta property="og:url" content="https://kuanmi.top/2023/01/27/traefik/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="记录一些读UIToolkit文档时的关键点，仅当备忘录。 VisualTree由VisualElement构成的具有层级结构的数据集合。 VisualElement一个基类，包含样式表、布局数据以及事件处理器。内置了各种实现  Buttons Toggles Text input fields  panel面板是视觉树的父对象，视觉树要连接到面板才能渲染。面板要么属于一个编辑器窗口，要么属于一个运">
+<meta property="og:description" content="简介之前都是用Nginx来做反代，最近发现了新的玩具traefik，来玩一下，看看对比NPM有什么优劣。 安装这里就用Docker来安装 version: &#39;3&#39;  services:   reverse-proxy:     # The official v2 Traefik docker image     image: traefik:v2.9     # Enables t">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://docs.unity3d.com/uploads/Main/UIBuilder/UIBuilderAnnotatedMainWindow.png">
-<meta property="article:published_time" content="2023-01-27T18:49:22.000Z">
-<meta property="article:modified_time" content="2023-01-28T02:49:22.469Z">
+<meta property="og:image" content="https://doc.traefik.io/traefik/assets/img/traefik-architecture.png">
+<meta property="article:published_time" content="2023-01-27T19:21:02.000Z">
+<meta property="article:modified_time" content="2023-01-29T08:52:14.297Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://docs.unity3d.com/uploads/Main/UIBuilder/UIBuilderAnnotatedMainWindow.png">
+<meta name="twitter:image" content="https://doc.traefik.io/traefik/assets/img/traefik-architecture.png">
   
   
   
-  <title>uitoolkit杂记 - KuanMi</title>
+  <title>traefik - KuanMi</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -193,13 +193,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('https://docs.unity3d.com/uploads/Main/UIBuilder/UIBuilderAnnotatedMainWindow.png') no-repeat center center; background-size: cover;">
+     style="background: url('https://doc.traefik.io/traefik/assets/img/traefik-architecture.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="uitoolkit杂记"></span>
+            <span id="subtitle" data-typed-text="traefik"></span>
           
         </div>
 
@@ -210,7 +210,7 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-01-28 02:49" pubdate>
+        <time datetime="2023-01-28 03:21" pubdate>
           2023年1月28日 凌晨
         </time>
       </span>
@@ -222,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.4k 字
+          1.8k 字
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
         
-          20 分钟
+          15 分钟
         
       </span>
     
@@ -281,97 +281,79 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">uitoolkit杂记</h1>
+            <h1 style="display: none">traefik</h1>
             
             
               <div class="markdown-body">
                 
-                <p>记录一些读UIToolkit文档时的关键点，仅当备忘录。</p>
-<h1 id="VisualTree"><a href="#VisualTree" class="headerlink" title="VisualTree"></a>VisualTree</h1><p>由VisualElement构成的具有层级结构的数据集合。</p>
-<h1 id="VisualElement"><a href="#VisualElement" class="headerlink" title="VisualElement"></a>VisualElement</h1><p>一个基类，包含样式表、布局数据以及事件处理器。<br>内置了各种实现</p>
-<ul>
-<li>Buttons</li>
-<li>Toggles</li>
-<li>Text input fields</li>
-</ul>
-<h1 id="panel"><a href="#panel" class="headerlink" title="panel"></a>panel</h1><p>面板是视觉树的父对象，视觉树要连接到面板才能渲染。面板要么属于一个编辑器窗口，要么属于一个运行时的UIDocument。面板也处理焦点控制和为视觉树分发事件。</p>
-<h1 id="绘制数据"><a href="#绘制数据" class="headerlink" title="绘制数据"></a>绘制数据</h1><p>深度优先绘制</p>
-<h1 id="布局系统"><a href="#布局系统" class="headerlink" title="布局系统"></a>布局系统</h1><p>和Web那一套一样，基于Flexbox。</p>
-<h1 id="UI-Builder"><a href="#UI-Builder" class="headerlink" title="UI Builder"></a>UI Builder</h1><p>一个可视化的编写uxml和uss文件的工具</p>
-<h1 id="自定义元素"><a href="#自定义元素" class="headerlink" title="自定义元素"></a>自定义元素</h1><p>实现VisualElement<code>public class MyElement : VisualElement</code><br>元素都由工厂模式生成，所以需要对应的工厂类<code>UxmlFactory&lt;MyElement&gt;</code></p>
-<h1 id="定义元素特征"><a href="#定义元素特征" class="headerlink" title="定义元素特征"></a>定义元素特征</h1><p>实现<code>VisualElement.UxmlTraits</code>类<br>在<code>Init</code>中使用<code>((MyElement)ve).status = m_Status.GetValueFromBag(bag, cc);</code>读取数据。</p>
-<h1 id="加载UXML"><a href="#加载UXML" class="headerlink" title="加载UXML"></a>加载UXML</h1><p>模板加载到VisualTreeAsset<br><code>var template = AssetDatabase.LoadAssetAtPath&lt;VisualTreeAsset&gt;(&quot;path/to/file.uxml&quot;);</code><br>然后附加到父元素<br><code>template.CloneTree(parentElement, slots);</code></p>
-<h1 id="UQuery"><a href="#UQuery" class="headerlink" title="UQuery"></a>UQuery</h1><p>基于Jquery或Linq，如<br><code>root.Query(&quot;foo&quot;).Children&lt;Button&gt;().ForEach(//执行操作);</code></p>
-<h1 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h1><p>事件通知到每个元素<br>基类EventBase</p>
-<h2 id="分发事件"><a href="#分发事件" class="headerlink" title="分发事件"></a>分发事件</h2><p>监听来自操作系统或脚本的事件，使用<code>EventDispatcher</code>分发到元素。首先确定分发策略，然后执行。<br>事件有可能由额外事件，通过队列管理。</p>
-<h2 id="分发行为"><a href="#分发行为" class="headerlink" title="分发行为"></a>分发行为</h2><p>分为三个阶段</p>
-<ul>
-<li>涓滴</li>
-<li>冒泡</li>
-<li>可取消</li>
-</ul>
-<h2 id="事件传播"><a href="#事件传播" class="headerlink" title="事件传播"></a>事件传播</h2><p>事件分发选择目标后，计算传播路径。</p>
-<ul>
-<li>从根部向目标，涓滴阶段</li>
-<li>接收事件</li>
-<li>上升到根部，冒泡阶段</li>
-</ul>
-<h2 id="事件目标"><a href="#事件目标" class="headerlink" title="事件目标"></a>事件目标</h2><p>取决于事件类型，键盘则是当前获得焦点的元素。</p>
-<h2 id="捕获鼠标"><a href="#捕获鼠标" class="headerlink" title="捕获鼠标"></a>捕获鼠标</h2><p>任何时候只有一个元素具有捕获。捕获后，该元素是除了鼠标滚轮之外任何鼠标事件的目标。</p>
-<h2 id="焦点环和Tab顺序"><a href="#焦点环和Tab顺序" class="headerlink" title="焦点环和Tab顺序"></a>焦点环和Tab顺序</h2><p>默认DFS。</p>
-<h1 id="处理事件"><a href="#处理事件" class="headerlink" title="处理事件"></a>处理事件</h1><h2 id="注册事件回调"><a href="#注册事件回调" class="headerlink" title="注册事件回调"></a>注册事件回调</h2><p>传播路径上除目标外可以对一个事件接受两次，涓滴和冒泡。<br>默认是在目标和冒泡阶段执行。如要在涓滴时执行，使用<code>TrickleDown.TrickleDown</code>注册回调。</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; 为涓滴阶段注册回调
-myElement.RegisterCallback&lt;MouseDownEvent&gt;(MyCallback, TrickleDown.TrickleDown);</code></pre></div></figure>
-<h2 id="发送自定义数据到事件回调"><a href="#发送自定义数据到事件回调" class="headerlink" title="发送自定义数据到事件回调"></a>发送自定义数据到事件回调</h2><figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F;将用户数据一起发送到回调
-myElement.RegisterCallback&lt;MouseDownEvent, MyType&gt;(MyCallbackWithData, myData);
-void MyCallbackWithData(MouseDownEvent evt, MyType data) &#123; &#x2F;* ...*&#x2F; &#125;</code></pre></div></figure>
-<h2 id="为控件处理输入事件"><a href="#为控件处理输入事件" class="headerlink" title="为控件处理输入事件"></a>为控件处理输入事件</h2><h3 id="捕获指针"><a href="#捕获指针" class="headerlink" title="捕获指针"></a>捕获指针</h3><p>使用CaptureEvents</p>
-<h3 id="使用操纵器处理事件"><a href="#使用操纵器处理事件" class="headerlink" title="使用操纵器处理事件"></a>使用操纵器处理事件</h3><h3 id="自定义控件"><a href="#自定义控件" class="headerlink" title="自定义控件"></a>自定义控件</h3><p>两种方式</p>
-<ul>
-<li>注册事件回调</li>
-<li>实现默认操作<br>区别</li>
-<li>回调在实例上注册，默认操作作为一个类的虚拟函数</li>
-<li>回调传播路径上所有元素都会执行。默认操作仅对事件目标执行</li>
-</ul>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">override void ExecuteDefaultActionAtTarget(EventBase evt)
-&#123;
-    &#x2F;&#x2F; 调用基函数。
-    base.ExecuteDefaultActionAtTarget(evt);
+                <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>之前都是用Nginx来做反代，最近发现了新的玩具<code>traefik</code>，来玩一下，看看对比NPM有什么优劣。</p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>这里就用Docker来安装</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">version: &#39;3&#39;
 
-    if (evt.GetEventTypeId() &#x3D;&#x3D; MouseDownEvent.TypeId())
-    &#123;
-        &#x2F;&#x2F; ...
-    &#125;
-    else if (evt.GetEventTypeId() &#x3D;&#x3D; MouseUpEvent.TypeId())
-    &#123;
-        &#x2F;&#x2F; ...
-    &#125;
-    &#x2F;&#x2F;更多事件类型
-&#125;</code></pre></div></figure>
-<h1 id="综合事件"><a href="#综合事件" class="headerlink" title="综合事件"></a>综合事件</h1><p>事件系统使用事件池。</p>
-<ol>
-<li>从事件池中获取一个事件对象</li>
-<li>填写事件属性</li>
-<li>包含在<code>using</code>中确保其返回到事件池</li>
-<li>事件传递给<code>element.SendEvent()</code></li>
-</ol>
-<p>要发送来自操作系统的事件，使用<code>UnityEngine.Event</code>初始化事件</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">void SynthesizeAndSendKeyDownEvent(IPanel panel, KeyCode code,
-     char character &#x3D; &#39;\0&#39;, EventModifiers modifiers &#x3D; EventModifiers.None)
-&#123;
-    &#x2F;&#x2F; Create a UnityEngine.Event to hold initialization data.
-    var evt &#x3D; new Event() &#123;
-        type &#x3D; EventType.KeyDownEvent,
-        keyCode &#x3D; code,
-        character &#x3D; character,
-        modifiers &#x3D; modifiers
-    &#125;;
+services:
+  reverse-proxy:
+    # The official v2 Traefik docker image
+    image: traefik:v2.9
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure&#x3D;true --providers.docker
+    ports:
+      # The HTTP port
+      - &quot;85:80&quot;
+      # The Web UI (enabled by --api.insecure&#x3D;true)
+      - &quot;8085:8080&quot;
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - &#x2F;var&#x2F;run&#x2F;docker.sock:&#x2F;var&#x2F;run&#x2F;docker.sock</code></pre></div></figure>
 
-    using (KeyDownEvent keyDownEvent &#x3D; KeyDownEvent.GetPooled(evt))
-    &#123;
-        panel.visualTree.SendEvent(keyDownEvent);
-    &#125;
-&#125;</code></pre></div></figure>
+<p>然后<code>docker compose up -d</code>，起容器<br>UFW开对应的端口就OK了。</p>
+<h1 id="webUI"><a href="#webUI" class="headerlink" title="webUI"></a>webUI</h1><p><img src="/images/trae-UI.png" srcset="/img/loading.gif" lazyload alt="trae-UI"><br>自带UI，还是很方便的</p>
+<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>Traefik 提供了多种配置方式，可以直接在容器的label中添加，也可以使用传统的配置文件的形式，更是提供了一大堆称为<code>Providers</code>的插件来做到动态更改配置。<br>比如：</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">labels:
+  - &quot;traefik.enable&#x3D;true&quot;
+  - &quot;traefik.http.routers.unityacc.rule&#x3D;Host(&#96;acc.home.kuanmi.top&#96;)&quot;
+  - &quot;traefik.http.routers.unityacc.entrypoints&#x3D;web&quot;</code></pre></div></figure>
+
+<p>如果要在配置文件中调用docker的服务，要使用@符号，如：</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">http:
+  routers:
+    testRouters:
+      rule: &quot;Host(&#96;test.home.kuanmi.top&#96;)&quot;
+      service: whoami-traefik@docker</code></pre></div></figure>
+
+<h1 id="https"><a href="#https" class="headerlink" title="https"></a>https</h1><p>证书方面也提供了Let’s Encrypt来自动生成和更新，由于这里无法访问80和443端口，就使用DNS的方式来自动生成。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">certificatesResolvers:
+  myresolver:
+    acme:
+      email: ma_zhengke@outlook.com
+      storage: &#x2F;etc&#x2F;traefik&#x2F;acme.json
+      dnsChallenge:
+        provider: alidns
+        delayBeforeCheck: 0</code></pre></div></figure>
+
+<figure><div class="code-wrapper"><pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">http:
+  routers:
+    testRouters:
+      rule: &quot;Host(&#96;test.home.kuanmi.top&#96;)&quot;
+      service: whoami-traefik@docker
+      tls:
+        certresolver: myresolver</code></pre></div></figure>
+<p>如果是要通配符的话：</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">http:
+  routers:
+    unityacc:
+      rule: &quot;Host(&#96;unity.home.kuanmi.top&#96;)&quot;
+      entryPoints:
+        - &quot;web-secure&quot;
+      service: unityAcc-unityacc@docker
+      tls:
+        certresolver: myresolver
+        domains:
+          - main: &quot;home.kuanmi.top&quot;
+            sans:
+              - &quot;*.home.kuanmi.top&quot;</code></pre></div></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>和Nginx对比的话，但就我能使用到的功能，二者相差不大，更多的功能还没有体验到，不敢妄下结论说二者的优劣。<br>唯一觉得有意思的一点是Traefik可以接入docker，使用label做到服务的发现（虽然还是要配置），方便不少。<br>但用NPM，同时给各个容器配置别名，其实也大差不差。<br>再加上一些nginx常用的便捷的如return 444等还不知道该怎么在Traefik中实现，目前还是沿用Nginx的配置不要变动了。</p>
+
                 
               </div>
             
@@ -388,8 +370,8 @@ void MyCallbackWithData(MouseDownEvent evt, MyType data) &#123; &#x2F;* ...*&#x2
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>uitoolkit杂记</div>
-      <div>https://kuanmi.top/2023/01/27/uitoolkit/</div>
+      <div>traefik</div>
+      <div>https://kuanmi.top/2023/01/27/traefik/</div>
     </div>
     <div class="license-meta">
       
@@ -431,18 +413,12 @@ void MyCallbackWithData(MouseDownEvent evt, MyType data) &#123; &#x2F;* ...*&#x2
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/01/27/traefik/" title="traefik">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">traefik</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/01/14/Hololens2-mrtk3/" title="Hololens2-mrtk3">
-                        <span class="hidden-mobile">Hololens2-mrtk3</span>
+                      <a href="/2023/01/27/uitoolkit/" title="uitoolkit杂记">
+                        <span class="hidden-mobile">uitoolkit杂记</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
