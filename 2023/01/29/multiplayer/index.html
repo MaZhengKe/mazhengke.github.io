@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://docs-multiplayer.unity3d.com/img/logo.png">
 <meta property="article:published_time" content="2023-01-29T17:38:05.000Z">
-<meta property="article:modified_time" content="2023-01-31T09:29:06.186Z">
+<meta property="article:modified_time" content="2023-01-31T09:30:16.514Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://docs-multiplayer.unity3d.com/img/logo.png">
@@ -339,8 +339,9 @@ public void UpdatePositionsServerRpc(Vector3[] newpositions)
 <h2 id="人物绑定"><a href="#人物绑定" class="headerlink" title="人物绑定"></a>人物绑定</h2><p>都做到这一步了，干脆把人物的绑定也一并做了吧。<br>还是用<code>Animation Rigging</code>。主要就是根据头显以及两个手柄推测出身体，头部，以及手臂和手的姿态。没用什么太复杂的算法。</p>
 <ul>
 <li>身体头部单纯用头显位置和旋转去算。</li>
-<li>手部只是用IK简单反推了一下。<br>我记得SteamVR是有对应的API去获取这些预测的位置的，但XRToolkit没有。<br>最终人物的手臂动画还有很大优化的空间，单单依靠IK去反推手臂姿态还是太牵强了，因为人的手腕也是很灵活的，而且肩膀的旋转也很难去推算出来，有这两个不确定的因素，除非用AI去算。很好奇VRChat是如何优化的。</li>
+<li>手部只是用IK简单反推了一下。</li>
 </ul>
+<p>我记得SteamVR是有对应的API去获取这些预测的位置的，但XRToolkit没有。<br>最终人物的手臂动画还有很大优化的空间，单单依靠IK去反推手臂姿态还是太牵强了，因为人的手腕也是很灵活的，而且肩膀的旋转也很难去推算出来，有这两个不确定的因素，除非用AI去算。很好奇VRChat是如何优化的。</p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这个网络框架还是很好用的，符合Unity的习惯，迁移一些现有的逻辑到网络上也算比较方便了（和自己手撸Socket相比）。<br>与XRToolkit结合起来也不算复杂，能满足一些基本的交互逻辑了。</p>
 
                 
