@@ -16,23 +16,23 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="笔记记录下使用Unity网络框架的一些坑。最后实现一个简单的VR场景下的多人交互。 安装从空白项目开始，2021.3版本。包管理器安装com.unity.netcode.gameobjects Transport发现这个netcode.gameobjects是依赖于Transport的。后者就是一个基于UDP的连接库。有一些官方给的例子可以参考。 netcode.gameobjects照这个基础栗">
+    <meta name="description" content="xrtoolkit2.3预览版更新，测试一下新功能。 安装目前还是预览版本，记得在packageManager中打开预览开关。然后按名称载入com.unity.xr.interaction.toolkit，记得指定版本2.3.0-pre.1 戳又一个交互器，最大的亮点是对UI的支持。可以做到类似触摸屏的效果了，不用傻傻的再用射线交互了。做一些类似的按钮交互也更方便了。 凝视可惜手头上并没有Ocul">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Netcode网络框架与XRToolkit交互">
-<meta property="og:url" content="https://kuanmi.top/2023/01/29/multiplayer/index.html">
+<meta property="og:title" content="xrtoolkit2.3预览版本体验">
+<meta property="og:url" content="https://kuanmi.top/2023/01/31/xrtoolkit2-3/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="笔记记录下使用Unity网络框架的一些坑。最后实现一个简单的VR场景下的多人交互。 安装从空白项目开始，2021.3版本。包管理器安装com.unity.netcode.gameobjects Transport发现这个netcode.gameobjects是依赖于Transport的。后者就是一个基于UDP的连接库。有一些官方给的例子可以参考。 netcode.gameobjects照这个基础栗">
+<meta property="og:description" content="xrtoolkit2.3预览版更新，测试一下新功能。 安装目前还是预览版本，记得在packageManager中打开预览开关。然后按名称载入com.unity.xr.interaction.toolkit，记得指定版本2.3.0-pre.1 戳又一个交互器，最大的亮点是对UI的支持。可以做到类似触摸屏的效果了，不用傻傻的再用射线交互了。做一些类似的按钮交互也更方便了。 凝视可惜手头上并没有Ocul">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://docs-multiplayer.unity3d.com/img/logo.png">
-<meta property="article:published_time" content="2023-01-29T17:38:05.000Z">
-<meta property="article:modified_time" content="2023-01-31T09:30:16.514Z">
+<meta property="og:image" content="https://kuanmi.top/images/affordance.gif">
+<meta property="article:published_time" content="2023-01-31T17:44:16.000Z">
+<meta property="article:modified_time" content="2023-02-01T05:50:15.602Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://docs-multiplayer.unity3d.com/img/logo.png">
+<meta name="twitter:image" content="https://kuanmi.top/images/affordance.gif">
   
   
   
-  <title>Netcode网络框架与XRToolkit交互 - KuanMi</title>
+  <title>xrtoolkit2.3预览版本体验 - KuanMi</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -193,13 +193,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('https://docs-multiplayer.unity3d.com/img/logo.png') no-repeat center center; background-size: cover;">
+     style="background: url('/images/affordance.gif') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Netcode网络框架与XRToolkit交互"></span>
+            <span id="subtitle" data-typed-text="xrtoolkit2.3预览版本体验"></span>
           
         </div>
 
@@ -210,8 +210,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-01-30 01:38" pubdate>
-          2023年1月30日 凌晨
+        <time datetime="2023-02-01 01:44" pubdate>
+          2023年2月1日 凌晨
         </time>
       </span>
     
@@ -222,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.1k 字
+          790 字
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
         
-          18 分钟
+          7 分钟
         
       </span>
     
@@ -281,68 +281,19 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">Netcode网络框架与XRToolkit交互</h1>
+            <h1 style="display: none">xrtoolkit2.3预览版本体验</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="笔记"><a href="#笔记" class="headerlink" title="笔记"></a>笔记</h1><p>记录下使用Unity网络框架的一些坑。最后实现一个简单的VR场景下的多人交互。</p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>从空白项目开始，2021.3版本。<br>包管理器安装<code>com.unity.netcode.gameobjects</code></p>
-<h1 id="Transport"><a href="#Transport" class="headerlink" title="Transport"></a>Transport</h1><p>发现这个<code>netcode.gameobjects</code>是依赖于<code>Transport</code>的。后者就是一个基于UDP的连接库。<br>有一些官方给的<a target="_blank" rel="noopener" href="https://docs-multiplayer.unity3d.com/transport/current/minimal-workflow">例子</a>可以参考。</p>
-<h1 id="netcode-gameobjects"><a href="#netcode-gameobjects" class="headerlink" title="netcode.gameobjects"></a>netcode.gameobjects</h1><p>照这个<a target="_blank" rel="noopener" href="https://docs-multiplayer.unity3d.com/netcode/current/tutorials/get-started-ngo/index.html">基础栗子</a>。<br>该有的都有了。大致思路是</p>
-<ul>
-<li>每个程序都拥有一套<code>NetworkManger</code>可在启动后选择是Sever还是Client。</li>
-<li><code>NetworkManger</code>之间用<code>Unity Transport</code>来连接。</li>
-<li>同时它还管理了<code>Player Perfab</code>的生成和销毁。对应的<code>Player Perfab</code>需要有<code>Network Object</code>组件来响应。</li>
-<li>具体的逻辑要自己扩展<code>NetworkBehaviour</code>这个类，提供了基本的如生成和销毁时回调的函数。</li>
-<li>服务器与客户端之间的相互调用用RPC来实现。</li>
-<li>简单的传递数值之类的可以使用<code>NetworkVariable</code>来实现</li>
-</ul>
-<h1 id="太空侵略者Demo"><a href="#太空侵略者Demo" class="headerlink" title="太空侵略者Demo"></a>太空侵略者Demo</h1><p>又一个示例Demo，克隆下来看看。</p>
-<h2 id="SceneTransitionHandler"><a href="#SceneTransitionHandler" class="headerlink" title="SceneTransitionHandler"></a>SceneTransitionHandler</h2><p>一个用来管理各个客户端场景切换和加载的<code>NetworkBehaviour</code>。单例。简单的状态机，完成加载时通知服务器。</p>
-<h2 id="MenuControl"><a href="#MenuControl" class="headerlink" title="MenuControl"></a>MenuControl</h2><p>控制是开启Host或者当客户端加入。充当Server时会注册相关的场景加载完成的事件。</p>
-<h2 id="LobbyMenuControl"><a href="#LobbyMenuControl" class="headerlink" title="LobbyMenuControl"></a>LobbyMenuControl</h2><p>大厅用户以及状态管理，监听客户端连接，连接即当进入大厅。通过RPC相互之间更新状态。当全部准备完毕就加载游戏场景。</p>
-<h2 id="InvadersGame"><a href="#InvadersGame" class="headerlink" title="InvadersGame"></a>InvadersGame</h2><p>最重要的游戏逻辑类。和网络关系就不大了。需要留意的是要生成的预制体要提前放入NetworkManager的NetworkPrefabs中，且预制体需要包含<code>NetworkObject</code>组件。<br>如果要同步各个客户端的物体的位置，最便捷的方法就是使用<code>NetworkTransform</code>，但这个是根据位移阙值去更新的，肯定会有至少一帧的延迟，如果是对精度要求很高的，还是用RPC自己调用来更新吧。</p>
-<h1 id="spaceshooter"><a href="#spaceshooter" class="headerlink" title="spaceshooter"></a>spaceshooter</h1><p>针对物理给出的一个例子，所有的用户输入都通过RPC发送到服务器，然后统一计算后再发回全部客户端。和LOL的模式几乎一样，避免了物理的不同步，也防范了用户修改内存作弊等等。</p>
-<h1 id="clientdriven"><a href="#clientdriven" class="headerlink" title="clientdriven"></a>clientdriven</h1><p>在客户端实现部分运动逻辑，具体还没看。</p>
-<h1 id="XR-toolkit联动"><a href="#XR-toolkit联动" class="headerlink" title="XR toolkit联动"></a>XR toolkit联动</h1><p>与XR toolkit 结合起来，做个多人VR交互的Demo吧。</p>
-<h2 id="延迟启动VR"><a href="#延迟启动VR" class="headerlink" title="延迟启动VR"></a>延迟启动VR</h2><p>参照这个官方的<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Packages/com.unity.xr.management@4.0/manual/EndUser.html">例子</a>。</p>
-<h2 id="传送与交互"><a href="#传送与交互" class="headerlink" title="传送与交互"></a>传送与交互</h2><p>这里关于传送要注意，</p>
-<ul>
-<li><code>InteractionManager</code>，<code>locomotionSystem</code>等最好不要实例化，方便场景内的地板和传送点注册</li>
-<li>在生成后记得再把<code>locomotionSystem</code>需要的<code>xrOrigin</code>和<code>BaseTeleportationInteractable</code>需要的<code>TeleportationProvider</code>一并补充了。</li>
-</ul>
-<p>至于交互的物体，建议不要用物理。而且要通过实例化，并提前在NetworkManager中注册。<br>然后就是添加<code>ClientNetworkTransform</code>。并在抓取对应物体时用<code>ServerRpc</code>调用<code>networkObject.ChangeOwnership</code>来改变所属关系。</p>
-<h2 id="同步"><a href="#同步" class="headerlink" title="同步"></a>同步</h2><p>位置的同步可以用现成的 <code>ClientNetworkTransform</code> 其他，比如<code>LineRenderer</code>的同步只能自己手写RPC了。<br>仿照<code>NetworkTransform</code></p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">private void Update()
-&#123;
-    if (!IsSpawned)
-    &#123;
-        return;
-    &#125;
-
-    if (IsOwner)
-    &#123;
-        lineRenderer.GetPositions(positions);
-        UpdatePositionsServerRpc(positions);
-    &#125;
-&#125;
-
-
-[ServerRpc]
-public void UpdatePositionsServerRpc(Vector3[] newpositions)
-&#123;
-    lineRenderer.SetPositions(newpositions);
-&#125;</code></pre></div></figure>
-<p>这里就没有限制刷新次数。</p>
-<h2 id="防火墙"><a href="#防火墙" class="headerlink" title="防火墙"></a>防火墙</h2><p>Server端不要忘了开防火墙。</p>
-<h2 id="人物绑定"><a href="#人物绑定" class="headerlink" title="人物绑定"></a>人物绑定</h2><p>都做到这一步了，干脆把人物的绑定也一并做了吧。<br>还是用<code>Animation Rigging</code>。主要就是根据头显以及两个手柄推测出身体，头部，以及手臂和手的姿态。没用什么太复杂的算法。</p>
-<ul>
-<li>身体头部单纯用头显位置和旋转去算。</li>
-<li>手部只是用IK简单反推了一下。</li>
-</ul>
-<p>我记得SteamVR是有对应的API去获取这些预测的位置的，但XRToolkit没有。<br>最终人物的手臂动画还有很大优化的空间，单单依靠IK去反推手臂姿态还是太牵强了，因为人的手腕也是很灵活的，而且肩膀的旋转也很难去推算出来，有这两个不确定的因素，除非用AI去算。很好奇VRChat是如何优化的。</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这个网络框架还是很好用的，符合Unity的习惯，迁移一些现有的逻辑到网络上也算比较方便了（和自己手撸Socket相比）。<br>与XRToolkit结合起来也不算复杂，能满足一些基本的交互逻辑了。</p>
+                <h1 id="xrtoolkit"><a href="#xrtoolkit" class="headerlink" title="xrtoolkit"></a>xrtoolkit</h1><p>2.3预览版更新，测试一下新功能。</p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>目前还是预览版本，记得在packageManager中打开预览开关。<br>然后按名称载入<code>com.unity.xr.interaction.toolkit</code>，记得指定版本2.3.0-pre.1</p>
+<h1 id="戳"><a href="#戳" class="headerlink" title="戳"></a>戳</h1><p>又一个交互器，最大的亮点是对UI的支持。可以做到类似触摸屏的效果了，不用傻傻的再用射线交互了。做一些类似的按钮交互也更方便了。</p>
+<h1 id="凝视"><a href="#凝视" class="headerlink" title="凝视"></a>凝视</h1><p>可惜手头上并没有Oculus，这个目前体验不了。</p>
+<h1 id="交互组"><a href="#交互组" class="headerlink" title="交互组"></a>交互组</h1><p>他们终于意识到搞这么多交互器，然后手动去控制何时应该启用和关闭哪个是多么复杂的事情了。<br>这个东西就是给交互器排序，然后在有多个交互器都可以悬停或选择时，按顺序只启用优先级最高的那个。<br>具体用起来就比如说，<code>Direct Interactor</code>比<code>Ray Interactor</code>优先级高的话，在距离物体很近，<code>Direct Interactor</code>可以悬停的时候，就会禁用<code>Ray Interactor</code>。体验上要好很多。</p>
+<h1 id="Affordance"><a href="#Affordance" class="headerlink" title="Affordance"></a>Affordance</h1><p>不知道怎么翻译才确切。<br>是个挺有意思的工具。感觉是为了无代码编程准备的。<br>总结起来就是类似<code>Button</code>的<code>Transition</code>。根据不同的状态，如未启用、闲置、悬浮、选择和使用等来设置需要的值（可以是颜色、数值、向量乃至音频）。然后由一类<code>AffordanceReceiver</code>的组件来依据这些设定好的<code>主题</code>来插值或者播放，最后把插值后的结果给到对应的材质、Player或者缩放。<br><img src="/images/affordance.gif" srcset="/img/loading.gif" lazyload alt="颜色插值"><br>虽然这些功能手动写也不会太麻烦，但还是很乐于看到官方给出现成的解决方案的。</p>
+<h1 id="模拟器"><a href="#模拟器" class="headerlink" title="模拟器"></a>模拟器</h1><p>xr模拟器也更新了一下，类似FPS的交互模式，增加了新的UI，总算是能用了。<br><img src="/images/XRm.png" srcset="/img/loading.gif" lazyload alt="xr模拟器"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>不大不小的更新吧，有了戳击交互，对于UI就更方便了。凝视目前手里没有能用的设备不好说，最后的那两个也算是锦上添花的功能了。<br>期待下次更新能把<code>XR Hands</code>和<code>xr toolkit</code>结合起来，那就算<code>xr toolkit</code>功能齐全了。</p>
 
                 
               </div>
@@ -360,8 +311,8 @@ public void UpdatePositionsServerRpc(Vector3[] newpositions)
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Netcode网络框架与XRToolkit交互</div>
-      <div>https://kuanmi.top/2023/01/29/multiplayer/</div>
+      <div>xrtoolkit2.3预览版本体验</div>
+      <div>https://kuanmi.top/2023/01/31/xrtoolkit2-3/</div>
     </div>
     <div class="license-meta">
       
@@ -373,7 +324,7 @@ public void UpdatePositionsServerRpc(Vector3[] newpositions)
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年1月30日</div>
+          <div>2023年2月1日</div>
         </div>
       
       
@@ -403,9 +354,9 @@ public void UpdatePositionsServerRpc(Vector3[] newpositions)
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/01/31/xrtoolkit2-3/" title="xrtoolkit2.3预览版本体验">
+                      <a href="/2023/02/01/CustomInputSystem/" title="自定义UDP设备 InputSystem">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">xrtoolkit2.3预览版本体验</span>
+                        <span class="hidden-mobile">自定义UDP设备 InputSystem</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -413,8 +364,8 @@ public void UpdatePositionsServerRpc(Vector3[] newpositions)
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/01/29/SplineLine/" title="Timeline搭配贝塞尔曲线">
-                        <span class="hidden-mobile">Timeline搭配贝塞尔曲线</span>
+                      <a href="/2023/01/29/multiplayer/" title="Netcode网络框架与XRToolkit交互">
+                        <span class="hidden-mobile">Netcode网络框架与XRToolkit交互</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

@@ -16,23 +16,23 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="笔记记录下使用Unity网络框架的一些坑。最后实现一个简单的VR场景下的多人交互。 安装从空白项目开始，2021.3版本。包管理器安装com.unity.netcode.gameobjects Transport发现这个netcode.gameobjects是依赖于Transport的。后者就是一个基于UDP的连接库。有一些官方给的例子可以参考。 netcode.gameobjects照这个基础栗">
+    <meta name="description" content="解耦经常会有各种奇奇怪怪的硬件需要使用TCP&#x2F;UDP去交互，这次尝试下使用InputSystem去解耦。 IInputStateTypeInfo定义一个结构体实现这个接口。 FourCC四个字符来定义一个唯一标识符。 InputControl使用这个描述符来定义一些字段，其中标记了各个按钮或者遥感的定义。 [InputControl(name &#x3D; &quot;firstButt">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Netcode网络框架与XRToolkit交互">
-<meta property="og:url" content="https://kuanmi.top/2023/01/29/multiplayer/index.html">
+<meta property="og:title" content="自定义UDP设备 InputSystem">
+<meta property="og:url" content="https://kuanmi.top/2023/02/01/CustomInputSystem/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="笔记记录下使用Unity网络框架的一些坑。最后实现一个简单的VR场景下的多人交互。 安装从空白项目开始，2021.3版本。包管理器安装com.unity.netcode.gameobjects Transport发现这个netcode.gameobjects是依赖于Transport的。后者就是一个基于UDP的连接库。有一些官方给的例子可以参考。 netcode.gameobjects照这个基础栗">
+<meta property="og:description" content="解耦经常会有各种奇奇怪怪的硬件需要使用TCP&#x2F;UDP去交互，这次尝试下使用InputSystem去解耦。 IInputStateTypeInfo定义一个结构体实现这个接口。 FourCC四个字符来定义一个唯一标识符。 InputControl使用这个描述符来定义一些字段，其中标记了各个按钮或者遥感的定义。 [InputControl(name &#x3D; &quot;firstButt">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://docs-multiplayer.unity3d.com/img/logo.png">
-<meta property="article:published_time" content="2023-01-29T17:38:05.000Z">
-<meta property="article:modified_time" content="2023-01-31T09:30:16.514Z">
+<meta property="article:published_time" content="2023-02-01T21:28:06.000Z">
+<meta property="article:modified_time" content="2023-02-02T05:28:06.836Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://docs-multiplayer.unity3d.com/img/logo.png">
   
   
   
-  <title>Netcode网络框架与XRToolkit交互 - KuanMi</title>
+  <title>自定义UDP设备 InputSystem - KuanMi</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -193,13 +193,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('https://docs-multiplayer.unity3d.com/img/logo.png') no-repeat center center; background-size: cover;">
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Netcode网络框架与XRToolkit交互"></span>
+            <span id="subtitle" data-typed-text="自定义UDP设备 InputSystem"></span>
           
         </div>
 
@@ -210,8 +210,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-01-30 01:38" pubdate>
-          2023年1月30日 凌晨
+        <time datetime="2023-02-02 05:28" pubdate>
+          2023年2月2日 凌晨
         </time>
       </span>
     
@@ -222,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.1k 字
+          6.4k 字
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
         
-          18 分钟
+          54 分钟
         
       </span>
     
@@ -281,68 +281,242 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">Netcode网络框架与XRToolkit交互</h1>
+            <h1 style="display: none">自定义UDP设备 InputSystem</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="笔记"><a href="#笔记" class="headerlink" title="笔记"></a>笔记</h1><p>记录下使用Unity网络框架的一些坑。最后实现一个简单的VR场景下的多人交互。</p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>从空白项目开始，2021.3版本。<br>包管理器安装<code>com.unity.netcode.gameobjects</code></p>
-<h1 id="Transport"><a href="#Transport" class="headerlink" title="Transport"></a>Transport</h1><p>发现这个<code>netcode.gameobjects</code>是依赖于<code>Transport</code>的。后者就是一个基于UDP的连接库。<br>有一些官方给的<a target="_blank" rel="noopener" href="https://docs-multiplayer.unity3d.com/transport/current/minimal-workflow">例子</a>可以参考。</p>
-<h1 id="netcode-gameobjects"><a href="#netcode-gameobjects" class="headerlink" title="netcode.gameobjects"></a>netcode.gameobjects</h1><p>照这个<a target="_blank" rel="noopener" href="https://docs-multiplayer.unity3d.com/netcode/current/tutorials/get-started-ngo/index.html">基础栗子</a>。<br>该有的都有了。大致思路是</p>
-<ul>
-<li>每个程序都拥有一套<code>NetworkManger</code>可在启动后选择是Sever还是Client。</li>
-<li><code>NetworkManger</code>之间用<code>Unity Transport</code>来连接。</li>
-<li>同时它还管理了<code>Player Perfab</code>的生成和销毁。对应的<code>Player Perfab</code>需要有<code>Network Object</code>组件来响应。</li>
-<li>具体的逻辑要自己扩展<code>NetworkBehaviour</code>这个类，提供了基本的如生成和销毁时回调的函数。</li>
-<li>服务器与客户端之间的相互调用用RPC来实现。</li>
-<li>简单的传递数值之类的可以使用<code>NetworkVariable</code>来实现</li>
-</ul>
-<h1 id="太空侵略者Demo"><a href="#太空侵略者Demo" class="headerlink" title="太空侵略者Demo"></a>太空侵略者Demo</h1><p>又一个示例Demo，克隆下来看看。</p>
-<h2 id="SceneTransitionHandler"><a href="#SceneTransitionHandler" class="headerlink" title="SceneTransitionHandler"></a>SceneTransitionHandler</h2><p>一个用来管理各个客户端场景切换和加载的<code>NetworkBehaviour</code>。单例。简单的状态机，完成加载时通知服务器。</p>
-<h2 id="MenuControl"><a href="#MenuControl" class="headerlink" title="MenuControl"></a>MenuControl</h2><p>控制是开启Host或者当客户端加入。充当Server时会注册相关的场景加载完成的事件。</p>
-<h2 id="LobbyMenuControl"><a href="#LobbyMenuControl" class="headerlink" title="LobbyMenuControl"></a>LobbyMenuControl</h2><p>大厅用户以及状态管理，监听客户端连接，连接即当进入大厅。通过RPC相互之间更新状态。当全部准备完毕就加载游戏场景。</p>
-<h2 id="InvadersGame"><a href="#InvadersGame" class="headerlink" title="InvadersGame"></a>InvadersGame</h2><p>最重要的游戏逻辑类。和网络关系就不大了。需要留意的是要生成的预制体要提前放入NetworkManager的NetworkPrefabs中，且预制体需要包含<code>NetworkObject</code>组件。<br>如果要同步各个客户端的物体的位置，最便捷的方法就是使用<code>NetworkTransform</code>，但这个是根据位移阙值去更新的，肯定会有至少一帧的延迟，如果是对精度要求很高的，还是用RPC自己调用来更新吧。</p>
-<h1 id="spaceshooter"><a href="#spaceshooter" class="headerlink" title="spaceshooter"></a>spaceshooter</h1><p>针对物理给出的一个例子，所有的用户输入都通过RPC发送到服务器，然后统一计算后再发回全部客户端。和LOL的模式几乎一样，避免了物理的不同步，也防范了用户修改内存作弊等等。</p>
-<h1 id="clientdriven"><a href="#clientdriven" class="headerlink" title="clientdriven"></a>clientdriven</h1><p>在客户端实现部分运动逻辑，具体还没看。</p>
-<h1 id="XR-toolkit联动"><a href="#XR-toolkit联动" class="headerlink" title="XR toolkit联动"></a>XR toolkit联动</h1><p>与XR toolkit 结合起来，做个多人VR交互的Demo吧。</p>
-<h2 id="延迟启动VR"><a href="#延迟启动VR" class="headerlink" title="延迟启动VR"></a>延迟启动VR</h2><p>参照这个官方的<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Packages/com.unity.xr.management@4.0/manual/EndUser.html">例子</a>。</p>
-<h2 id="传送与交互"><a href="#传送与交互" class="headerlink" title="传送与交互"></a>传送与交互</h2><p>这里关于传送要注意，</p>
-<ul>
-<li><code>InteractionManager</code>，<code>locomotionSystem</code>等最好不要实例化，方便场景内的地板和传送点注册</li>
-<li>在生成后记得再把<code>locomotionSystem</code>需要的<code>xrOrigin</code>和<code>BaseTeleportationInteractable</code>需要的<code>TeleportationProvider</code>一并补充了。</li>
-</ul>
-<p>至于交互的物体，建议不要用物理。而且要通过实例化，并提前在NetworkManager中注册。<br>然后就是添加<code>ClientNetworkTransform</code>。并在抓取对应物体时用<code>ServerRpc</code>调用<code>networkObject.ChangeOwnership</code>来改变所属关系。</p>
-<h2 id="同步"><a href="#同步" class="headerlink" title="同步"></a>同步</h2><p>位置的同步可以用现成的 <code>ClientNetworkTransform</code> 其他，比如<code>LineRenderer</code>的同步只能自己手写RPC了。<br>仿照<code>NetworkTransform</code></p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">private void Update()
+                <h1 id="解耦"><a href="#解耦" class="headerlink" title="解耦"></a>解耦</h1><p>经常会有各种奇奇怪怪的硬件需要使用TCP&#x2F;UDP去交互，这次尝试下使用InputSystem去解耦。</p>
+<h1 id="IInputStateTypeInfo"><a href="#IInputStateTypeInfo" class="headerlink" title="IInputStateTypeInfo"></a>IInputStateTypeInfo</h1><p>定义一个结构体实现这个接口。</p>
+<h2 id="FourCC"><a href="#FourCC" class="headerlink" title="FourCC"></a>FourCC</h2><p>四个字符来定义一个唯一标识符。</p>
+<h2 id="InputControl"><a href="#InputControl" class="headerlink" title="InputControl"></a>InputControl</h2><p>使用这个描述符来定义一些字段，其中标记了各个按钮或者遥感的定义。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[InputControl(name &#x3D; &quot;firstButton&quot;, layout &#x3D; &quot;Button&quot;, bit &#x3D; 0, displayName &#x3D; &quot;First Button&quot;)]
+[InputControl(name &#x3D; &quot;secondButton&quot;, layout &#x3D; &quot;Button&quot;, bit &#x3D; 1, displayName &#x3D; &quot;Second Button&quot;)]
+[InputControl(name &#x3D; &quot;thirdButton&quot;, layout &#x3D; &quot;Button&quot;, bit &#x3D; 2, displayName &#x3D; &quot;Third Button&quot;)]
+public ushort buttons;</code></pre></div></figure>
+
+<p>遥感的定义需要额外的<code>format</code>属性，这里的<code>VC2B</code>指的是<code>a Vector2 of bytes</code><br>定义X轴y轴<br>剩下的上下左右似乎是硬编码的。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[InputControl(name &#x3D; &quot;stick&quot;, format &#x3D; &quot;VC2B&quot;, layout &#x3D; &quot;Stick&quot;, displayName &#x3D; &quot;Main Stick&quot;)]
+[InputControl(name &#x3D; &quot;stick&#x2F;x&quot;, defaultState &#x3D; 127, format &#x3D; &quot;BYTE&quot;,offset &#x3D; 0,
+    parameters &#x3D; &quot;normalize,normalizeMin&#x3D;0,normalizeMax&#x3D;1,normalizeZero&#x3D;0.5&quot;)]
+public byte x;
+
+
+[InputControl(name &#x3D; &quot;stick&#x2F;up&quot;, parameters &#x3D; &quot;normalize,normalizeMin&#x3D;0,normalizeMax&#x3D;1,normalizeZero&#x3D;0.5,clamp&#x3D;2,clampMin&#x3D;0,clampMax&#x3D;1&quot;)]
+[InputControl(name &#x3D; &quot;stick&#x2F;down&quot;, parameters &#x3D; &quot;normalize,normalizeMin&#x3D;0,normalizeMax&#x3D;1,normalizeZero&#x3D;0.5,clamp&#x3D;2,clampMin&#x3D;-1,clampMax&#x3D;0,invert&quot;)]
+[InputControl(name &#x3D; &quot;stick&#x2F;left&quot;, parameters &#x3D; &quot;normalize,normalizeMin&#x3D;0,normalizeMax&#x3D;1,normalizeZero&#x3D;0.5,clamp&#x3D;2,clampMin&#x3D;-1,clampMax&#x3D;0,invert&quot;)]
+[InputControl(name &#x3D; &quot;stick&#x2F;right&quot;, parameters &#x3D; &quot;normalize,normalizeMin&#x3D;0,normalizeMax&#x3D;1,normalizeZero&#x3D;0.5,clamp&#x3D;2,clampMin&#x3D;0,clampMax&#x3D;1&quot;)]
+public byte y;</code></pre></div></figure>
+<p>总结下就是依靠一个结构体以及各个描述符来定义数据交换的大小和约定的格式。</p>
+<h1 id="InputDevice"><a href="#InputDevice" class="headerlink" title="InputDevice"></a>InputDevice</h1><p>定义好了结构体，接下来就是要实现真正的<code>InputDevice</code>了。</p>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>首先是确保在编辑器以及运行时都会初始化。</p>
+<p>这里的初始化中包含一段模板代码。用来通过”Custom”来发现设备。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">#if UNITY_EDITOR
+[InitializeOnLoad] &#x2F;&#x2F; Call static class constructor in editor.
+#endif
+[InputControlLayout(stateType &#x3D; typeof(CustomDeviceState))]
+public class CustomDevice : InputDevice, IInputUpdateCallbackReceiver
 &#123;
-    if (!IsSpawned)
+    #if UNITY_EDITOR
+    static CustomDevice()
     &#123;
-        return;
+        Initialize();
     &#125;
 
-    if (IsOwner)
+    #endif
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Initialize()
     &#123;
-        lineRenderer.GetPositions(positions);
-        UpdatePositionsServerRpc(positions);
-    &#125;
+        InputSystem.RegisterLayout&lt;CustomDevice&gt;(
+            matches: new InputDeviceMatcher()
+                .WithInterface(&quot;Custom&quot;));
+    &#125;</code></pre></div></figure>
+<h2 id="ButtonControl"><a href="#ButtonControl" class="headerlink" title="ButtonControl"></a>ButtonControl</h2><p>公开一些属性，方便其他人调用。<br>FinishSetup</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public ButtonControl firstButton &#123; get; private set; &#125;
+public ButtonControl secondButton &#123; get; private set; &#125;
+public ButtonControl thirdButton &#123; get; private set; &#125;
+public StickControl stick &#123; get; private set; &#125;
+protected override void FinishSetup()
+&#123;
+    base.FinishSetup();
+
+    firstButton &#x3D; GetChildControl&lt;ButtonControl&gt;(&quot;firstButton&quot;);
+    secondButton &#x3D; GetChildControl&lt;ButtonControl&gt;(&quot;secondButton&quot;);
+    thirdButton &#x3D; GetChildControl&lt;ButtonControl&gt;(&quot;thirdButton&quot;);
+    stick &#x3D; GetChildControl&lt;StickControl&gt;(&quot;stick&quot;);
+&#125;</code></pre></div></figure>
+
+<h1 id="current"><a href="#current" class="headerlink" title="current"></a>current</h1><p>保留一个静态对象，类似单例，但是每次都更新，而不会销毁之前的。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public static CustomDevice current &#123; get; private set; &#125;
+public override void MakeCurrent()
+&#123;
+    base.MakeCurrent();
+    current &#x3D; this;
 &#125;
 
-
-[ServerRpc]
-public void UpdatePositionsServerRpc(Vector3[] newpositions)
+protected override void OnRemoved()
 &#123;
-    lineRenderer.SetPositions(newpositions);
+    base.OnRemoved();
+    if (current &#x3D;&#x3D; this)
+        current &#x3D; null;
 &#125;</code></pre></div></figure>
-<p>这里就没有限制刷新次数。</p>
-<h2 id="防火墙"><a href="#防火墙" class="headerlink" title="防火墙"></a>防火墙</h2><p>Server端不要忘了开防火墙。</p>
-<h2 id="人物绑定"><a href="#人物绑定" class="headerlink" title="人物绑定"></a>人物绑定</h2><p>都做到这一步了，干脆把人物的绑定也一并做了吧。<br>还是用<code>Animation Rigging</code>。主要就是根据头显以及两个手柄推测出身体，头部，以及手臂和手的姿态。没用什么太复杂的算法。</p>
-<ul>
-<li>身体头部单纯用头显位置和旋转去算。</li>
-<li>手部只是用IK简单反推了一下。</li>
-</ul>
-<p>我记得SteamVR是有对应的API去获取这些预测的位置的，但XRToolkit没有。<br>最终人物的手臂动画还有很大优化的空间，单单依靠IK去反推手臂姿态还是太牵强了，因为人的手腕也是很灵活的，而且肩膀的旋转也很难去推算出来，有这两个不确定的因素，除非用AI去算。很好奇VRChat是如何优化的。</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这个网络框架还是很好用的，符合Unity的习惯，迁移一些现有的逻辑到网络上也算比较方便了（和自己手撸Socket相比）。<br>与XRToolkit结合起来也不算复杂，能满足一些基本的交互逻辑了。</p>
+<h1 id="创建设备"><a href="#创建设备" class="headerlink" title="创建设备"></a>创建设备</h1><p>一切就绪，接下来就是创建一个设备了。<br>这里是在编辑器中虚拟了一个设备</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">#if UNITY_EDITOR
+[MenuItem(&quot;Tools&#x2F;Custom Device Sample&#x2F;Create Device&quot;)]
+private static void CreateDevice()
+&#123;
+    InputSystem.AddDevice(new InputDeviceDescription
+    &#123;
+        interfaceName &#x3D; &quot;Custom&quot;,
+        product &#x3D; &quot;Sample Product&quot;
+    &#125;);
+&#125;
+
+[MenuItem(&quot;Tools&#x2F;Custom Device Sample&#x2F;Remove Device&quot;)]
+private static void RemoveDevice()
+&#123;
+    var customDevice &#x3D; InputSystem.devices.FirstOrDefault(x &#x3D;&gt; x is CustomDevice);
+    if (customDevice !&#x3D; null)
+        InputSystem.RemoveDevice(customDevice);
+&#125;
+
+#endif</code></pre></div></figure>
+
+<p>轮询键盘去更新设备状态</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public void OnUpdate()
+&#123;
+    var keyboard &#x3D; Keyboard.current;
+    if (keyboard &#x3D;&#x3D; null)
+        return;
+
+    var state &#x3D; new CustomDeviceState();
+
+    state.x &#x3D; 127;
+    state.y &#x3D; 127;
+    &#x2F;&#x2F; Map WASD to stick.
+    var wPressed &#x3D; keyboard.wKey.isPressed;
+    var aPressed &#x3D; keyboard.aKey.isPressed;
+    var sPressed &#x3D; keyboard.sKey.isPressed;
+    var dPressed &#x3D; keyboard.dKey.isPressed;
+
+    if (aPressed)
+        state.x -&#x3D; 127;
+    if (dPressed)
+        state.x +&#x3D; 127;
+    if (wPressed)
+        state.y +&#x3D; 127;
+    if (sPressed)
+        state.y -&#x3D; 127;
+
+    &#x2F;&#x2F; Map buttons to 1, 2, and 3.
+    if (keyboard.spaceKey.isPressed)
+    &#123;
+        &#x2F;&#x2F; Debug.Log(&quot;VAR&quot;);
+        state.buttons |&#x3D; 1 &lt;&lt; 0;
+    &#125;
+    if (keyboard.digit2Key.isPressed)
+        state.buttons |&#x3D; 1 &lt;&lt; 1;
+    if (keyboard.digit3Key.isPressed)
+        state.buttons |&#x3D; 1 &lt;&lt; 2;
+
+    InputSystem.QueueStateEvent(this, state);
+&#125;</code></pre></div></figure>
+
+<h1 id="UDP-Driver"><a href="#UDP-Driver" class="headerlink" title="UDP Driver"></a>UDP Driver</h1><p>栗子吃完了，用UDP写一个吧<br>先是一个基础的UDPServer</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class UDPServer : MonoBehaviour
+&#123;
+    public int listenPort  &#x3D; 9000;
+    
+    private Thread thread;
+    private readonly ConcurrentQueue&lt;string&gt; _messages &#x3D; new();
+    private UdpClient _listener;
+
+    private void Start()
+    &#123;
+        
+        thread &#x3D; new Thread(StartListen);
+        thread.Start();
+    &#125;
+    
+    private void OnDestroy()
+    &#123;
+        thread.Abort();
+        _listener.Close();
+    &#125;
+
+    private void Update()
+    &#123;
+        if (_messages.TryDequeue(out var message))
+        &#123;
+            Debug.Log($&quot;Message: &#123;message&#125;&quot;);
+        &#125;
+    &#125;
+
+    private void StartListen()
+    &#123;
+        _listener &#x3D; new UdpClient(listenPort);
+        var groupEP &#x3D; new IPEndPoint(IPAddress.Any, listenPort);
+        try
+        &#123;
+            while (true)
+            &#123;
+                Debug.Log(&quot;Waiting for broadcast&quot;);
+
+                byte[] bytes &#x3D; _listener.Receive(ref groupEP);
+
+                Debug.Log($&quot;Received broadcast from &#123;groupEP&#125; :&quot;);
+                var data &#x3D; Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+                _messages.Enqueue(data);
+                Debug.Log($&quot; &#123;data&#125;&quot;);
+            &#125;
+        &#125;
+        catch (SocketException e)
+        &#123;
+            Debug.Log(e);
+        &#125;
+        finally
+        &#123;
+            _listener.Close();
+        &#125;
+    &#125;
+&#125;</code></pre></div></figure>
+
+<p>然后增加设备相关代码即可：</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">private void Start()
+&#123;
+    InputSystem.AddDevice&lt;UDPDevice&gt;();
+    _udpDevice &#x3D; UDPDevice.current;
+    ......
+&#125;.
+
+private void OnDestroy()
+&#123;
+    ......
+    InputSystem.RemoveDevice(_udpDevice);
+&#125;
+
+public UDPDeviceState state;
+private void Update()
+&#123;
+    var newState &#x3D; new UDPDeviceState
+    &#123;
+        buttons &#x3D; 0
+    &#125;;
+    
+    if (_messages.TryDequeue(out var message))
+    &#123;
+        newState.buttons &#x3D; 1;
+        Debug.Log($&quot;Message: &#123;message&#125;&quot;);
+    &#125;
+
+    if (state !&#x3D; newState)
+    &#123;
+        InputSystem.QueueStateEvent(_udpDevice, newState);
+    &#125;
+    state &#x3D; newState;
+&#125;</code></pre></div></figure>
+<p>基础的UDP消息充当按钮就OK了。后续可以根据需要调整为遥感或其他各种类型的控件。</p>
 
                 
               </div>
@@ -360,8 +534,8 @@ public void UpdatePositionsServerRpc(Vector3[] newpositions)
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Netcode网络框架与XRToolkit交互</div>
-      <div>https://kuanmi.top/2023/01/29/multiplayer/</div>
+      <div>自定义UDP设备 InputSystem</div>
+      <div>https://kuanmi.top/2023/02/01/CustomInputSystem/</div>
     </div>
     <div class="license-meta">
       
@@ -373,7 +547,7 @@ public void UpdatePositionsServerRpc(Vector3[] newpositions)
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年1月30日</div>
+          <div>2023年2月2日</div>
         </div>
       
       
@@ -403,18 +577,12 @@ public void UpdatePositionsServerRpc(Vector3[] newpositions)
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/01/31/xrtoolkit2-3/" title="xrtoolkit2.3预览版本体验">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">xrtoolkit2.3预览版本体验</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/01/29/SplineLine/" title="Timeline搭配贝塞尔曲线">
-                        <span class="hidden-mobile">Timeline搭配贝塞尔曲线</span>
+                      <a href="/2023/01/31/xrtoolkit2-3/" title="xrtoolkit2.3预览版本体验">
+                        <span class="hidden-mobile">xrtoolkit2.3预览版本体验</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
