@@ -221,6 +221,84 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/01/29/SplineLine/" target="_self">
+          <img src="/images/spline-l.png" srcset="/img/loading.gif" lazyload alt="Timeline搭配贝塞尔曲线">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/01/29/SplineLine/" target="_self">
+          Timeline搭配贝塞尔曲线
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2023/01/29/SplineLine/" target="_self">
+        <div>
+          序先前产品有个需求，沿时间线播放一个线性移动问题的动画，干脆用官方自带的画贝塞尔的Spline搭配Timeline实现了，现在闲下来打算整理一下的。突然发现自己又造轮子了，而且别人用的是更简便的方法，不需要自己定义轨道等等繁琐的配置，只要实现一个ITimeControl即可。 原帖：[Unity2022] 同步样条线和时间线。非常详细。 但他这里还是太简单了一些，速度全程匀速，持续时间也是要靠手动
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-01-29 09:17" pubdate>
+              2023-01-29
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/01/27/traefik/" target="_self">
+          <img src="https://doc.traefik.io/traefik/assets/img/traefik-architecture.png" srcset="/img/loading.gif" lazyload alt="traefik尝鲜">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/01/27/traefik/" target="_self">
+          traefik尝鲜
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2023/01/27/traefik/" target="_self">
+        <div>
+          简介之前都是用Nginx来做反代，最近发现了新的玩具traefik，来玩一下，看看对比NPM有什么优劣。 安装这里就用Docker来安装 version: &#39;3&#39;  services:   reverse-proxy:     # The official v2 Traefik docker image     image: traefik:v2.9     # Enables t
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-01-28 03:21" pubdate>
+              2023-01-28
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2023/01/27/uitoolkit/" target="_self">
           <img src="https://docs.unity3d.com/uploads/Main/UIBuilder/UIBuilderAnnotatedMainWindow.png" srcset="/img/loading.gif" lazyload alt="uitoolkit杂记">
         </a>
@@ -524,95 +602,6 @@
           </div>
         
         
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/12/05/ChatGPT/" target="_self">
-          <img src="/images/chatGPT.jpg" srcset="/img/loading.gif" lazyload alt="ChatGPT">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/12/05/ChatGPT/" target="_self">
-          ChatGPT
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/12/05/ChatGPT/" target="_self">
-        <div>
-          使用ChatGPT生成的打砖块游戏,仅限电脑WASD移动 AI生成游戏，ChatGPT使用ThreeJS生成弹球游戏
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-12-06 04:48" pubdate>
-              2022-12-06
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/11/16/ECS-systems-intro/" target="_self">
-          <img src="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/entities-splash-image.png" srcset="/img/loading.gif" lazyload alt="ECS 系统">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/16/ECS-systems-intro/" target="_self">
-          ECS 系统
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/11/16/ECS-systems-intro/" target="_self">
-        <div>
-          系统 使用 SystemBase 创建系统 回调方法顺序   迭代数据 额外资源 使用 Entities.ForEach 迭代数据 使用 IJobEntity 迭代数据 使用 IJobEntityBatch 遍历成批数据 手动迭代数据   系统更新顺序 组件系统组 系统排序属性 默认系统组 多个世界   使用作业在多个线程上调度数据 工作扩展 通用职位 使用 Job.WithCode 安排后台作
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-17 06:07" pubdate>
-              2022-11-17
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Entities/">#Entities</a>
-            
-              <a href="/tags/ECS/">#ECS</a>
-            
-              <a href="/tags/DOTS/">#DOTS</a>
-            
-          </div>
         
       </div>
     </article>

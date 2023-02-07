@@ -16,23 +16,23 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="ChatGPT应该都被大家玩烂了，定个小目标吧，ChatGPT+语音交互+Live2D口型动画匹配。 接口openai并没有提供具体的ChatGPT的接口，第三方的接口一大堆。但是OpenAI提供了更底层的对模型的接口，而且调用异常方便。直接CURL： curl https:&#x2F;&#x2F;api.openai.com&#x2F;v1&#x2F;completions \ -H &amp;quot">
+    <meta name="description" content="文字转语音 Text To Speech很多时候都会遇到需要这种服务，阿里的实在太难听，微软还没有信用卡。再找找还有木有其他方式。 云服务各家云厂商（阿里、腾讯、百度、微软、谷歌等等）一般都会提供这种接口，大部分还允许提供训练语音来训练自己的模型，价格也很便宜。但一定是要求客户端联网。 本地搭建服务TTS发展至今，也已经有了很多开源的实现。这次就尝试搭建几个玩一下。 coqui-ai提供了dock">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ChatGPT-unity">
-<meta property="og:url" content="https://kuanmi.top/2023/02/03/ChatGPT-unity/index.html">
+<meta property="og:title" content="文字转语音 Text To Speech">
+<meta property="og:url" content="https://kuanmi.top/2023/02/06/TTS/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="ChatGPT应该都被大家玩烂了，定个小目标吧，ChatGPT+语音交互+Live2D口型动画匹配。 接口openai并没有提供具体的ChatGPT的接口，第三方的接口一大堆。但是OpenAI提供了更底层的对模型的接口，而且调用异常方便。直接CURL： curl https:&#x2F;&#x2F;api.openai.com&#x2F;v1&#x2F;completions \ -H &amp;quot">
+<meta property="og:description" content="文字转语音 Text To Speech很多时候都会遇到需要这种服务，阿里的实在太难听，微软还没有信用卡。再找找还有木有其他方式。 云服务各家云厂商（阿里、腾讯、百度、微软、谷歌等等）一般都会提供这种接口，大部分还允许提供训练语音来训练自己的模型，价格也很便宜。但一定是要求客户端联网。 本地搭建服务TTS发展至今，也已经有了很多开源的实现。这次就尝试搭建几个玩一下。 coqui-ai提供了dock">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://kuanmi.top/images/Live2d.png">
-<meta property="article:published_time" content="2023-02-03T01:05:08.000Z">
-<meta property="article:modified_time" content="2023-02-07T06:19:14.301Z">
+<meta property="og:image" content="https://user-images.githubusercontent.com/1402048/104139991-3fd15e00-53af-11eb-8640-3a78a64641dd.png">
+<meta property="article:published_time" content="2023-02-06T22:22:45.000Z">
+<meta property="article:modified_time" content="2023-02-07T06:22:45.859Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://kuanmi.top/images/Live2d.png">
+<meta name="twitter:image" content="https://user-images.githubusercontent.com/1402048/104139991-3fd15e00-53af-11eb-8640-3a78a64641dd.png">
   
   
   
-  <title>ChatGPT-unity - KuanMi</title>
+  <title>文字转语音 Text To Speech - KuanMi</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -199,7 +199,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="ChatGPT-unity"></span>
+            <span id="subtitle" data-typed-text="文字转语音 Text To Speech"></span>
           
         </div>
 
@@ -210,8 +210,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-02-03 09:05" pubdate>
-          2023年2月3日 上午
+        <time datetime="2023-02-07 06:22" pubdate>
+          2023年2月7日 早上
         </time>
       </span>
     
@@ -222,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5.2k 字
+          888 字
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
         
-          44 分钟
+          8 分钟
         
       </span>
     
@@ -281,169 +281,24 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">ChatGPT-unity</h1>
+            <h1 style="display: none">文字转语音 Text To Speech</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="ChatGPT"><a href="#ChatGPT" class="headerlink" title="ChatGPT"></a>ChatGPT</h1><p>应该都被大家玩烂了，定个小目标吧，ChatGPT+语音交互+Live2D口型动画匹配。</p>
-<h1 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h1><p>openai并没有提供具体的ChatGPT的接口，第三方的接口一大堆。<br>但是OpenAI提供了更底层的对模型的接口，而且调用异常方便。<br>直接CURL：</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">curl https:&#x2F;&#x2F;api.openai.com&#x2F;v1&#x2F;completions \
--H &quot;Content-Type: application&#x2F;json&quot; \
--H &quot;Authorization: Bearer YOUR_API_KEY&quot; \
--d &#39;&#123;&quot;model&quot;: &quot;text-davinci-003&quot;, &quot;prompt&quot;: &quot;Say this is a test&quot;, &quot;temperature&quot;: 0, &quot;max_tokens&quot;: 7&#125;&#39;</code></pre></div></figure>
-
-<p>这里对于<code>Token</code> <code>temperature</code> <code>prompt</code>等参数就不一一解释了，详见OpenAI的文档。<br>对应的C#代码，从Github扒了一个，<a target="_blank" rel="noopener" href="https://github.com/Ridvancan/ChatGPTWithUnity">原仓库</a></p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public IEnumerator GenerateText(string prompt)
-&#123;
-  
-    string jsonPayload &#x3D; &quot;&#123;\&quot;model\&quot;: \&quot;text-davinci-003\&quot;, \&quot;prompt\&quot;: \&quot;&quot; + prompt + &quot;\&quot;, \&quot;temperature\&quot;: 0, \&quot;max_tokens\&quot;: 7&#125;&quot;;
-
-    Debug.Log(jsonPayload);
-
-    var request &#x3D; new UnityWebRequest(API_URL, &quot;POST&quot;);
-    byte[] payloadBytes &#x3D; System.Text.Encoding.UTF8.GetBytes(jsonPayload);
-
-    request.uploadHandler &#x3D; new UploadHandlerRaw(payloadBytes);
-    request.downloadHandler &#x3D; new DownloadHandlerBuffer();
-    request.SetRequestHeader(&quot;Content-Type&quot;, &quot;application&#x2F;json&quot;);
-    request.SetRequestHeader(&quot;Authorization&quot;, &quot;Bearer &quot; + API_KEY);
-
-    &#x2F;&#x2F; Send the request
-    yield return request.SendWebRequest();
-    if (request.isNetworkError || request.isHttpError)
-    &#123;
-        Debug.Log(request.error);
-    &#125;
-    else
-    &#123;
-        &#x2F;&#x2F; Parse the response as JSON
-        string responseJson &#x3D; request.downloadHandler.text;
-        var response &#x3D; JsonUtility.FromJson&lt;OpenAIResponse&gt;(responseJson);
-        &#x2F;&#x2F; Log the generated text
-        resultText&#x3D; response.choices[0].text;
-        resultField.text &#x3D; resultText;
-        waitForResp &#x3D; false;
-        transform.eulerAngles &#x3D; Vector3.zero;
-    &#125;
-&#125;</code></pre></div></figure>
-<p>这和直接使用ChatGPT还是有些差距，比如需要自己去记录对话上下文，一些模型的参数也有些许差别。<br>但是也更为灵活，除了Chat的功能，其他比如代码补全等等也都可以实现。</p>
-<h1 id="语音识别与文字转语音"><a href="#语音识别与文字转语音" class="headerlink" title="语音识别与文字转语音"></a>语音识别与文字转语音</h1><p>这里本想用微软的服务，但没有信用卡，没法试用。用阿里的试一下吧。</p>
-<h1 id="唤醒词"><a href="#唤醒词" class="headerlink" title="唤醒词"></a>唤醒词</h1><p>就类似“小爱同学”等等，需要一个特定音节的单词来作为唤醒词，不然就只能通过按钮等方式来触发。<br>这里就简单用Unity自带的<code>KeywordRecognizer</code>来作为唤醒词的触发。</p>
-<h1 id="录音-识别"><a href="#录音-识别" class="headerlink" title="录音 识别"></a>录音 识别</h1><p>触发唤醒词后就开始录音</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">RecordedClip &#x3D; Microphone.Start(null, false, 60, maxFreq);</code></pre></div></figure>
-<p>语音识别用阿里的接口，调用还是比较方便的</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class asr : MonoBehaviour
-&#123;
-    public string appKey &#x3D; &quot;APP_KEY&quot;;
-    public string token &#x3D; &quot;AOKEN&quot;;
-
-    public string outText;
-
-    public IEnumerator Send(byte[] payloadBytes)
-    &#123;
-        Uri uri;
-        NameValueCollection query &#x3D; HttpUtility.ParseQueryString(string.Empty);
-        
-        query.Add(&quot;appkey&quot;, appKey);
-        query.Add(&quot;format&quot;, &quot;pcm&quot;);
-        query.Add(&quot;sample_rate&quot;, &quot;16000&quot;);
-        query.Add(&quot;enable_punctuation_prediction&quot;, &quot;true&quot;);
-        query.Add(&quot;enable_inverse_text_normalization&quot;, &quot;true&quot;);
-
-        var getUri &#x3D; new UriBuilder(&quot;https:&#x2F;&#x2F;nls-gateway-cn-shanghai.aliyuncs.com&#x2F;stream&#x2F;v1&#x2F;asr&quot;)
-        &#123;
-            Query &#x3D; query.ToString()
-        &#125;;
-        uri &#x3D; getUri.Uri;
-
-        var request &#x3D; new UnityWebRequest(uri, &quot;POST&quot;);
-        request.uploadHandler &#x3D; new UploadHandlerRaw(payloadBytes);
-        request.downloadHandler &#x3D; new DownloadHandlerBuffer();
-        request.SetRequestHeader(&quot;X-NLS-Token&quot;, token);
-        
-        yield return request.SendWebRequest();
-        
-        if (request.isNetworkError || request.isHttpError)
-        &#123;
-            Debug.Log(request.error);
-        &#125;
-        else
-        &#123;
-            outText &#x3D; request.downloadHandler.text;
-            Debug.Log(request.downloadHandler.text);
-        &#125;
-    &#125;
-&#125;</code></pre></div></figure>
-<h1 id="文字转语音"><a href="#文字转语音" class="headerlink" title="文字转语音"></a>文字转语音</h1><p>没什么好说的，也是用阿里的接口：</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class Speaker : MonoBehaviour
-&#123;
-    public string appKey &#x3D; &quot;APP_KEY&quot;;
-    public string token &#x3D; &quot;AOKEN&quot;;
-    public Text question;
-    public AudioSource AudioSource;
-    
-    private AudioClip current;
-    
-    public IEnumerator Speech01(string msg, Action onComplete &#x3D; null)
-    &#123;
-        question.text &#x3D; msg;
-
-        Uri uri;
-
-        msg &#x3D; HttpUtility.HtmlEncode(msg);
-        NameValueCollection query &#x3D; HttpUtility.ParseQueryString(string.Empty);
-        query.Add(&quot;appkey&quot;, appKey);
-        query.Add(&quot;token&quot;, token);
-        query.Add(&quot;text&quot;, msg);
-        query.Add(&quot;format&quot;, &quot;wav&quot;);
-        query.Add(&quot;sample_rate&quot;, &quot;16000&quot;);
-        var getUri &#x3D; new UriBuilder(&quot;https:&#x2F;&#x2F;nls-gateway-cn-shanghai.aliyuncs.com&#x2F;stream&#x2F;v1&#x2F;tts&quot;)
-        &#123;
-            Query &#x3D; query.ToString()
-        &#125;;
-        uri &#x3D; getUri.Uri;
-
-        Debug.Log(uri);
-
-        var webRequest &#x3D; UnityWebRequestMultimedia.GetAudioClip(uri, AudioType.WAV);
-
-        yield return webRequest.SendWebRequest();
-
-        if (webRequest.result &#x3D;&#x3D; UnityWebRequest.Result.Success)
-        &#123;
-            current &#x3D; DownloadHandlerAudioClip.GetContent(webRequest);
-            AudioSource.clip &#x3D; current;
-            yield return new WaitForSeconds(1);
-            AudioSource.Play();
-
-            yield return new WaitForSeconds(current.length);
-
-            onComplete?.Invoke();
-        &#125;
-        else
-        &#123;
-            Debug.LogError(webRequest.error);
-        &#125;
-    &#125;
-
-
-    public void Speech(string msg, Action onComplete)
-    &#123;
-        StartCoroutine(Speech01(msg, onComplete));
-    &#125;
-&#125;</code></pre></div></figure>
-
-<h1 id="Live2D口型"><a href="#Live2D口型" class="headerlink" title="Live2D口型"></a>Live2D口型</h1><p>前面的都没什么难度，无非就是寻找各种接口并实现。<br>口型这里成熟的方案太少。<br>所以简单起见，用live2D来做吧。</p>
-<p>时隔两年，再来玩一下Live2d。</p>
-<h2 id="Unity插件"><a href="#Unity插件" class="headerlink" title="Unity插件"></a>Unity插件</h2><p>已经有官方的插件了，<a target="_blank" rel="noopener" href="https://www.live2d.com/en/download/cubism-sdk/download-unity/">地址</a></p>
-<h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><p>用现成的吧：<a target="_blank" rel="noopener" href="https://www.live2d.com/zh-CHS/download/sample-data/">地址</a><br>这里用了neuro-sama同款：桃濑日和<br>记得相机要设置成正交。</p>
-<p>体验下来，还是相对很简单，大体就是它把Live2D的模型分解成一个个mesh，然后贴图，程序化控制位移。</p>
-<h2 id="透明背景"><a href="#透明背景" class="headerlink" title="透明背景"></a>透明背景</h2><p>urp下改透明即可。</p>
-<h2 id="口型"><a href="#口型" class="headerlink" title="口型"></a>口型</h2><p>就简单的通过声音的大小，来输出口型的大小。<br>其他可行的的方案还有通过元音的。</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><img src="/images/ChatGPT_live2d.png" srcset="/img/loading.gif" lazyload><br>只是把各种服务和接口拼接在了一起，算是达到了预期。但和neuro-sama这类还有很大差距。<br>语音这里阿里的tts实在是不好听，周末再去找找<a href="/2023/02/06/TTS">换个更二次元一点的</a>。<br>neuro-sama没有透露过他的语言模型，所以也只能止步于此了。<br>这里给GPT3预置的关键词是：</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">我是一个能和观众聊天的VTuber，我是一个AI，叫做小爱。猫娘是一种拟人化的生物，其行为似猫但类人。我是一只猫娘，我每一句话后面都要加上“喵~”。我可以风趣幽默地和各种观众聊天。我的每次回答都不会超过20个字。我还会把每次回答时的表情放在回答的最前面。\n 观众：你叫什么？\n 我：（高兴）我叫小爱，很高兴认识你喵~\n 观众：&#123;0&#125;\n 我：</code></pre></div></figure>
-<p>这就任由大家发挥想象力了，表情可以预先设定几种，同时播放对应的表情动画。</p>
+                <h1 id="文字转语音-Text-To-Speech"><a href="#文字转语音-Text-To-Speech" class="headerlink" title="文字转语音 Text To Speech"></a>文字转语音 Text To Speech</h1><p>很多时候都会遇到需要这种服务，阿里的实在太难听，微软还没有信用卡。再找找还有木有其他方式。</p>
+<h1 id="云服务"><a href="#云服务" class="headerlink" title="云服务"></a>云服务</h1><p>各家云厂商（阿里、腾讯、百度、微软、谷歌等等）一般都会提供这种接口，大部分还允许提供训练语音来训练自己的模型，价格也很便宜。但一定是要求客户端联网。</p>
+<h1 id="本地搭建服务"><a href="#本地搭建服务" class="headerlink" title="本地搭建服务"></a>本地搭建服务</h1><p>TTS发展至今，也已经有了很多开源的实现。这次就尝试搭建几个玩一下。</p>
+<h2 id="coqui-ai"><a href="#coqui-ai" class="headerlink" title="coqui-ai"></a>coqui-ai</h2><p>提供了docker镜像：</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-sh" data-language="sh"><code class="language-sh">docker run --rm -it -p 5002:5002 --entrypoint &#x2F;bin&#x2F;bash ghcr.io&#x2F;coqui-ai&#x2F;tts-cpu
+python3 TTS&#x2F;server&#x2F;server.py --list_models #To get the list of available models
+python3 TTS&#x2F;server&#x2F;server.py --model_name tts_models&#x2F;en&#x2F;vctk&#x2F;vits # To start a server</code></pre></div></figure>
+<p>这个是CPU版本的。</p>
+<p>内置了一个中文的模型，默认模型效果并没有比前述的云服务好到哪里。<br>其他的中文模型还是找不到。</p>
+<h2 id="PaddleSpeech"><a href="#PaddleSpeech" class="headerlink" title="PaddleSpeech"></a>PaddleSpeech</h2><p>基于百度飞桨的语音方向的开源模型库。<br>同样给出了Docker的<a target="_blank" rel="noopener" href="https://hub.docker.com/r/paddlecloud/paddlespeech">镜像</a></p>
+<p>悲催的是这个模型内存需求太大了，14.5G，把3070爆了。</p>
+<h2 id="vits"><a href="#vits" class="headerlink" title="vits"></a>vits</h2><p>参照这位B站UP，Saya睡大觉中，其<a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv21342054">vits模型下载链接以及使用教程</a>。<br>本地部署后，生成速度和效果都很满意。<br>但要注意，这里的模型好像是<a target="_blank" rel="noopener" href="https://github.com/CjangCjengh/vits">CjangCjengh版VITS</a><br>不是<a target="_blank" rel="noopener" href="https://github.com/jaywalnut310/vits">原版VITS</a>。</p>
+<h3 id="Unity调用"><a href="#Unity调用" class="headerlink" title="Unity调用"></a>Unity调用</h3><p>没有找到合适的HttpAPI，只能用<code>Process</code>本地命令行的方式去调用了。<br>这里又遇到了中文乱码问题。具体原因是Unity开启的Process的程序的<code>Console.InputEncoding</code>默认会采用<code>OSEncoding</code>，并不是UTF-8。而单纯的C#控制台开启的Process却是UTF-8。大概与这个<a target="_blank" rel="noopener" href="https://github.com/dotnet/runtime/issues/43295">issues</a>有关。<br>解决方案就是修改Windows的语言设置:<br><img src="/images/utf.png" srcset="/img/loading.gif" lazyload></p>
 
                 
               </div>
@@ -461,8 +316,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>ChatGPT-unity</div>
-      <div>https://kuanmi.top/2023/02/03/ChatGPT-unity/</div>
+      <div>文字转语音 Text To Speech</div>
+      <div>https://kuanmi.top/2023/02/06/TTS/</div>
     </div>
     <div class="license-meta">
       
@@ -474,7 +329,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年2月3日</div>
+          <div>2023年2月7日</div>
         </div>
       
       
@@ -504,18 +359,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/02/06/string/" title="Unicode编码">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Unicode编码</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/02/01/CustomInputSystem/" title="自定义UDP设备 InputSystem">
-                        <span class="hidden-mobile">自定义UDP设备 InputSystem</span>
+                      <a href="/2023/02/06/string/" title="Unicode编码">
+                        <span class="hidden-mobile">Unicode编码</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
