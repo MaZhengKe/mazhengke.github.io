@@ -16,23 +16,23 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="前言之前只是使用了现成的OpenAI的模型，每次调用都要给出一大堆的重复提示词，而且效果也不是太好，这次尝试用其称为微调(fine-tuning)来训练个新的模型。可以节省token，顺便看看微调后的模型效果和之前有多大区别。OpenAI已经给出了详尽的说明，下面就只记录下具体的步骤。 安装直接在容器里操作吧，不想污染主机。起一个python的环境。 version: &quot;2.3&amp;quot">
+    <meta name="description" content="前言之前做GPT聊天时，用Live2D的简单的通过音量大小来驱动嘴型的大小变化，这里想更精确一定，用元音来驱动。主要就是复刻了这位大佬的这篇文章。 大致思路初看时被一堆术语吓到了，什么频域信息、窗函数、高斯滤波器、DCT变换、共振峰等等。耐心一点一点看就发现还是比较简单的，很多算法并不一定要从新造轮子去实现，知道其目的就好了。 获取语音数据的频域信息这里直接用AudioSource.GetSpec">
 <meta property="og:type" content="article">
-<meta property="og:title" content="OpenAI微调模型测试">
-<meta property="og:url" content="https://kuanmi.top/2023/02/06/OpenAI/index.html">
+<meta property="og:title" content="语音转口型">
+<meta property="og:url" content="https://kuanmi.top/2023/02/08/lip/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="前言之前只是使用了现成的OpenAI的模型，每次调用都要给出一大堆的重复提示词，而且效果也不是太好，这次尝试用其称为微调(fine-tuning)来训练个新的模型。可以节省token，顺便看看微调后的模型效果和之前有多大区别。OpenAI已经给出了详尽的说明，下面就只记录下具体的步骤。 安装直接在容器里操作吧，不想污染主机。起一个python的环境。 version: &quot;2.3&amp;quot">
+<meta property="og:description" content="前言之前做GPT聊天时，用Live2D的简单的通过音量大小来驱动嘴型的大小变化，这里想更精确一定，用元音来驱动。主要就是复刻了这位大佬的这篇文章。 大致思路初看时被一堆术语吓到了，什么频域信息、窗函数、高斯滤波器、DCT变换、共振峰等等。耐心一点一点看就发现还是比较简单的，很多算法并不一定要从新造轮子去实现，知道其目的就好了。 获取语音数据的频域信息这里直接用AudioSource.GetSpec">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://kuanmi.top/images/chatGPT.jpg">
-<meta property="article:published_time" content="2023-02-06T22:56:34.000Z">
-<meta property="article:modified_time" content="2023-02-07T09:24:41.336Z">
+<meta property="og:image" content="https://kuanmi.top/images/lip.gif">
+<meta property="article:published_time" content="2023-02-08T00:07:54.000Z">
+<meta property="article:modified_time" content="2023-02-08T09:09:34.859Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://kuanmi.top/images/chatGPT.jpg">
+<meta name="twitter:image" content="https://kuanmi.top/images/lip.gif">
   
   
   
-  <title>OpenAI微调模型测试 - KuanMi</title>
+  <title>语音转口型 - KuanMi</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -199,7 +199,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="OpenAI微调模型测试"></span>
+            <span id="subtitle" data-typed-text="语音转口型"></span>
           
         </div>
 
@@ -210,8 +210,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-02-07 06:56" pubdate>
-          2023年2月7日 早上
+        <time datetime="2023-02-08 08:07" pubdate>
+          2023年2月8日 早上
         </time>
       </span>
     
@@ -222,7 +222,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.4k 字
+          575 字
         
       </span>
     
@@ -233,7 +233,7 @@
         
         
         
-          21 分钟
+          5 分钟
         
       </span>
     
@@ -281,95 +281,23 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">OpenAI微调模型测试</h1>
+            <h1 style="display: none">语音转口型</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>之前只是使用了现成的OpenAI的模型，每次调用都要给出一大堆的重复提示词，而且效果也不是太好，这次尝试用其称为<code>微调(fine-tuning)</code>来训练个新的模型。可以节省token，顺便看看微调后的模型效果和之前有多大区别。<br>OpenAI已经给出了详尽的<a target="_blank" rel="noopener" href="https://platform.openai.com/docs/guides/fine-tuning">说明</a>，下面就只记录下具体的步骤。</p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>直接在容器里操作吧，不想污染主机。<br>起一个python的环境。</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">version: &quot;2.3&quot;
-services:
-  app:
-    image: python
-    container_name: openai
-    environment:
-      - HTTP_PROXY&#x3D;http:&#x2F;&#x2F;clash:7890
-      - HTTPS_PROXY&#x3D;http:&#x2F;&#x2F;clash:7890
-      - no_proxy&#x3D;localhost,127.0.0.1,::1
-    entrypoint: &quot;sleep infinity&quot;
-    volumes:
-      - .&#x2F;data:&#x2F;data
-networks:
-  default:
-    external: true
-    name: nginxproxynet</code></pre></div></figure>
-
-<figure><div class="code-wrapper"><pre class="line-numbers language-sh" data-language="sh"><code class="language-sh">docker exec -it openai &#x2F;bin&#x2F;bash
-export OPENAI_API_KEY&#x3D;&quot;&lt;OPENAI_API_KEY&gt;&quot;
-pip install --upgrade openai
-pip install openai[datalib]</code></pre></div></figure>
-
-<h1 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h1><p>我感觉这是工作量最大的内容了。这里先用几个试一下：</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csv" data-language="csv"><code class="language-csv">prompt,completion
-xxxx,xxxx</code></pre></div></figure>
-<p>然后用工具整理一下</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-sh" data-language="sh"><code class="language-sh">openai tools fine_tunes.prepare_data -f &#x2F;data&#x2F;data.csv</code></pre></div></figure>
-<p>这里他会自动帮我们添加提示的结束字符，以及回答的开头空格和结束的\n</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-json" data-language="json"><code class="language-json">&#123;&quot;prompt&quot;:&quot;xxxx -&gt;&quot;,&quot;completion&quot;:&quot; xxxx\n&quot;&#125;</code></pre></div></figure>
-
-<h1 id="训练"><a href="#训练" class="headerlink" title="训练"></a>训练</h1><p>然后就是上传文件开始训练了。</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-sh" data-language="sh"><code class="language-sh">openai api fine_tunes.create -t &#x2F;data&#x2F;data_prepared.jsonl -m davinci --suffix &quot;test001&quot;</code></pre></div></figure>
-<p>要等很久。主要是排队，期间可以用<code>openai api fine_tunes.list</code>查看状态：</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-json" data-language="json"><code class="language-json">&#123;
-  &quot;data&quot;: [
-    &#123;
-      &quot;created_at&quot;: 1675758078,
-      &quot;fine_tuned_model&quot;: null,
-      &quot;hyperparams&quot;: &#123;
-        &quot;batch_size&quot;: null,
-        &quot;learning_rate_multiplier&quot;: null,
-        &quot;n_epochs&quot;: 4,
-        &quot;prompt_loss_weight&quot;: 0.01
-      &#125;,
-      &quot;id&quot;: &quot;ft-xxxxxxxxxxxxx&quot;,
-      &quot;model&quot;: &quot;davinci&quot;,
-      &quot;object&quot;: &quot;fine-tune&quot;,
-      &quot;organization_id&quot;: &quot;org-xxxxxxxxxxxxxxxxxx&quot;,
-      &quot;result_files&quot;: [],
-      &quot;status&quot;: &quot;pending&quot;,
-      &quot;training_files&quot;: [
-        &#123;
-          &quot;bytes&quot;: 189,
-          &quot;created_at&quot;: 1675758077,
-          &quot;filename&quot;: &quot;&#x2F;data&#x2F;data_prepared.jsonl&quot;,
-          &quot;id&quot;: &quot;file-xxxxxxxxxxxxxxxxxx&quot;,
-          &quot;object&quot;: &quot;file&quot;,
-          &quot;purpose&quot;: &quot;fine-tune&quot;,
-          &quot;status&quot;: &quot;processed&quot;,
-          &quot;status_details&quot;: null
-        &#125;
-      ],
-      &quot;updated_at&quot;: 1675758078,
-      &quot;validation_files&quot;: []
-    &#125;
-  ],
-  &quot;object&quot;: &quot;list&quot;
-&#125;</code></pre></div></figure>
-<p>一直是<code>pending</code>，<del>等训练好再写吧。</del><br>过了7分钟终于进入队列了，排在13。<br>如果按他们的提示，每个任务要一个半小时，那就得近20小时。。。。<br>实际也就等了半小时不到。但结果不尽人意。数据量太少了。</p>
-<h1 id="样本属性"><a href="#样本属性" class="headerlink" title="样本属性"></a>样本属性</h1><p>这里设计一下样本应该包含哪些<br>这里只需要保存变量即可</p>
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>之前做GPT聊天时，用Live2D的简单的通过音量大小来驱动嘴型的大小变化，这里想更精确一定，用元音来驱动。<br>主要就是复刻了这位大佬的<a target="_blank" rel="noopener" href="https://huailiang.github.io/blog/2020/mouth/">这篇文章</a>。</p>
+<h1 id="大致思路"><a href="#大致思路" class="headerlink" title="大致思路"></a>大致思路</h1><p>初看时被一堆术语吓到了，什么频域信息、窗函数、高斯滤波器、DCT变换、共振峰等等。<br>耐心一点一点看就发现还是比较简单的，很多算法并不一定要从新造轮子去实现，知道其目的就好了。</p>
+<h2 id="获取语音数据的频域信息"><a href="#获取语音数据的频域信息" class="headerlink" title="获取语音数据的频域信息"></a>获取语音数据的频域信息</h2><p>这里直接用<code>AudioSource.GetSpecturmData</code>即可。这里其实就包含了之前提到的频域信息和窗函数。<br><img src="/images/audio.png" srcset="/img/loading.gif" lazyload alt="频域可视化"></p>
+<h2 id="高斯滤波"><a href="#高斯滤波" class="headerlink" title="高斯滤波"></a>高斯滤波</h2><p>就像通常的高斯模糊的卷积一样，这里也可以在一维空间高斯滤波一次，去除噪音。</p>
+<h2 id="提取共振峰"><a href="#提取共振峰" class="headerlink" title="提取共振峰"></a>提取共振峰</h2><p>简单说就是寻找局部最大值的最大值所在的频率位置。<br>这个位置就是用来判定元音的依据了。<br>注意的是，原文给出的5个元音的判断的频率，仅仅针对采样率为44Khz的文件，其他采样率要自行修改。</p>
+<h1 id="结合Live2D"><a href="#结合Live2D" class="headerlink" title="结合Live2D"></a>结合Live2D</h1><p>live2d有自己的一套奇奇怪怪的框架去修改参数，还要考虑排序。<br>好在其插件基本开源，参照着写就行了，根据当前的元音去混合口型动画。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><img src="/images/lip.gif" srcset="/img/loading.gif" lazyload><br>放在Live2D上效果确实比之前单纯的用音量来控制好的多，但也仅限于是增加了口型的多样性，很难说是“正确”的口型。<br>这里最主要的原因在于</p>
 <ul>
-<li>时间，文本模型无法知道当前的时间</li>
-<li>内容，直播的内容</li>
-<li>对话列表，为了有一定的上下文联系，列表不一定是要一一对应。<ul>
-<li>观众名称</li>
-<li>弹幕内容</li>
-<li>回答内容</li>
+<li>不同人声的各个元音的共振峰并不相同，需要根据配音来调整</li>
+<li>只考虑了第一共振峰，误差太大，可以参照下表结合第二共振峰去判断，效果应该更好。</li>
+<li><img src="https://huailiang.github.io/img/post-vr/mou9.jpg" srcset="/img/loading.gif" lazyload></li>
 </ul>
-</li>
-</ul>
-<h1 id="样本采集"><a href="#样本采集" class="headerlink" title="样本采集"></a>样本采集</h1><p>真是有多少人工就有多少智能。按Openai的说法，这种聊天类需要的样本量至少数千，这还只是最低。模型的质量与样本量成指数关系，想想都头大。<br>程序的问题还得程序来解决。<br>初步想法是录制别人的直播视频，加语音识别，同时录制弹幕，然后程序化生成样本。</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>仅就调用Openai的接口来说，并不复杂，难度还是在于样本的获取，就等样本采集完毕后再来试一试模型的训练吧。</p>
 
                 
               </div>
@@ -387,8 +315,8 @@ xxxx,xxxx</code></pre></div></figure>
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>OpenAI微调模型测试</div>
-      <div>https://kuanmi.top/2023/02/06/OpenAI/</div>
+      <div>语音转口型</div>
+      <div>https://kuanmi.top/2023/02/08/lip/</div>
     </div>
     <div class="license-meta">
       
@@ -400,7 +328,7 @@ xxxx,xxxx</code></pre></div></figure>
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年2月7日</div>
+          <div>2023年2月8日</div>
         </div>
       
       
@@ -430,18 +358,12 @@ xxxx,xxxx</code></pre></div></figure>
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/02/08/lip/" title="语音转口型">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">语音转口型</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/02/06/TTS/" title="文字转语音 Text To Speech">
-                        <span class="hidden-mobile">文字转语音 Text To Speech</span>
+                      <a href="/2023/02/06/OpenAI/" title="OpenAI微调模型测试">
+                        <span class="hidden-mobile">OpenAI微调模型测试</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

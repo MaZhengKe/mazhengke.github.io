@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>语音转口型</title>
+    <link href="/2023/02/08/lip/"/>
+    <url>/2023/02/08/lip/</url>
+    
+    <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>之前做GPT聊天时，用Live2D的简单的通过音量大小来驱动嘴型的大小变化，这里想更精确一定，用元音来驱动。<br>主要就是复刻了这位大佬的<a href="https://huailiang.github.io/blog/2020/mouth/">这篇文章</a>。</p><h1 id="大致思路"><a href="#大致思路" class="headerlink" title="大致思路"></a>大致思路</h1><p>初看时被一堆术语吓到了，什么频域信息、窗函数、高斯滤波器、DCT变换、共振峰等等。<br>耐心一点一点看就发现还是比较简单的，很多算法并不一定要从新造轮子去实现，知道其目的就好了。</p><h2 id="获取语音数据的频域信息"><a href="#获取语音数据的频域信息" class="headerlink" title="获取语音数据的频域信息"></a>获取语音数据的频域信息</h2><p>这里直接用<code>AudioSource.GetSpecturmData</code>即可。这里其实就包含了之前提到的频域信息和窗函数。<br><img src="/images/audio.png" alt="频域可视化"></p><h2 id="高斯滤波"><a href="#高斯滤波" class="headerlink" title="高斯滤波"></a>高斯滤波</h2><p>就像通常的高斯模糊的卷积一样，这里也可以在一维空间高斯滤波一次，去除噪音。</p><h2 id="提取共振峰"><a href="#提取共振峰" class="headerlink" title="提取共振峰"></a>提取共振峰</h2><p>简单说就是寻找局部最大值的最大值所在的频率位置。<br>这个位置就是用来判定元音的依据了。<br>注意的是，原文给出的5个元音的判断的频率，仅仅针对采样率为44Khz的文件，其他采样率要自行修改。</p><h1 id="结合Live2D"><a href="#结合Live2D" class="headerlink" title="结合Live2D"></a>结合Live2D</h1><p>live2d有自己的一套奇奇怪怪的框架去修改参数，还要考虑排序。<br>好在其插件基本开源，参照着写就行了，根据当前的元音去混合口型动画。</p><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><img src="/images/lip.gif"><br>放在Live2D上效果确实比之前单纯的用音量来控制好的多，但也仅限于是增加了口型的多样性，很难说是“正确”的口型。<br>这里最主要的原因在于</p><ul><li>不同人声的各个元音的共振峰并不相同，需要根据配音来调整</li><li>只考虑了第一共振峰，误差太大，可以参照下表结合第二共振峰去判断，效果应该更好。</li><li><img src="https://huailiang.github.io/img/post-vr/mou9.jpg"></li></ul>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>OpenAI微调模型测试</title>
     <link href="/2023/02/06/OpenAI/"/>
     <url>/2023/02/06/OpenAI/</url>
