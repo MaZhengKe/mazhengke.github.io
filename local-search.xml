@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>布料模拟方案汇总</title>
+    <link href="/2023/02/09/cloth/"/>
+    <url>/2023/02/09/cloth/</url>
+    
+    <content type="html"><![CDATA[<h1 id="布料模拟"><a href="#布料模拟" class="headerlink" title="布料模拟"></a>布料模拟</h1><p>总结一下常见的布料模拟的方案</p><h1 id="K动画"><a href="#K动画" class="headerlink" title="K动画"></a>K动画</h1><p>最传统，同时在某些特定场景下也是最简单有效的手段了，比如固定不动的随风摆动的窗帘。<br>没什么好说的，存粹看美术的工作量了。</p><h1 id="绑定-动态骨骼"><a href="#绑定-动态骨骼" class="headerlink" title="绑定+动态骨骼"></a>绑定+动态骨骼</h1><p>基于前一种，绑定好骨骼后，用物理模拟的方式去驱动骨骼的变化，进而模拟布料。<br>最知名的应该就是<code>Dynamic Bone</code>这个插件了。<br>能想到的场景比如人物的头发，裙摆等，都很适合这种方案。性能需求小，多平台支持，也有一定的动态。</p><h1 id="粒子模拟"><a href="#粒子模拟" class="headerlink" title="粒子模拟"></a>粒子模拟</h1><p>这里有两种方案：</p><ol><li>官方的<code>Cloth Component</code>应该是基于PhysX物理引擎的。</li><li>做粒子模拟知名的厂商<code>Obi</code>提供的<code>Obi Cloth</code>，基于<code>Burst</code>。</li></ol><p>前者可以复用Unity中的各种碰撞体，后者的侵入性就很强了，需要单独的解算器，各种碰撞也都要添加额外组件。<br>因为后者依赖于<code>Burst</code>，一些没有<code>Burst</code>支持的平台如web就无法使用了。</p><h1 id="提前解算-ABC动画导入"><a href="#提前解算-ABC动画导入" class="headerlink" title="提前解算+ABC动画导入"></a>提前解算+ABC动画导入</h1><p>仅针对固定的布料动画，且不支持安卓或web。<br>提前在Maya、Blender或者MD中烘焙顶点动画，导出abc文件，然后在Unity中播放。<br>毕竟是离线的烘培，效果应该是所有方案中最好的，非常适合一些固定的动画，比如过场动画、固定的飘动的旗帜等等。<br><img src="/images/cloth.gif"></p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>线框绘制</title>
     <link href="/2023/02/09/wireframe/"/>
     <url>/2023/02/09/wireframe/</url>
