@@ -19,16 +19,16 @@
     <meta name="description" content="根据虚幻提供的最佳实践在VR中，由于法线贴图不会考虑到双目显示和运动，它提供的效果和视差贴图比起来差距很大。对应到Unity中，在HDRP的Lit着色器下，指的就是HeightMap。下面罗列一下使用HeightMap的一些注意事项。 置换模式大体分两类，一种是将高度图映射到顶点上，顶点置换，还一种是在像素级别的置换。 顶点置换简单易懂，效果也很好，缺点是要求模型有很多顶点才有比较好的效果。 或者">
 <meta property="og:type" content="article">
 <meta property="og:title" content="高度置换贴图">
-<meta property="og:url" content="https://kuanmi.top/2023/01/02/Displacement/index.html">
+<meta property="og:url" content="https://www.kuanmi.top/2023/01/02/Displacement/index.html">
 <meta property="og:site_name" content="KuanMi">
 <meta property="og:description" content="根据虚幻提供的最佳实践在VR中，由于法线贴图不会考虑到双目显示和运动，它提供的效果和视差贴图比起来差距很大。对应到Unity中，在HDRP的Lit着色器下，指的就是HeightMap。下面罗列一下使用HeightMap的一些注意事项。 置换模式大体分两类，一种是将高度图映射到顶点上，顶点置换，还一种是在像素级别的置换。 顶点置换简单易懂，效果也很好，缺点是要求模型有很多顶点才有比较好的效果。 或者">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://kuanmi.top/images/PDis.png">
+<meta property="og:image" content="https://www.kuanmi.top/images/PDis.png">
 <meta property="article:published_time" content="2023-01-02T19:11:50.000Z">
 <meta property="article:modified_time" content="2023-01-09T01:11:35.026Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://kuanmi.top/images/PDis.png">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/PDis.png">
   
   
   
@@ -72,7 +72,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"kuanmi.top","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -316,7 +316,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>高度置换贴图</div>
-      <div>https://kuanmi.top/2023/01/02/Displacement/</div>
+      <div>https://www.kuanmi.top/2023/01/02/Displacement/</div>
     </div>
     <div class="license-meta">
       

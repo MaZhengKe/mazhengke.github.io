@@ -19,16 +19,16 @@
     <meta name="description" content="线框渲染最近写代码快写吐了，写点Shader缓解一下。今天就复刻一个线框渲染吧，顺便温习一下几何着色器的用法。参考列在前面  在unity中实现风格化线框渲染 几何着色器（Geometry Shader）的基础介绍以及简单示例  几种方式总结一下各种实现的方法  生成线框模型 线框贴图 写入UV 利用GL来绘制线框 几何着色器 用几何着色器的LineStream来生成线段图元 用几何着色器来生成片">
 <meta property="og:type" content="article">
 <meta property="og:title" content="线框绘制">
-<meta property="og:url" content="https://kuanmi.top/2023/02/09/wireframe/index.html">
+<meta property="og:url" content="https://www.kuanmi.top/2023/02/09/wireframe/index.html">
 <meta property="og:site_name" content="KuanMi">
 <meta property="og:description" content="线框渲染最近写代码快写吐了，写点Shader缓解一下。今天就复刻一个线框渲染吧，顺便温习一下几何着色器的用法。参考列在前面  在unity中实现风格化线框渲染 几何着色器（Geometry Shader）的基础介绍以及简单示例  几种方式总结一下各种实现的方法  生成线框模型 线框贴图 写入UV 利用GL来绘制线框 几何着色器 用几何着色器的LineStream来生成线段图元 用几何着色器来生成片">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://kuanmi.top/images/w-all.png">
+<meta property="og:image" content="https://www.kuanmi.top/images/w-all.png">
 <meta property="article:published_time" content="2023-02-09T01:14:59.000Z">
 <meta property="article:modified_time" content="2023-02-09T09:14:59.840Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://kuanmi.top/images/w-all.png">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/w-all.png">
   
   
   
@@ -72,7 +72,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"kuanmi.top","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -534,7 +534,7 @@ o3.barycentric &#x3D; float3(0, 0, dis3) + param;</code></pre></div></figure>
   <div class="license-box my-3">
     <div class="license-title">
       <div>线框绘制</div>
-      <div>https://kuanmi.top/2023/02/09/wireframe/</div>
+      <div>https://www.kuanmi.top/2023/02/09/wireframe/</div>
     </div>
     <div class="license-meta">
       

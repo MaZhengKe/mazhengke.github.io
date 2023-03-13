@@ -16,23 +16,23 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="记录一些读UIToolkit文档时的关键点，仅当备忘录。 VisualTree由VisualElement构成的具有层级结构的数据集合。 VisualElement一个基类，包含样式表、布局数据以及事件处理器。内置了各种实现  Buttons Toggles Text input fields  panel面板是视觉树的父对象，视觉树要连接到面板才能渲染。面板要么属于一个编辑器窗口，要么属于一个运">
+    <meta name="description" content="前言随便记一下HDRP中打光和烘培的一些要点和坑 光的来源大致分实时光和烘焙光。 实时光来自于实时平行光、点光等。 烘焙可以是光照贴图，或者光照探针。 烘焙注意点 模型的光照UV是否合理 重叠 不相邻或者角度差距多大而UV却靠在一起   注意单面 尽量防止要渲染的面可以“看到”反面 注意单面处的阴影漏光（添加额外的提供阴影的物体）   室内场景注意反弹次数，大于10 噪点产生原因 采样次数太少导致">
 <meta property="og:type" content="article">
-<meta property="og:title" content="uitoolkit杂记">
-<meta property="og:url" content="https://www.kuanmi.top/2023/01/27/uitoolkit/index.html">
+<meta property="og:title" content="Lighting">
+<meta property="og:url" content="https://www.kuanmi.top/2023/02/23/Lighting/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="记录一些读UIToolkit文档时的关键点，仅当备忘录。 VisualTree由VisualElement构成的具有层级结构的数据集合。 VisualElement一个基类，包含样式表、布局数据以及事件处理器。内置了各种实现  Buttons Toggles Text input fields  panel面板是视觉树的父对象，视觉树要连接到面板才能渲染。面板要么属于一个编辑器窗口，要么属于一个运">
+<meta property="og:description" content="前言随便记一下HDRP中打光和烘培的一些要点和坑 光的来源大致分实时光和烘焙光。 实时光来自于实时平行光、点光等。 烘焙可以是光照贴图，或者光照探针。 烘焙注意点 模型的光照UV是否合理 重叠 不相邻或者角度差距多大而UV却靠在一起   注意单面 尽量防止要渲染的面可以“看到”反面 注意单面处的阴影漏光（添加额外的提供阴影的物体）   室内场景注意反弹次数，大于10 噪点产生原因 采样次数太少导致">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://docs.unity3d.com/uploads/Main/UIBuilder/UIBuilderAnnotatedMainWindow.png">
-<meta property="article:published_time" content="2023-01-27T18:49:22.000Z">
-<meta property="article:modified_time" content="2023-01-28T02:49:22.469Z">
+<meta property="og:image" content="https://www.kuanmi.top/images/Bake.png">
+<meta property="article:published_time" content="2023-02-23T16:25:28.000Z">
+<meta property="article:modified_time" content="2023-02-24T00:29:14.865Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://docs.unity3d.com/uploads/Main/UIBuilder/UIBuilderAnnotatedMainWindow.png">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/Bake.png">
   
   
   
-  <title>uitoolkit杂记 - KuanMi</title>
+  <title>Lighting - KuanMi</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -197,13 +197,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('https://docs.unity3d.com/uploads/Main/UIBuilder/UIBuilderAnnotatedMainWindow.png') no-repeat center center; background-size: cover;">
+     style="background: url('/images/Bake.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="uitoolkit杂记"></span>
+            <span id="subtitle" data-typed-text="Lighting"></span>
           
         </div>
 
@@ -214,8 +214,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-01-28 02:49" pubdate>
-          2023年1月28日 凌晨
+        <time datetime="2023-02-24 00:25" pubdate>
+          2023年2月24日 凌晨
         </time>
       </span>
     
@@ -226,7 +226,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.4k 字
+          1.1k 字
         
       </span>
     
@@ -237,7 +237,7 @@
         
         
         
-          20 分钟
+          10 分钟
         
       </span>
     
@@ -285,97 +285,49 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">uitoolkit杂记</h1>
+            <h1 style="display: none">Lighting</h1>
             
             
               <div class="markdown-body">
                 
-                <p>记录一些读UIToolkit文档时的关键点，仅当备忘录。</p>
-<h1 id="VisualTree"><a href="#VisualTree" class="headerlink" title="VisualTree"></a>VisualTree</h1><p>由VisualElement构成的具有层级结构的数据集合。</p>
-<h1 id="VisualElement"><a href="#VisualElement" class="headerlink" title="VisualElement"></a>VisualElement</h1><p>一个基类，包含样式表、布局数据以及事件处理器。<br>内置了各种实现</p>
-<ul>
-<li>Buttons</li>
-<li>Toggles</li>
-<li>Text input fields</li>
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>随便记一下HDRP中打光和烘培的一些要点和坑</p>
+<h1 id="光的来源"><a href="#光的来源" class="headerlink" title="光的来源"></a>光的来源</h1><p>大致分实时光和烘焙光。</p>
+<h1 id="实时光"><a href="#实时光" class="headerlink" title="实时光"></a>实时光</h1><p>来自于实时平行光、点光等。</p>
+<h1 id="烘焙"><a href="#烘焙" class="headerlink" title="烘焙"></a>烘焙</h1><p>可以是光照贴图，或者光照探针。</p>
+<h1 id="烘焙注意点"><a href="#烘焙注意点" class="headerlink" title="烘焙注意点"></a>烘焙注意点</h1><ul>
+<li>模型的光照UV是否合理<ul>
+<li>重叠</li>
+<li>不相邻或者角度差距多大而UV却靠在一起</li>
 </ul>
-<h1 id="panel"><a href="#panel" class="headerlink" title="panel"></a>panel</h1><p>面板是视觉树的父对象，视觉树要连接到面板才能渲染。面板要么属于一个编辑器窗口，要么属于一个运行时的UIDocument。面板也处理焦点控制和为视觉树分发事件。</p>
-<h1 id="绘制数据"><a href="#绘制数据" class="headerlink" title="绘制数据"></a>绘制数据</h1><p>深度优先绘制</p>
-<h1 id="布局系统"><a href="#布局系统" class="headerlink" title="布局系统"></a>布局系统</h1><p>和Web那一套一样，基于Flexbox。</p>
-<h1 id="UI-Builder"><a href="#UI-Builder" class="headerlink" title="UI Builder"></a>UI Builder</h1><p>一个可视化的编写uxml和uss文件的工具</p>
-<h1 id="自定义元素"><a href="#自定义元素" class="headerlink" title="自定义元素"></a>自定义元素</h1><p>实现VisualElement<code>public class MyElement : VisualElement</code><br>元素都由工厂模式生成，所以需要对应的工厂类<code>UxmlFactory&lt;MyElement&gt;</code></p>
-<h1 id="定义元素特征"><a href="#定义元素特征" class="headerlink" title="定义元素特征"></a>定义元素特征</h1><p>实现<code>VisualElement.UxmlTraits</code>类<br>在<code>Init</code>中使用<code>((MyElement)ve).status = m_Status.GetValueFromBag(bag, cc);</code>读取数据。</p>
-<h1 id="加载UXML"><a href="#加载UXML" class="headerlink" title="加载UXML"></a>加载UXML</h1><p>模板加载到VisualTreeAsset<br><code>var template = AssetDatabase.LoadAssetAtPath&lt;VisualTreeAsset&gt;(&quot;path/to/file.uxml&quot;);</code><br>然后附加到父元素<br><code>template.CloneTree(parentElement, slots);</code></p>
-<h1 id="UQuery"><a href="#UQuery" class="headerlink" title="UQuery"></a>UQuery</h1><p>基于Jquery或Linq，如<br><code>root.Query(&quot;foo&quot;).Children&lt;Button&gt;().ForEach(//执行操作);</code></p>
-<h1 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h1><p>事件通知到每个元素<br>基类EventBase</p>
-<h2 id="分发事件"><a href="#分发事件" class="headerlink" title="分发事件"></a>分发事件</h2><p>监听来自操作系统或脚本的事件，使用<code>EventDispatcher</code>分发到元素。首先确定分发策略，然后执行。<br>事件有可能由额外事件，通过队列管理。</p>
-<h2 id="分发行为"><a href="#分发行为" class="headerlink" title="分发行为"></a>分发行为</h2><p>分为三个阶段</p>
-<ul>
-<li>涓滴</li>
-<li>冒泡</li>
-<li>可取消</li>
+</li>
+<li>注意单面<ul>
+<li>尽量防止要渲染的面可以“看到”反面</li>
+<li>注意单面处的阴影漏光（添加额外的提供阴影的物体）</li>
 </ul>
-<h2 id="事件传播"><a href="#事件传播" class="headerlink" title="事件传播"></a>事件传播</h2><p>事件分发选择目标后，计算传播路径。</p>
-<ul>
-<li>从根部向目标，涓滴阶段</li>
-<li>接收事件</li>
-<li>上升到根部，冒泡阶段</li>
+</li>
+<li>室内场景注意反弹次数，大于10</li>
+<li>噪点产生原因<ul>
+<li>采样次数太少导致随机性<ul>
+<li>分析是环境采样太少还是间接照明反射太少</li>
 </ul>
-<h2 id="事件目标"><a href="#事件目标" class="headerlink" title="事件目标"></a>事件目标</h2><p>取决于事件类型，键盘则是当前获得焦点的元素。</p>
-<h2 id="捕获鼠标"><a href="#捕获鼠标" class="headerlink" title="捕获鼠标"></a>捕获鼠标</h2><p>任何时候只有一个元素具有捕获。捕获后，该元素是除了鼠标滚轮之外任何鼠标事件的目标。</p>
-<h2 id="焦点环和Tab顺序"><a href="#焦点环和Tab顺序" class="headerlink" title="焦点环和Tab顺序"></a>焦点环和Tab顺序</h2><p>默认DFS。</p>
-<h1 id="处理事件"><a href="#处理事件" class="headerlink" title="处理事件"></a>处理事件</h1><h2 id="注册事件回调"><a href="#注册事件回调" class="headerlink" title="注册事件回调"></a>注册事件回调</h2><p>传播路径上除目标外可以对一个事件接受两次，涓滴和冒泡。<br>默认是在目标和冒泡阶段执行。如要在涓滴时执行，使用<code>TrickleDown.TrickleDown</code>注册回调。</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; 为涓滴阶段注册回调
-myElement.RegisterCallback&lt;MouseDownEvent&gt;(MyCallback, TrickleDown.TrickleDown);</code></pre></div></figure>
-<h2 id="发送自定义数据到事件回调"><a href="#发送自定义数据到事件回调" class="headerlink" title="发送自定义数据到事件回调"></a>发送自定义数据到事件回调</h2><figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F;将用户数据一起发送到回调
-myElement.RegisterCallback&lt;MouseDownEvent, MyType&gt;(MyCallbackWithData, myData);
-void MyCallbackWithData(MouseDownEvent evt, MyType data) &#123; &#x2F;* ...*&#x2F; &#125;</code></pre></div></figure>
-<h2 id="为控件处理输入事件"><a href="#为控件处理输入事件" class="headerlink" title="为控件处理输入事件"></a>为控件处理输入事件</h2><h3 id="捕获指针"><a href="#捕获指针" class="headerlink" title="捕获指针"></a>捕获指针</h3><p>使用CaptureEvents</p>
-<h3 id="使用操纵器处理事件"><a href="#使用操纵器处理事件" class="headerlink" title="使用操纵器处理事件"></a>使用操纵器处理事件</h3><h3 id="自定义控件"><a href="#自定义控件" class="headerlink" title="自定义控件"></a>自定义控件</h3><p>两种方式</p>
-<ul>
-<li>注册事件回调</li>
-<li>实现默认操作<br>区别</li>
-<li>回调在实例上注册，默认操作作为一个类的虚拟函数</li>
-<li>回调传播路径上所有元素都会执行。默认操作仅对事件目标执行</li>
+</li>
 </ul>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">override void ExecuteDefaultActionAtTarget(EventBase evt)
-&#123;
-    &#x2F;&#x2F; 调用基函数。
-    base.ExecuteDefaultActionAtTarget(evt);
+</li>
+<li>面光补光注意光照强度是平均分部到面上每个点的</li>
+<li>面光强度和距离平方成反比，不应该拿来作为窗口补光，要调整天空的曝光强度。</li>
+<li>Debug时关闭过滤，调整至没有黑块且大致均匀后再过滤。</li>
+</ul>
+<h1 id="背面问题"><a href="#背面问题" class="headerlink" title="背面问题"></a>背面问题</h1><p>没有银弹，只能根据不同的模型，不同的精度需求来调整。大致调整的方向如下：<br>尽量减少背面，力求模型全封闭且没有重叠的面。</p>
+<p>上述条件很难达成，为了模型的简洁，不可能保证没有重叠的面，而且场景中也不能保证没有重叠的面。<br>这时要调整<code>Backface Tolerance</code>，意指如何确定一个面是朝向背面的。目的是确保不计算朝向背面的无效面，然后用周围的像素来填充，防止黑色块扩散。<br>但是这个值如果调整过大，会导致很多本是正常的面也计入无效面，即使填充周围像素，也有可能不能覆盖，导致大范围的黑色色块。<br>而如果这个值太小，会导致本该无效的面被记为有效面，然后无效面的黑色会渗出到周围，也会导致黑色块。</p>
+<p>所以应该宁可面被判定无效然后被周围填充，也不能让无效面被判定有效导致污染贴图。</p>
+<p>还有和分辨率相关的问题，如果一个模型在光照贴图中的占比太小，光照贴图中的一个像素对应到场景中，有两种状态，也会导致伪影。常见于各个模型的拼接处，但这种一般会被周围的像素来填充，影响不太大。</p>
+<h1 id="双面问题"><a href="#双面问题" class="headerlink" title="双面问题"></a>双面问题</h1><p>不要滥用双面来解决背面问题。一是增加了渲染压力，二是本该无效的面，因为启用了双面导致了成为了有效面，然后又没有光照，黑色会渗出。<br>具体黑色渗出的范围和<code>Lightmap Padding</code>有关。</p>
+<h1 id="单位"><a href="#单位" class="headerlink" title="单位"></a>单位</h1><h2 id="candela"><a href="#candela" class="headerlink" title="candela"></a>candela</h2><p>是发光强度（人眼感知到的可见光的亮度，光束在特定方向上的亮度）的单位，简称“坎”，符号cd。普通蜡烛的发光强度1cd。</p>
+<h2 id="Lumen"><a href="#Lumen" class="headerlink" title="Lumen"></a>Lumen</h2><p>光通量，光源发出的可见光总量的量度。从一球面度发出一cd光源的光具有一流明的光通量。</p>
+<h2 id="Lux"><a href="#Lux" class="headerlink" title="Lux"></a>Lux</h2><p>每平方米流明。<br>照度单位。向 1 平方米的面积上发出 1 流明光通量的光源的照度为 1 勒克斯。</p>
+<h2 id="Nits"><a href="#Nits" class="headerlink" title="Nits"></a>Nits</h2><p>尼特（坎德拉每平方米）<br>亮度单位。描述可见光源的表面功率。当使用这个单位时，光源的总功率取决于光源的大小。</p>
+<h2 id="Exposure-value-EV"><a href="#Exposure-value-EV" class="headerlink" title="Exposure value (EV)"></a>Exposure value (EV)</h2><p>曝光值。<br>EV指快门速度与光圈f值的组合。<br>EV100指当感光度为ISO100、光圈系数为F1、曝光时间为1秒时，曝光量定义为0。</p>
 
-    if (evt.GetEventTypeId() &#x3D;&#x3D; MouseDownEvent.TypeId())
-    &#123;
-        &#x2F;&#x2F; ...
-    &#125;
-    else if (evt.GetEventTypeId() &#x3D;&#x3D; MouseUpEvent.TypeId())
-    &#123;
-        &#x2F;&#x2F; ...
-    &#125;
-    &#x2F;&#x2F;更多事件类型
-&#125;</code></pre></div></figure>
-<h1 id="综合事件"><a href="#综合事件" class="headerlink" title="综合事件"></a>综合事件</h1><p>事件系统使用事件池。</p>
-<ol>
-<li>从事件池中获取一个事件对象</li>
-<li>填写事件属性</li>
-<li>包含在<code>using</code>中确保其返回到事件池</li>
-<li>事件传递给<code>element.SendEvent()</code></li>
-</ol>
-<p>要发送来自操作系统的事件，使用<code>UnityEngine.Event</code>初始化事件</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">void SynthesizeAndSendKeyDownEvent(IPanel panel, KeyCode code,
-     char character &#x3D; &#39;\0&#39;, EventModifiers modifiers &#x3D; EventModifiers.None)
-&#123;
-    &#x2F;&#x2F; Create a UnityEngine.Event to hold initialization data.
-    var evt &#x3D; new Event() &#123;
-        type &#x3D; EventType.KeyDownEvent,
-        keyCode &#x3D; code,
-        character &#x3D; character,
-        modifiers &#x3D; modifiers
-    &#125;;
-
-    using (KeyDownEvent keyDownEvent &#x3D; KeyDownEvent.GetPooled(evt))
-    &#123;
-        panel.visualTree.SendEvent(keyDownEvent);
-    &#125;
-&#125;</code></pre></div></figure>
                 
               </div>
             
@@ -392,8 +344,8 @@ void MyCallbackWithData(MouseDownEvent evt, MyType data) &#123; &#x2F;* ...*&#x2
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>uitoolkit杂记</div>
-      <div>https://www.kuanmi.top/2023/01/27/uitoolkit/</div>
+      <div>Lighting</div>
+      <div>https://www.kuanmi.top/2023/02/23/Lighting/</div>
     </div>
     <div class="license-meta">
       
@@ -405,7 +357,7 @@ void MyCallbackWithData(MouseDownEvent evt, MyType data) &#123; &#x2F;* ...*&#x2
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年1月28日</div>
+          <div>2023年2月24日</div>
         </div>
       
       
@@ -435,18 +387,12 @@ void MyCallbackWithData(MouseDownEvent evt, MyType data) &#123; &#x2F;* ...*&#x2
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/01/27/traefik/" title="traefik尝鲜">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">traefik尝鲜</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/01/14/Hololens2-mrtk3/" title="Hololens2-mrtk3">
-                        <span class="hidden-mobile">Hololens2-mrtk3</span>
+                      <a href="/2023/02/12/sss/" title="HDRP中的次表面散射">
+                        <span class="hidden-mobile">HDRP中的次表面散射</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
