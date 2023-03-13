@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.kuanmi.top/vercel.json</loc>
+    
+    <lastmod>2023-03-13</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.kuanmi.top/2023/02/01/CustomInputSystem/</loc>
     
     <lastmod>2023-03-10</lastmod>
@@ -266,15 +275,6 @@
     <loc>https://www.kuanmi.top/2022/11/10/vscode-remote-containers/</loc>
     
     <lastmod>2022-11-11</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.kuanmi.top/vercel.json</loc>
-    
-    <lastmod>2022-11-10</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
