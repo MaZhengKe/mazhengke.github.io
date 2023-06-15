@@ -75,7 +75,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -92,7 +92,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"></head>
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
 
 
 <body>
@@ -125,7 +125,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/">
                 <i class="iconfont icon-home-fill"></i>
-                首页
+                <span>首页</span>
               </a>
             </li>
           
@@ -137,7 +137,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/archives/">
                 <i class="iconfont icon-archive-fill"></i>
-                归档
+                <span>归档</span>
               </a>
             </li>
           
@@ -149,7 +149,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/categories/">
                 <i class="iconfont icon-category-fill"></i>
-                分类
+                <span>分类</span>
               </a>
             </li>
           
@@ -161,7 +161,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/tags/">
                 <i class="iconfont icon-tags-fill"></i>
-                标签
+                <span>标签</span>
               </a>
             </li>
           
@@ -173,7 +173,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/about/">
                 <i class="iconfont icon-user-fill"></i>
-                关于
+                <span>关于</span>
               </a>
             </li>
           
@@ -181,15 +181,16 @@
         
           <li class="nav-item" id="search-btn">
             <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+              <i class="iconfont icon-search"></i>
             </a>
           </li>
           
         
         
           <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
           </li>
         
       </ul>
@@ -272,7 +273,10 @@
       
   <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
     <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
   <div class="toc-body" id="toc-body"></div>
 </div>
 
@@ -296,9 +300,7 @@
                 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Unity的URP和HDRP针对LensFlare也就是炫光，使用的是同一套逻辑(LensFlare(SRP))。但就是不支持VR，无论是单通道还是多通道。</p>
 <span id="more"></span>
 <p>Unity这样做也有一定的道理，本来这个效果就是模拟镜头的一种缺陷，人眼一般不会看到这种炫光，所以VR不支持也是理所当然的。<br>但本着没事找事的心态，权当练习，我翻看了这部分的源码，做了一点修改，使之能兼容VR。</p>
-<p>效果如下：<br><img src="/images/Len_01.jpg" srcset="/img/loading.gif" lazyload alt="镜头炫光"><br><a target="_blank" rel="noopener" href="https://github.com/MaZhengKe/LensFlareVR">仓库地址</a><br>在我给官方提了这个BUG后，回复是就是不支持。<br>论坛上也有有说<a target="_blank" rel="noopener" href="https://forum.unity.com/threads/lensflare-srp-does-not-work-properly-in-vr-and-urp.1249408/">这个问题</a>已经存在很久了。<br><img src="/images/Len_Err.jpg" srcset="/img/loading.gif" lazyload alt="平行光偏移"><img src="/images/Len_Err02.jpg" srcset="/img/loading.gif" lazyload alt="点光源偏移"></p>
-<hr>
-<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>先从看它的shader入手吧，很简单，就一个文件 LensFlareDataDriven.shader，分了4个pass，每个pass的区别仅仅在于Blend的方式，分别对应了Additive、Screen、Premultiply、Lerp四种BlendMode。<br><img src="/images/Len_BlendMode.png" srcset="/img/loading.gif" lazyload alt="Lens Flare Data中的四种BlendMode"></p>
+<h2 id="效果如下：仓库地址在我给官方提了这个BUG后，回复是就是不支持。论坛上也有有说这个问题已经存在很久了。"><a href="#效果如下：仓库地址在我给官方提了这个BUG后，回复是就是不支持。论坛上也有有说这个问题已经存在很久了。" class="headerlink" title="效果如下：仓库地址在我给官方提了这个BUG后，回复是就是不支持。论坛上也有有说这个问题已经存在很久了。"></a>效果如下：<br><img src="/images/Len_01.jpg" srcset="/img/loading.gif" lazyload alt="镜头炫光"><br><a target="_blank" rel="noopener" href="https://github.com/MaZhengKe/LensFlareVR">仓库地址</a><br>在我给官方提了这个BUG后，回复是就是不支持。<br>论坛上也有有说<a target="_blank" rel="noopener" href="https://forum.unity.com/threads/lensflare-srp-does-not-work-properly-in-vr-and-urp.1249408/">这个问题</a>已经存在很久了。<br><img src="/images/Len_Err.jpg" srcset="/img/loading.gif" lazyload alt="平行光偏移"><img src="/images/Len_Err02.jpg" srcset="/img/loading.gif" lazyload alt="点光源偏移"></h2><h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>先从看它的shader入手吧，很简单，就一个文件 LensFlareDataDriven.shader，分了4个pass，每个pass的区别仅仅在于Blend的方式，分别对应了Additive、Screen、Premultiply、Lerp四种BlendMode。<br><img src="/images/Len_BlendMode.png" srcset="/img/loading.gif" lazyload alt="Lens Flare Data中的四种BlendMode"></p>
 <p>关键的逻辑在LensFlareCommon.hlsl中，输入有两张贴图，颜色一张，遮挡一张，然后是一个颜色和5个向量，分别定义了颜色，旋转、缩放、屏幕位置、偏移、宽高比、遮挡半径、遮挡采样次数、是否离屏渲染以及边缘偏移、羽化范围、多边形属性等等。</p>
 <figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">TEXTURE2D(_FlareTex);
 SAMPLER(sampler_FlareTex);
@@ -314,8 +316,7 @@ float4 _FlareData1; &#x2F;&#x2F; x: OcclusionRadius, y: OcclusionSampleCount, z:
 float4 _FlareData2; &#x2F;&#x2F; xy: ScreenPos, zw: FlareSize
 float4 _FlareData3; &#x2F;&#x2F; x: Allow Offscreen, y: Edge Offset, z: Falloff, w: invSideCount
 float4 _FlareData4; &#x2F;&#x2F; x: SDF Roundness, y: Poly Radius, z: PolyParam0, w: PolyParam1</code></pre></div></figure>
-<p>而且都通过定义宏的方式来增强了可读性，学到了。</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#define _LocalCos0              _FlareData0.x
+<h2 id="而且都通过定义宏的方式来增强了可读性，学到了。"><a href="#而且都通过定义宏的方式来增强了可读性，学到了。" class="headerlink" title="而且都通过定义宏的方式来增强了可读性，学到了。"></a>而且都通过定义宏的方式来增强了可读性，学到了。<br><figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#define _LocalCos0              _FlareData0.x
 #define _LocalSin0              _FlareData0.y
 #define _PositionTranslate      _FlareData0.zw
 
@@ -324,10 +325,7 @@ float4 _FlareData4; &#x2F;&#x2F; x: SDF Roundness, y: Poly Radius, z: PolyParam0
 #define _ScreenPosZ             _FlareData1.z
 #ifndef _FlareScreenRatio
 #define _FlareScreenRatio       _FlareData1.w
-#endif</code></pre></div></figure>
-<hr>
-<p>再往下就发现了从shadertoy拿来的工具函数<code>float4 ComputeCircle(float2 uv)</code> <code>float4 ComputePolygon(float2 uv_)</code>，用来程序化直接从UV绘制椭圆和多边形的。</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float4 GetFlareShape(float2 uv)
+#endif</code></pre></div></figure></h2><h2 id="再往下就发现了从shadertoy拿来的工具函数float4-ComputeCircle-float2-uv-float4-ComputePolygon-float2-uv-，用来程序化直接从UV绘制椭圆和多边形的。这里看到绘制分成三种，圆，多边形，贴图。对应了这里的Type"><a href="#再往下就发现了从shadertoy拿来的工具函数float4-ComputeCircle-float2-uv-float4-ComputePolygon-float2-uv-，用来程序化直接从UV绘制椭圆和多边形的。这里看到绘制分成三种，圆，多边形，贴图。对应了这里的Type" class="headerlink" title="再往下就发现了从shadertoy拿来的工具函数float4 ComputeCircle(float2 uv) float4 ComputePolygon(float2 uv_)，用来程序化直接从UV绘制椭圆和多边形的。这里看到绘制分成三种，圆，多边形，贴图。对应了这里的Type"></a>再往下就发现了从shadertoy拿来的工具函数<code>float4 ComputeCircle(float2 uv)</code> <code>float4 ComputePolygon(float2 uv_)</code>，用来程序化直接从UV绘制椭圆和多边形的。<br><figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float4 GetFlareShape(float2 uv)
 &#123;
 #ifdef FLARE_CIRCLE
     return ComputeCircle(uv);
@@ -336,10 +334,7 @@ float4 _FlareData4; &#x2F;&#x2F; x: SDF Roundness, y: Poly Radius, z: PolyParam0
 #else
     return SAMPLE_TEXTURE2D(_FlareTex, sampler_FlareTex, uv);
 #endif
-&#125;</code></pre></div></figure>
-<p>这里看到绘制分成三种，圆，多边形，贴图。对应了这里的Type<br><img src="/images/Len_Type.png" srcset="/img/loading.gif" lazyload alt="Lens Flare Data中的三种类型"></p>
-<hr>
-<p>最后来看看vert函数</p>
+&#125;</code></pre></div></figure><br>这里看到绘制分成三种，圆，多边形，贴图。对应了这里的Type<br><img src="/images/Len_Type.png" srcset="/img/loading.gif" lazyload alt="Lens Flare Data中的三种类型"></h2><p>最后来看看vert函数</p>
 <figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float4 posPreScale &#x3D; float4(2.0f, 2.0f, 1.0f, 1.0f) * GetQuadVertexPosition(input.vertexID) - float4(1.0f, 1.0f, 0.0f, 0.0);
 float2 uv &#x3D; GetQuadTexCoord(input.vertexID);
 uv.x &#x3D; 1.0f - uv.x;
@@ -413,8 +408,7 @@ void DoLensFlareDatadriven(Camera camera, CommandBuffer cmd, RenderTargetIdentif
     ......
 &#125;</code></pre></div></figure>
 
-<p>来到DoLensFlareDataDrivenCommon函数，这里必须吐槽下这个函数，近16个参数就不说了，函数体也有500多行。。。<br>在这里增加一个函数来计算炫光在左右眼中的屏幕位置        </p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">static public Vector2 GetScreenPos(Camera.MonoOrStereoscopicEye eye, LensFlareComponentMK comp, Camera cam, bool isCameraRelative, Matrix4x4 viewProjMatrix)
+<h2 id="来到DoLensFlareDataDrivenCommon函数，这里必须吐槽下这个函数，近16个参数就不说了，函数体也有500多行。。。在这里增加一个函数来计算炫光在左右眼中的屏幕位置在使用相机位置的时候也分别要用左右眼球的位置计算出来后，添加进去"><a href="#来到DoLensFlareDataDrivenCommon函数，这里必须吐槽下这个函数，近16个参数就不说了，函数体也有500多行。。。在这里增加一个函数来计算炫光在左右眼中的屏幕位置在使用相机位置的时候也分别要用左右眼球的位置计算出来后，添加进去" class="headerlink" title="来到DoLensFlareDataDrivenCommon函数，这里必须吐槽下这个函数，近16个参数就不说了，函数体也有500多行。。。在这里增加一个函数来计算炫光在左右眼中的屏幕位置在使用相机位置的时候也分别要用左右眼球的位置计算出来后，添加进去"></a>来到DoLensFlareDataDrivenCommon函数，这里必须吐槽下这个函数，近16个参数就不说了，函数体也有500多行。。。<br>在这里增加一个函数来计算炫光在左右眼中的屏幕位置<br><figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">static public Vector2 GetScreenPos(Camera.MonoOrStereoscopicEye eye, LensFlareComponentMK comp, Camera cam, bool isCameraRelative, Matrix4x4 viewProjMatrix)
 &#123;
     Light light &#x3D; comp.GetComponent&lt;Light&gt;();
 
@@ -436,9 +430,7 @@ void DoLensFlareDatadriven(Camera camera, CommandBuffer cmd, RenderTargetIdentif
 
     Vector2 screenPos &#x3D; new Vector2(2.0f * viewportPos.x - 1.0f, 1.0f - 2.0f * viewportPos.y);
     return screenPos;
-&#125;</code></pre></div></figure>
-<p>在使用相机位置的时候也分别要用左右眼球的位置</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public static Vector3 GetEyePosition(Side eye)
+&#125;</code></pre></div></figure><br>在使用相机位置的时候也分别要用左右眼球的位置<br><figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public static Vector3 GetEyePosition(Side eye)
 &#123;
     if (XRSettings.enabled)
     &#123;
@@ -460,13 +452,9 @@ void DoLensFlareDatadriven(Camera camera, CommandBuffer cmd, RenderTargetIdentif
     &#123;
         return Camera.main.transform.position;
     &#125;
-&#125;</code></pre></div></figure>
-<p>计算出来后，添加进去</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">var leftPos &#x3D; GetScreenPos(Camera.MonoOrStereoscopicEye.Left,comp,cam,isCameraRelative,LeftViewProjMatrix);
+&#125;</code></pre></div></figure><br>计算出来后，添加进去<br><figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">var leftPos &#x3D; GetScreenPos(Camera.MonoOrStereoscopicEye.Left,comp,cam,isCameraRelative,LeftViewProjMatrix);
 var rightPos &#x3D; GetScreenPos(Camera.MonoOrStereoscopicEye.Right,comp,cam,isCameraRelative,RightViewProjMatrix);
-cmd.SetGlobalVector(ShaderConstants._FlareData5,new Vector4(leftPos.x,leftPos.y,rightPos.x,rightPos.y));</code></pre></div></figure>
-<hr>
-<h2 id="Shader修改"><a href="#Shader修改" class="headerlink" title="Shader修改"></a>Shader修改</h2><p>然后是shader的修改<br>增加一行输入，并定义好宏</p>
+cmd.SetGlobalVector(ShaderConstants._FlareData5,new Vector4(leftPos.x,leftPos.y,rightPos.x,rightPos.y));</code></pre></div></figure></h2><h2 id="Shader修改"><a href="#Shader修改" class="headerlink" title="Shader修改"></a>Shader修改</h2><p>然后是shader的修改<br>增加一行输入，并定义好宏</p>
 <figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float4 _FlareData5; 
   
 #define _LeftScreenPos          _FlareData5.xy
@@ -526,21 +514,23 @@ float2 _ScreenPos &#x3D; _CameraScreenPos;
         </div>
       
       
-      <div class="license-meta-item">
-        <div>许可协议</div>
-        <div>
-          
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
             
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
             
-              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
-              <span class="hint--top hint--rounded" aria-label="BY - 署名">
-                <i class="iconfont icon-by"></i>
-              </span>
-              </a>
-            
-          
+          </div>
         </div>
-      </div>
+      
     </div>
     <div class="license-icon iconfont"></div>
   </div>
@@ -716,22 +706,34 @@ float2 _ScreenPos &#x3D; _CameraScreenPos;
     var boardCtn = jQuery('#board-ctn');
     var boardTop = boardCtn.offset().top;
 
-    window.tocbot.init({
+    window.tocbot.init(Object.assign({
       tocSelector     : '#toc-body',
       contentSelector : '.markdown-body',
-      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
       linkClass       : 'tocbot-link',
       activeLinkClass : 'tocbot-active-link',
       listClass       : 'tocbot-list',
       isCollapsedClass: 'tocbot-is-collapsed',
       collapsibleClass: 'tocbot-is-collapsible',
-      collapseDepth   : CONFIG.toc.collapseDepth || 0,
       scrollSmooth    : true,
-      headingsOffset  : -boardTop
-    });
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
     if (toc.find('.toc-list-item').length > 0) {
       toc.css('visibility', 'visible');
     }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
   });
 </script>
 
@@ -766,6 +768,21 @@ float2 _ScreenPos &#x3D; _CameraScreenPos;
       window.anchors.options.class = 'anchorjs-link-left';
     }
     window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
   });
 </script>
 

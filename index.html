@@ -58,7 +58,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -75,7 +75,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"></head>
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
 
 
 <body>
@@ -108,7 +108,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/">
                 <i class="iconfont icon-home-fill"></i>
-                首页
+                <span>首页</span>
               </a>
             </li>
           
@@ -120,7 +120,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/archives/">
                 <i class="iconfont icon-archive-fill"></i>
-                归档
+                <span>归档</span>
               </a>
             </li>
           
@@ -132,7 +132,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/categories/">
                 <i class="iconfont icon-category-fill"></i>
-                分类
+                <span>分类</span>
               </a>
             </li>
           
@@ -144,7 +144,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/tags/">
                 <i class="iconfont icon-tags-fill"></i>
-                标签
+                <span>标签</span>
               </a>
             </li>
           
@@ -156,7 +156,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/about/">
                 <i class="iconfont icon-user-fill"></i>
-                关于
+                <span>关于</span>
               </a>
             </li>
           
@@ -164,15 +164,16 @@
         
           <li class="nav-item" id="search-btn">
             <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+              <i class="iconfont icon-search"></i>
             </a>
           </li>
           
         
         
           <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
           </li>
         
       </ul>
@@ -268,6 +269,47 @@
               <a href="/tags/Reflection/">#Reflection</a>
             
           </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/06/14/ParallaxMapping/" target="_self">
+          <img src="/images/Parallax.png" srcset="/img/loading.gif" lazyload alt="URP下的视差遮蔽映射（带像素偏移）">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+          <i class="index-pin iconfont icon-top" title="Pin on top"></i>
+        
+        <a href="/2023/06/14/ParallaxMapping/" target="_self">
+          URP下的视差遮蔽映射（带像素偏移）
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2023/06/14/ParallaxMapping/" target="_self">
+        <div>
+          前言之前之所以要重写一遍URP的lit，其实主要目的就是为了这里能实现真正的陡峭视差映射。URP自带的视差映射只是最最基本的用射线方向和高度去做偏移，只能在高度不高时有一点效果，要想更高一点的高度，只能像HDRP一样，分层用类似光线步进的方式去采样。 高度图高度图可以有多种使用方式，最简单的就是用来变化顶点，但需要模型面数很高。或者曲面细分后位移顶点，对GPU就有要求了。还可以在像素级别实现。通过
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-06-15 04:00" pubdate>
+              2023-06-15
+            </time>
+          </div>
+        
+        
         
       </div>
     </article>
@@ -435,23 +477,23 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/02/23/Lighting/" target="_self">
-          <img src="/images/Bake.png" srcset="/img/loading.gif" lazyload alt="Lighting">
+        <a href="/2023/06/14/ShaderVariants/" target="_self">
+          <img src="/images/ShaderV.png" srcset="/img/loading.gif" lazyload alt="着色器变体">
         </a>
       </div>
     
     <article class="col-12 col-md-8 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2023/02/23/Lighting/" target="_self">
-          Lighting
+        <a href="/2023/06/14/ShaderVariants/" target="_self">
+          着色器变体
         </a>
       </h1>
 
       
-      <a class="index-excerpt " href="/2023/02/23/Lighting/" target="_self">
+      <a class="index-excerpt " href="/2023/06/14/ShaderVariants/" target="_self">
         <div>
-          前言随便记一下HDRP中打光和烘培的一些要点和坑 光的来源大致分实时光和烘焙光。 实时光来自于实时平行光、点光等。 烘焙可以是光照贴图，或者光照探针。 烘焙注意点 模型的光照UV是否合理 重叠 不相邻或者角度差距多大而UV却靠在一起   注意单面 尽量防止要渲染的面可以“看到”反面 注意单面处的阴影漏光（添加额外的提供阴影的物体）   室内场景注意反弹次数，大于10 噪点产生原因 采样次数太少导致
+          着色器变体汇总一下shader变体相关的内容 为什么要变体最根本的原因是因为着色器在运行时产生分支的开销太大，有必要为了不同的条件产生不同的shader，减轻GPU的压力，用空间换时间。主要是有以下几个目的  可以将同一着色器分配给不同的材质，然后为不同的材质配置不同的关键字，就可以做到在同一个地方维护代码，提高复用性。 可以在运行时通过开关关键字改变着色器行为。 利用变体禁用不必要的逻辑，优化运
         </div>
       </a>
 
@@ -459,8 +501,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2023-02-24 00:25" pubdate>
-              2023-02-24
+            <time datetime="2023-06-15 07:15" pubdate>
+              2023-06-15
             </time>
           </div>
         
@@ -474,23 +516,23 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/02/12/sss/" target="_self">
-          <img src="/images/sss-index.png" srcset="/img/loading.gif" lazyload alt="HDRP中的次表面散射">
+        <a href="/2023/06/14/pbr/" target="_self">
+          <img src="/images/PBR-lit.png" srcset="/img/loading.gif" lazyload alt="URP下定制PBRShader">
         </a>
       </div>
     
     <article class="col-12 col-md-8 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2023/02/12/sss/" target="_self">
-          HDRP中的次表面散射
+        <a href="/2023/06/14/pbr/" target="_self">
+          URP下定制PBRShader
         </a>
       </h1>
 
       
-      <a class="index-excerpt " href="/2023/02/12/sss/" target="_self">
+      <a class="index-excerpt " href="/2023/06/14/pbr/" target="_self">
         <div>
-          前言今天来研读一下HDRP的屏幕空间次表面散射的实现。 次表面散射不多介绍了，就是模拟光线在介质中传播，常用于皮肤、植被、蜡烛等半透明的材质。 双向次表面散射反射率分部函数bidirectional subsurface scattering reflectance distribution functio简称BSSRDF从名字大致能看出来是和BSDF类似的，但是考虑了次表面散射的因素。 fss(
+          复刻URPLit考虑到项目移植各个平台的顺利，URP还是目前最实用的管线了，但自带的lit还是缺少很多功能，比如对VR很重要的几何高光抗锯齿，混合SSR也不是很方便，各向异性，环境法线，高光遮蔽，视差映射等等功能都是缺少的。为了功能的收缩与扩张方便，还是有必要手撸一个PBR的。而且Lit的代码为了兼容各种环境，比如Dot，VR，LODCross，做了大量的判断，代码很杂乱，很难修改。整理一遍也是为
         </div>
       </a>
 
@@ -498,8 +540,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2023-02-13 00:51" pubdate>
-              2023-02-13
+            <time datetime="2023-06-15 02:40" pubdate>
+              2023-06-15
             </time>
           </div>
         
@@ -513,23 +555,23 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/02/09/cloth/" target="_self">
-          <img src="/images/cloth.png" srcset="/img/loading.gif" lazyload alt="布料模拟方案汇总">
+        <a href="/2023/06/14/InterfaceInEditor/" target="_self">
+          <img src="https://user-images.githubusercontent.com/5531467/164994604-15a0d060-72d1-440b-926b-883dd5f31955.png" srcset="/img/loading.gif" lazyload alt="接口在编辑器中的拓展">
         </a>
       </div>
     
     <article class="col-12 col-md-8 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2023/02/09/cloth/" target="_self">
-          布料模拟方案汇总
+        <a href="/2023/06/14/InterfaceInEditor/" target="_self">
+          接口在编辑器中的拓展
         </a>
       </h1>
 
       
-      <a class="index-excerpt " href="/2023/02/09/cloth/" target="_self">
+      <a class="index-excerpt " href="/2023/06/14/InterfaceInEditor/" target="_self">
         <div>
-          布料模拟总结一下常见的布料模拟的方案 K动画最传统，同时在某些特定场景下也是最简单有效的手段了，比如固定不动的随风摆动的窗帘。没什么好说的，存粹看美术的工作量了。 绑定+动态骨骼基于前一种，绑定好骨骼后，用物理模拟的方式去驱动骨骼的变化，进而模拟布料。最知名的应该就是Dynamic Bone这个插件了。能想到的场景比如人物的头发，裙摆等，都很适合这种方案。性能需求小，多平台支持，也有一定的动态。
+          前言经常会希望在Unity编辑器中有这样一种功能的实现，可以直接引用（序列化）一个实现了指定接口的组件。面向接口可以大大降低代码的耦合，实现依赖反转，同时更加灵活，后续的修改与扩展都更加方便。但官方就是不做，可以从这个帖子中看到官方的态度。所以下面就列举一下自己实现这个功能的各种方法。 问题描述假使有这样一个接口 public interface ICanGetBool &#123;     bo
         </div>
       </a>
 
@@ -537,8 +579,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2023-02-10 02:35" pubdate>
-              2023-02-10
+            <time datetime="2023-06-15 02:30" pubdate>
+              2023-06-15
             </time>
           </div>
         
@@ -552,23 +594,23 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/02/09/wireframe/" target="_self">
-          <img src="/images/w-all.png" srcset="/img/loading.gif" lazyload alt="线框绘制">
+        <a href="/2023/06/14/Catenary/" target="_self">
+          <img src="/images/Catenary.gif" srcset="/img/loading.gif" lazyload alt="悬链线与弹簧质点模拟绳索">
         </a>
       </div>
     
     <article class="col-12 col-md-8 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2023/02/09/wireframe/" target="_self">
-          线框绘制
+        <a href="/2023/06/14/Catenary/" target="_self">
+          悬链线与弹簧质点模拟绳索
         </a>
       </h1>
 
       
-      <a class="index-excerpt " href="/2023/02/09/wireframe/" target="_self">
+      <a class="index-excerpt " href="/2023/06/14/Catenary/" target="_self">
         <div>
-          线框渲染最近写代码快写吐了，写点Shader缓解一下。今天就复刻一个线框渲染吧，顺便温习一下几何着色器的用法。参考列在前面  在unity中实现风格化线框渲染 几何着色器（Geometry Shader）的基础介绍以及简单示例  几种方式总结一下各种实现的方法  生成线框模型 线框贴图 写入UV 利用GL来绘制线框 几何着色器 用几何着色器的LineStream来生成线段图元 用几何着色器来生成片
+          绳索模拟最近有这么一个需求，模拟绳子。如果是那种铰链之类的，可以直接用unity物理。如果是软体并且要求物理碰撞，那就得考虑Obi之类的用质点弹簧模型的解算器去解算了。考虑到webGL也要用，Obi需求的求解器依赖于Burst，所以webgl没法使用。而且Obi不可控因素太多，为了一个简单的，无需物理的绳索动画，也没有必要使用太复杂的Obi。还一种方式就是让美术在Blender，maya里绑定骨骼
         </div>
       </a>
 
@@ -576,8 +618,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2023-02-09 09:14" pubdate>
-              2023-02-09
+            <time datetime="2023-06-15 02:05" pubdate>
+              2023-06-15
             </time>
           </div>
         
@@ -591,23 +633,23 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/02/08/lip/" target="_self">
-          <img src="/images/lip.gif" srcset="/img/loading.gif" lazyload alt="语音转口型">
+        <a href="/2023/05/09/URP-thickness/" target="_self">
+          <img src="/images/thickness-bone-render.png" srcset="/img/loading.gif" lazyload alt="URP下厚度图的实现">
         </a>
       </div>
     
     <article class="col-12 col-md-8 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2023/02/08/lip/" target="_self">
-          语音转口型
+        <a href="/2023/05/09/URP-thickness/" target="_self">
+          URP下厚度图的实现
         </a>
       </h1>
 
       
-      <a class="index-excerpt " href="/2023/02/08/lip/" target="_self">
+      <a class="index-excerpt " href="/2023/05/09/URP-thickness/" target="_self">
         <div>
-          前言之前做GPT聊天时，用Live2D的简单的通过音量大小来驱动嘴型的大小变化，这里想更精确一定，用元音来驱动。主要就是复刻了这位大佬的这篇文章。 大致思路初看时被一堆术语吓到了，什么频域信息、窗函数、高斯滤波器、DCT变换、共振峰等等。耐心一点一点看就发现还是比较简单的，很多算法并不一定要从新造轮子去实现，知道其目的就好了。 获取语音数据的频域信息这里直接用AudioSource.GetSpec
+          屏幕空间厚度总有一些时候需要获取特定模型的屏幕空间厚度，如次表面散射，透明渲染，或者最近项目中要求实现的X光效果。Unity在2023.1的HDRP中提供了这一功能，经询问，URP暂无此计划。翻阅HDRP的实现源码后才发现这个效果并没有那么复杂，性能损耗也没有想象中那么大，实现的方式很巧妙，遂决定在URP中复刻一下。  HDRP中的实现最关键的代码是一个Shader：ComputeThicknes
         </div>
       </a>
 
@@ -615,47 +657,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2023-02-08 08:07" pubdate>
-              2023-02-08
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/02/06/OpenAI/" target="_self">
-          <img src="/images/chatGPT.jpg" srcset="/img/loading.gif" lazyload alt="OpenAI微调模型测试">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/02/06/OpenAI/" target="_self">
-          OpenAI微调模型测试
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2023/02/06/OpenAI/" target="_self">
-        <div>
-          前言之前只是使用了现成的OpenAI的模型，每次调用都要给出一大堆的重复提示词，而且效果也不是太好，这次尝试用其称为微调(fine-tuning)来训练个新的模型。可以节省token，顺便看看微调后的模型效果和之前有多大区别。OpenAI已经给出了详尽的说明，下面就只记录下具体的步骤。 安装直接在容器里操作吧，不想污染主机。起一个python的环境。 version: &quot;2.3&amp;quot
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-02-07 06:56" pubdate>
-              2023-02-07
+            <time datetime="2023-05-10 07:40" pubdate>
+              2023-05-10
             </time>
           </div>
         

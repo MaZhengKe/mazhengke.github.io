@@ -58,7 +58,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -75,7 +75,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"></head>
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
 
 
 <body>
@@ -108,7 +108,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/">
                 <i class="iconfont icon-home-fill"></i>
-                首页
+                <span>首页</span>
               </a>
             </li>
           
@@ -120,7 +120,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/archives/">
                 <i class="iconfont icon-archive-fill"></i>
-                归档
+                <span>归档</span>
               </a>
             </li>
           
@@ -132,7 +132,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/categories/">
                 <i class="iconfont icon-category-fill"></i>
-                分类
+                <span>分类</span>
               </a>
             </li>
           
@@ -144,7 +144,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/tags/">
                 <i class="iconfont icon-tags-fill"></i>
-                标签
+                <span>标签</span>
               </a>
             </li>
           
@@ -156,7 +156,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/about/">
                 <i class="iconfont icon-user-fill"></i>
-                关于
+                <span>关于</span>
               </a>
             </li>
           
@@ -164,15 +164,16 @@
         
           <li class="nav-item" id="search-btn">
             <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+              <i class="iconfont icon-search"></i>
             </a>
           </li>
           
         
         
           <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
           </li>
         
       </ul>
@@ -220,6 +221,290 @@
               <div class="col-12 col-md-10 m-auto">
                 
 
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2022/07/05/Cpoy-From-Shader-Toy/" target="_self">
+          <img src="/images/water.jpg" srcset="/img/loading.gif" lazyload alt="Cpoy From Shader Toy">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/07/05/Cpoy-From-Shader-Toy/" target="_self">
+          Cpoy From Shader Toy
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2022/07/05/Cpoy-From-Shader-Toy/" target="_self">
+        <div>
+          在unity中复刻了这个ShaderToy中的效果。添加了视角的移动以及平面的反射。Seascape” by Alexander Alekseev aka TDM - 2014 wasd qe移动 鼠标右键旋转
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-07-05 17:27" pubdate>
+              2022-07-05
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2022/07/04/WebGLBrotli/" target="_self">
+          <img src="/images/BR-error.png" srcset="/img/loading.gif" lazyload alt="WebGL Brotli 压缩及vercel部署">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/07/04/WebGLBrotli/" target="_self">
+          WebGL Brotli 压缩及vercel部署
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2022/07/04/WebGLBrotli/" target="_self">
+        <div>
+          Unity WebGL Brotli压缩测试各个静态网页代理配置的方式不一，以vercel举例。需要在根目录下添加vercel.json文件，给已经被Unity用Br压缩过的文件重载或添加httpHeader。 Gzip也是一样，br改成gzip即可。
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-07-04 16:25" pubdate>
+              2022-07-04
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2022/07/04/LoadShaderToy/" target="_self">
+          <img src="/images/LoadShader.jpg" srcset="/img/loading.gif" lazyload alt="LoadShaderToy">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/07/04/LoadShaderToy/" target="_self">
+          LoadShaderToy
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2022/07/04/LoadShaderToy/" target="_self">
+        <div>
+          从ShaderToy复制一个简单的无贴图shader（或者使用最下面的），粘贴到下面，然后加载。
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-07-04 11:27" pubdate>
+              2022-07-04
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2022/07/02/UnityWebGLTest/" target="_self">
+          <img src="/images/webgl.jpg" srcset="/img/loading.gif" lazyload alt="UnityWebGL 测试">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/07/02/UnityWebGLTest/" target="_self">
+          UnityWebGL 测试
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2022/07/02/UnityWebGLTest/" target="_self">
+        <div>
+          没有使用压缩的版本，与使用了Brotli压缩对比。
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-07-02 23:26" pubdate>
+              2022-07-02
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2022/07/02/HelloThreeJS/" target="_self">
+          <img src="/images/hellothreejs-min.png" srcset="/img/loading.gif" lazyload alt="Hello ThreeJS">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/07/02/HelloThreeJS/" target="_self">
+          Hello ThreeJS
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2022/07/02/HelloThreeJS/" target="_self">
+        <div>
+          恶补了一堆前端知识，用iframe内嵌一个ThreeJS的Demo。
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-07-02 20:33" pubdate>
+              2022-07-02
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2022/07/02/HelloShaderToy/" target="_self">
+          <img src="/images/helloshadertoy.jpg" srcset="/img/loading.gif" lazyload alt="Hello ShaderToy">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/07/02/HelloShaderToy/" target="_self">
+          Hello ShaderToy
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2022/07/02/HelloShaderToy/" target="_self">
+        <div>
+          叹为观止。
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-07-02 19:10" pubdate>
+              2022-07-02
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2022/11/16/ECS-Scripting/" target="_self">
+          <img src="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/entities-splash-image.png" srcset="/img/loading.gif" lazyload alt="ECS 脚本">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2022/11/16/ECS-Scripting/" target="_self">
+          ECS 脚本
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2022/11/16/ECS-Scripting/" target="_self">
+        <div>
+          实体包中的脚本本节包含有关在实体中编写脚本时的最佳实践的信息，以及您可以在脚本中使用的一些功能。    标题 描述    使用方面组织代码 使用方面将实体组件的子集组合到单个 csharp 结构中。   Blob 资产 有关 blob 资产的信息，这些资产是针对流式处理优化的二进制数据片段。   在运行时加载场景 关于实体如何加载场景的信息。   转换系统 有关转换如何在实体中工作的信息。   使
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-11-17 07:44" pubdate>
+              2022-11-17
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Entities/">#Entities</a>
+            
+              <a href="/tags/ECS/">#ECS</a>
+            
+              <a href="/tags/DOTS/">#DOTS</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
 
   <div class="row mx-auto index-card">
     

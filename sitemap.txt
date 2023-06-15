@@ -1,3 +1,10 @@
+https://www.kuanmi.top/2023/06/14/ShaderVariants/
+https://www.kuanmi.top/2023/06/14/ParallaxMapping/
+https://www.kuanmi.top/2023/06/14/pbr/
+https://www.kuanmi.top/2023/06/14/InterfaceInEditor/
+https://www.kuanmi.top/2023/06/14/Catenary/
+https://www.kuanmi.top/2023/05/09/URP-thickness/
+https://www.kuanmi.top/2023/04/23/Physics/
 https://www.kuanmi.top/vercel.json
 https://www.kuanmi.top/2023/02/01/CustomInputSystem/
 https://www.kuanmi.top/2023/02/23/Lighting/

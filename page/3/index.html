@@ -58,7 +58,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -75,7 +75,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"></head>
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
 
 
 <body>
@@ -108,7 +108,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/">
                 <i class="iconfont icon-home-fill"></i>
-                首页
+                <span>首页</span>
               </a>
             </li>
           
@@ -120,7 +120,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/archives/">
                 <i class="iconfont icon-archive-fill"></i>
-                归档
+                <span>归档</span>
               </a>
             </li>
           
@@ -132,7 +132,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/categories/">
                 <i class="iconfont icon-category-fill"></i>
-                分类
+                <span>分类</span>
               </a>
             </li>
           
@@ -144,7 +144,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/tags/">
                 <i class="iconfont icon-tags-fill"></i>
-                标签
+                <span>标签</span>
               </a>
             </li>
           
@@ -156,7 +156,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/about/">
                 <i class="iconfont icon-user-fill"></i>
-                关于
+                <span>关于</span>
               </a>
             </li>
           
@@ -164,15 +164,16 @@
         
           <li class="nav-item" id="search-btn">
             <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+              <i class="iconfont icon-search"></i>
             </a>
           </li>
           
         
         
           <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
           </li>
         
       </ul>
@@ -220,6 +221,279 @@
               <div class="col-12 col-md-10 m-auto">
                 
 
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/02/01/CustomInputSystem/" target="_self">
+          <img src="https://docs-multiplayer.unity3d.com/img/logo.png" srcset="/img/loading.gif" lazyload alt="自定义UDP设备 InputSystem">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/02/01/CustomInputSystem/" target="_self">
+          自定义UDP设备 InputSystem
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2023/02/01/CustomInputSystem/" target="_self">
+        <div>
+          解耦经常会有各种奇奇怪怪的硬件需要使用TCP&#x2F;UDP去交互，这次尝试下使用InputSystem去解耦。 IInputStateTypeInfo定义一个结构体实现这个接口。 FourCC四个字符来定义一个唯一标识符。 InputControl使用这个描述符来定义一些字段，其中标记了各个按钮或者遥感的定义。 [InputControl(name &#x3D; &quot;firstButt
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-02-02 05:28" pubdate>
+              2023-02-02
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/01/31/xrtoolkit2-3/" target="_self">
+          <img src="/images/affordance.gif" srcset="/img/loading.gif" lazyload alt="xrtoolkit2.3预览版本体验">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/01/31/xrtoolkit2-3/" target="_self">
+          xrtoolkit2.3预览版本体验
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2023/01/31/xrtoolkit2-3/" target="_self">
+        <div>
+          xrtoolkit2.3预览版更新，测试一下新功能。 安装目前还是预览版本，记得在packageManager中打开预览开关。然后按名称载入com.unity.xr.interaction.toolkit，记得指定版本2.3.0-pre.1 戳又一个交互器，最大的亮点是对UI的支持。可以做到类似触摸屏的效果了，不用傻傻的再用射线交互了。做一些类似的按钮交互也更方便了。 凝视可惜手头上并没有Ocul
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-02-01 01:44" pubdate>
+              2023-02-01
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/01/29/multiplayer/" target="_self">
+          <img src="https://docs-multiplayer.unity3d.com/img/logo.png" srcset="/img/loading.gif" lazyload alt="Netcode网络框架与XRToolkit交互">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/01/29/multiplayer/" target="_self">
+          Netcode网络框架与XRToolkit交互
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2023/01/29/multiplayer/" target="_self">
+        <div>
+          笔记记录下使用Unity网络框架的一些坑。最后实现一个简单的VR场景下的多人交互。 安装从空白项目开始，2021.3版本。包管理器安装com.unity.netcode.gameobjects Transport发现这个netcode.gameobjects是依赖于Transport的。后者就是一个基于UDP的连接库。有一些官方给的例子可以参考。 netcode.gameobjects照这个基础栗
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-01-30 01:38" pubdate>
+              2023-01-30
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/01/29/SplineLine/" target="_self">
+          <img src="/images/spline-l.png" srcset="/img/loading.gif" lazyload alt="Timeline搭配贝塞尔曲线">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/01/29/SplineLine/" target="_self">
+          Timeline搭配贝塞尔曲线
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2023/01/29/SplineLine/" target="_self">
+        <div>
+          序先前产品有个需求，沿时间线播放一个线性移动问题的动画，干脆用官方自带的画贝塞尔的Spline搭配Timeline实现了，现在闲下来打算整理一下的。突然发现自己又造轮子了，而且别人用的是更简便的方法，不需要自己定义轨道等等繁琐的配置，只要实现一个ITimeControl即可。 原帖：[Unity2022] 同步样条线和时间线。非常详细。 但他这里还是太简单了一些，速度全程匀速，持续时间也是要靠手动
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-01-29 09:17" pubdate>
+              2023-01-29
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/01/27/traefik/" target="_self">
+          <img src="https://doc.traefik.io/traefik/assets/img/traefik-architecture.png" srcset="/img/loading.gif" lazyload alt="traefik尝鲜">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/01/27/traefik/" target="_self">
+          traefik尝鲜
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2023/01/27/traefik/" target="_self">
+        <div>
+          简介之前都是用Nginx来做反代，最近发现了新的玩具traefik，来玩一下，看看对比NPM有什么优劣。 安装这里就用Docker来安装 version: &#39;3&#39;  services:   reverse-proxy:     # The official v2 Traefik docker image     image: traefik:v2.9     # Enables t
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-01-28 03:21" pubdate>
+              2023-01-28
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/01/27/uitoolkit/" target="_self">
+          <img src="https://docs.unity3d.com/uploads/Main/UIBuilder/UIBuilderAnnotatedMainWindow.png" srcset="/img/loading.gif" lazyload alt="uitoolkit杂记">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/01/27/uitoolkit/" target="_self">
+          uitoolkit杂记
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2023/01/27/uitoolkit/" target="_self">
+        <div>
+          记录一些读UIToolkit文档时的关键点，仅当备忘录。 VisualTree由VisualElement构成的具有层级结构的数据集合。 VisualElement一个基类，包含样式表、布局数据以及事件处理器。内置了各种实现  Buttons Toggles Text input fields  panel面板是视觉树的父对象，视觉树要连接到面板才能渲染。面板要么属于一个编辑器窗口，要么属于一个运
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-01-28 02:49" pubdate>
+              2023-01-28
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/01/14/Hololens2-mrtk3/" target="_self">
+          <img src="https://hololenscndev.github.io/MRTKDoc/Documentation/Images/MRTK_Logo_Rev.png" srcset="/img/loading.gif" lazyload alt="Hololens2-mrtk3">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/01/14/Hololens2-mrtk3/" target="_self">
+          Hololens2-mrtk3
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2023/01/14/Hololens2-mrtk3/" target="_self">
+        <div>
+          悲报2023.01.23微软已经解雇了从事虚拟现实、混合现实和HoloLens开发的团队。MRTK开发也停止了 记录下mrtk3开发Hololens2应用的配置 项目配置 基础3D项目 切换到UWP ARM64   使用 MixedRealityFeatureTool 本质上就是一个包管理器，负责下载包，修改manifest.json文件 里面功能五花八门，基础的就先选择com.microsoft
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-01-15 01:00" pubdate>
+              2023-01-15
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
 
   <div class="row mx-auto index-card">
     
@@ -329,301 +603,6 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2022-12-30 03:29" pubdate>
               2022-12-30
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/12/26/draw/" target="_self">
-          <img src="/images/drawsdf.png" srcset="/img/loading.gif" lazyload alt="喷涂、绘制与填充">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/12/26/draw/" target="_self">
-          喷涂、绘制与填充
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/12/26/draw/" target="_self">
-        <div>
-          喷涂与绘制又是一个烂大街的效果，但毕竟还没有做过。这里记录和总结一下。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-12-26 08:39" pubdate>
-              2022-12-26
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/12/11/Unity2022-2/" target="_self">
-          <img src="/images/path.png" srcset="/img/loading.gif" lazyload alt="Unity 2022.2.0光追效果测试">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/12/11/Unity2022-2/" target="_self">
-          Unity 2022.2.0光追效果测试
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/12/11/Unity2022-2/" target="_self">
-        <div>
-          Unity 2022.2随着2022.2.0正式发布，HDRP版本也来到了14，简单测试了一下，无论是普通3D场景下的RayTracing还是VR场景下普通的光栅，都有了很大的改进。记录下踩的一些坑。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-12-12 04:36" pubdate>
-              2022-12-12
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/12/08/pico-overlay/" target="_self">
-          <img src="/images/screenshot_192.168.2.64_5555.png" srcset="/img/loading.gif" lazyload alt="pico VR 合成层">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/12/08/pico-overlay/" target="_self">
-          pico VR 合成层
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/12/08/pico-overlay/" target="_self">
-        <div>
-          Pico 合成层最近在开发一个Unity内的360 3D视频播放器，查找资料后发现了这么个东东。实际体验后效果还是很好的，尤其是对于需要在VR中渲染视频、UI等平面、曲面、天空盒等等。会清晰很多。 原理这里pico的文档说的很详细了，再结合我观察他们的log总结一下。 如果使用Unity的渲染管线去渲染，是先把全部的物体（包括UI）先渲染到两张（或一组，取决与你是singlePass还是multP
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-12-09 04:37" pubdate>
-              2022-12-09
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/12/05/ChatGPT/" target="_self">
-          <img src="/images/chatGPT.jpg" srcset="/img/loading.gif" lazyload alt="ChatGPT">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/12/05/ChatGPT/" target="_self">
-          ChatGPT
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/12/05/ChatGPT/" target="_self">
-        <div>
-          使用ChatGPT生成的打砖块游戏,仅限电脑WASD移动 AI生成游戏，ChatGPT使用ThreeJS生成弹球游戏
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-12-06 04:48" pubdate>
-              2022-12-06
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/11/16/ECS-systems-intro/" target="_self">
-          <img src="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/entities-splash-image.png" srcset="/img/loading.gif" lazyload alt="ECS 系统">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/16/ECS-systems-intro/" target="_self">
-          ECS 系统
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/11/16/ECS-systems-intro/" target="_self">
-        <div>
-          系统 使用 SystemBase 创建系统 回调方法顺序   迭代数据 额外资源 使用 Entities.ForEach 迭代数据 使用 IJobEntity 迭代数据 使用 IJobEntityBatch 遍历成批数据 手动迭代数据   系统更新顺序 组件系统组 系统排序属性 默认系统组 多个世界   使用作业在多个线程上调度数据 工作扩展 通用职位 使用 Job.WithCode 安排后台作
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-17 06:07" pubdate>
-              2022-11-17
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Entities/">#Entities</a>
-            
-              <a href="/tags/ECS/">#ECS</a>
-            
-              <a href="/tags/DOTS/">#DOTS</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/11/15/ECS/" target="_self">
-          <img src="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/entities-splash-image.png" srcset="/img/loading.gif" lazyload alt="Entities ECS DOTS 中文文档">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/15/ECS/" target="_self">
-          Entities ECS DOTS 中文文档
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/11/15/ECS/" target="_self">
-        <div>
-          前言Entity 1.0版本发布了，很多接口和概念都不同与之前的版本了。苦于没有更方便的中文资料去查询，总体机翻并稍微修改了一下，贴在下面，以备后用。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-16 07:05" pubdate>
-              2022-11-16
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/Entities/">#Entities</a>
-            
-              <a href="/tags/ECS/">#ECS</a>
-            
-              <a href="/tags/DOTS/">#DOTS</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/11/10/vscode-remote-containers/" target="_self">
-          <img src="/images/condev.png" srcset="/img/loading.gif" lazyload alt="vscode远程容器开发">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/10/vscode-remote-containers/" target="_self">
-          vscode远程容器开发
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/11/10/vscode-remote-containers/" target="_self">
-        <div>
-          之前在折腾HomeAssistant集成开发时接触到了VSCode的容器内开发，即使用容器构建开发环境，简化不同机器的开发环境的部署，确保团队环境一直，同时也方便了后修的测试。果然Docker是越用越爽。
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-10 08:46" pubdate>
-              2022-11-10
             </time>
           </div>
         
