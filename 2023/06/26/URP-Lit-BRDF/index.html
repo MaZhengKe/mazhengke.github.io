@@ -16,23 +16,23 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="着色器变体汇总一下shader变体相关的内容 为什么要变体最根本的原因是因为着色器在运行时产生分支的开销太大，有必要为了不同的条件产生不同的shader，减轻GPU的压力，用空间换时间。主要是有以下几个目的  可以将同一着色器分配给不同的材质，然后为不同的材质配置不同的关键字，就可以做到在同一个地方维护代码，提高复用性。 可以在运行时通过开关关键字改变着色器行为。 利用变体禁用不必要的逻辑，优化运">
+    <meta name="description" content="前述之前理清了lit包含的各个文件之间的联系，现在再回过头仔细看看到底它用的BRDF是什么。最终颜色分为两类实时光与间接光 实时光指平行光或者点光源等 反射率方程先来看主光源的反射率方程 half NdotL &#x3D; saturate(dot(normalWS, lightDirectionWS));计算cosThetahalf3 radiance &#x3D; lightColor * (lightAtten">
 <meta property="og:type" content="article">
-<meta property="og:title" content="着色器变体">
-<meta property="og:url" content="https://www.kuanmi.top/2023/06/14/ShaderVariants/index.html">
+<meta property="og:title" content="URP-Lit-BRDF简析">
+<meta property="og:url" content="https://www.kuanmi.top/2023/06/26/URP-Lit-BRDF/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="着色器变体汇总一下shader变体相关的内容 为什么要变体最根本的原因是因为着色器在运行时产生分支的开销太大，有必要为了不同的条件产生不同的shader，减轻GPU的压力，用空间换时间。主要是有以下几个目的  可以将同一着色器分配给不同的材质，然后为不同的材质配置不同的关键字，就可以做到在同一个地方维护代码，提高复用性。 可以在运行时通过开关关键字改变着色器行为。 利用变体禁用不必要的逻辑，优化运">
+<meta property="og:description" content="前述之前理清了lit包含的各个文件之间的联系，现在再回过头仔细看看到底它用的BRDF是什么。最终颜色分为两类实时光与间接光 实时光指平行光或者点光源等 反射率方程先来看主光源的反射率方程 half NdotL &#x3D; saturate(dot(normalWS, lightDirectionWS));计算cosThetahalf3 radiance &#x3D; lightColor * (lightAtten">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://www.kuanmi.top/images/ShaderV.png">
-<meta property="article:published_time" content="2023-06-14T23:15:56.000Z">
-<meta property="article:modified_time" content="2023-06-15T07:20:18.726Z">
+<meta property="og:image" content="https://www.kuanmi.top/images/LITBRDF.png">
+<meta property="article:published_time" content="2023-06-26T19:08:42.000Z">
+<meta property="article:modified_time" content="2023-07-31T01:05:46.844Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://www.kuanmi.top/images/ShaderV.png">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/LITBRDF.png">
   
   
   
-  <title>着色器变体 - KuanMi</title>
+  <title>URP-Lit-BRDF简析 - KuanMi</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -198,13 +198,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/images/ShaderV.png') no-repeat center center; background-size: cover;">
+     style="background: url('/images/LITBRDF.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="着色器变体"></span>
+            <span id="subtitle" data-typed-text="URP-Lit-BRDF简析"></span>
           
         </div>
 
@@ -215,8 +215,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-06-15 07:15" pubdate>
-          2023年6月15日 早上
+        <time datetime="2023-06-27 03:08" pubdate>
+          2023年6月27日 凌晨
         </time>
       </span>
     
@@ -227,7 +227,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.2k 字
+          3.3k 字
         
       </span>
     
@@ -238,7 +238,7 @@
         
         
         
-          36 分钟
+          28 分钟
         
       </span>
     
@@ -289,122 +289,66 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">着色器变体</h1>
+            <h1 style="display: none">URP-Lit-BRDF简析</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="着色器变体"><a href="#着色器变体" class="headerlink" title="着色器变体"></a>着色器变体</h1><p>汇总一下shader变体相关的内容</p>
-<h1 id="为什么要变体"><a href="#为什么要变体" class="headerlink" title="为什么要变体"></a>为什么要变体</h1><p>最根本的原因是因为着色器在运行时产生分支的开销太大，有必要为了不同的条件产生不同的shader，减轻GPU的压力，用空间换时间。<br>主要是有以下几个目的</p>
-<ul>
-<li>可以将同一着色器分配给不同的材质，然后为不同的材质配置不同的关键字，就可以做到在同一个地方维护代码，提高复用性。</li>
-<li>可以在运行时通过开关关键字改变着色器行为。</li>
-<li>利用变体禁用不必要的逻辑，优化运行效率，如没有法线贴图，那就没必要再去采用一次。</li>
-<li>开关一些特定功能，如光照贴图等等</li>
-</ul>
-<p>例如URP的lit就包含了一大堆关键字</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">&#x2F;&#x2F; -------------------------------------
-&#x2F;&#x2F; Material Keywords
-#pragma shader_feature_local _NORMALMAP
-#pragma shader_feature_local _PARALLAXMAP
-#pragma shader_feature_local _RECEIVE_SHADOWS_OFF
-#pragma shader_feature_local _ _DETAIL_MULX2 _DETAIL_SCALED
-#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT
-#pragma shader_feature_local_fragment _ALPHATEST_ON
-#pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON
-#pragma shader_feature_local_fragment _EMISSION
-#pragma shader_feature_local_fragment _METALLICSPECGLOSSMAP
-#pragma shader_feature_local_fragment _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-#pragma shader_feature_local_fragment _OCCLUSIONMAP
-#pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
-#pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
-#pragma shader_feature_local_fragment _SPECULAR_SETUP
+                <h1 id="前述"><a href="#前述" class="headerlink" title="前述"></a>前述</h1><p>之前理清了lit包含的各个文件之间的联系，现在再回过头仔细看看到底它用的BRDF是什么。<br>最终颜色分为两类<br>实时光与间接光</p>
+<h1 id="实时光"><a href="#实时光" class="headerlink" title="实时光"></a>实时光</h1><p>指平行光或者点光源等</p>
+<h2 id="反射率方程"><a href="#反射率方程" class="headerlink" title="反射率方程"></a>反射率方程</h2><p>先来看主光源的反射率方程</p>
+<p><code>half NdotL = saturate(dot(normalWS, lightDirectionWS));</code><br>计算cosTheta<br><code>half3 radiance = lightColor * (lightAttenuation * NdotL);</code><br>因为是平行光，仅计算一个方向，所以就简单的相乘即可<br><code>half3 brdf = brdfData.diffuse;</code><br><code>brdf += brdfData.specular * DirectBRDFSpecular(brdfData, normalWS, lightDirectionWS, viewDirectionWS);</code><br>然后就是BRDF了，分为两部分，漫反射与高光。</p>
+<h3 id="实时光漫反射"><a href="#实时光漫反射" class="headerlink" title="实时光漫反射"></a>实时光漫反射</h3><p>回过头看看漫反射怎么取的<br><code>    InitializeBRDFData(surfaceData.albedo, surfaceData.metallic, surfaceData.smoothness, brdfData);</code><br>输入仅有取自表面的反照率，金属，光滑</p>
+<p><code>    half oneMinusReflectivity = OneMinusReflectivityMetallic(metallic);</code></p>
+<p>这里用到了一个魔法数 标准介电反射率系数 (&#x3D; 4%)<br>OneMinusReflectivityMetallic 可以理解为吸收率？ 对应与learnopengl的PBR那篇文章中的 被折射 的比例kd。<br>一减去反射率  &#x3D; 1-reflectivity &#x3D; 1-lerp(dielectricSpec, 1, metallic) &#x3D; lerp(1-dielectricSpec, 0, metallic)。<br>理解为金属的反射率为1，非金属的反射率为0.04</p>
+<p><code>    half reflectivity = half(1.0) - oneMinusReflectivity;</code></p>
+<p>取反射率</p>
+<p><code>    half3 brdfDiffuse = albedo * oneMinusReflectivity;</code></p>
+<p>从贴图的albedo乘以吸收率得到Diffuse，即最终漫反射的颜色。 这里就是Lambertian漫反射的公式了。又被称为完全漫反射即漫反射的方向与角度无关。</p>
+<h3 id="实时光高光"><a href="#实时光高光" class="headerlink" title="实时光高光"></a>实时光高光</h3><p><code>    half3 brdfSpecular = lerp(kDieletricSpec.rgb, albedo, metallic);</code><br>这里就是高光的颜色了，指即使是非金属，也会有0.04的反射高光，而金属的反射颜色就取自albedo。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">outBRDFData.perceptualRoughness &#x3D; PerceptualSmoothnessToPerceptualRoughness(smoothness);
+outBRDFData.roughness           &#x3D; max(PerceptualRoughnessToRoughness(outBRDFData.perceptualRoughness), HALF_MIN_SQRT);
+outBRDFData.roughness2          &#x3D; max(outBRDFData.roughness * outBRDFData.roughness, HALF_MIN);
+outBRDFData.grazingTerm         &#x3D; saturate(smoothness + reflectivity);
+outBRDFData.normalizationTerm   &#x3D; outBRDFData.roughness * half(4.0) + half(2.0);
+outBRDFData.roughness2MinusOne  &#x3D; outBRDFData.roughness2 - half(1.0);</code></pre></div></figure>
 
-&#x2F;&#x2F; -------------------------------------
-&#x2F;&#x2F; Universal Pipeline keywords
-#pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
-#pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
-#pragma multi_compile _ EVALUATE_SH_MIXED EVALUATE_SH_VERTEX
-#pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
-#pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING
-#pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION
-#pragma multi_compile_fragment _ _SHADOWS_SOFT
-#pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
-#pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3
-#pragma multi_compile_fragment _ _LIGHT_LAYERS
-#pragma multi_compile_fragment _ _LIGHT_COOKIES
-#pragma multi_compile _ _FORWARD_PLUS
-#include_with_pragmas &quot;Packages&#x2F;com.unity.render-pipelines.universal&#x2F;ShaderLibrary&#x2F;RenderingLayers.hlsl&quot;
-
-
-&#x2F;&#x2F; -------------------------------------
-&#x2F;&#x2F; Unity defined keywords
-#pragma multi_compile _ LIGHTMAP_SHADOW_MIXING
-#pragma multi_compile _ SHADOWS_SHADOWMASK
-#pragma multi_compile _ DIRLIGHTMAP_COMBINED
-#pragma multi_compile _ LIGHTMAP_ON
-#pragma multi_compile _ DYNAMICLIGHTMAP_ON
-#pragma multi_compile_fragment _ LOD_FADE_CROSSFADE
-#pragma multi_compile_fog
-#pragma multi_compile_fragment _ DEBUG_DISPLAY</code></pre></div></figure>
-<h1 id="指令"><a href="#指令" class="headerlink" title="指令"></a>指令</h1><p>一般有4个</p>
-<ul>
-<li>multi_compile</li>
-<li>shader_feature<br>区别下文再详细描述</li>
-</ul>
-<h1 id="启用与禁用"><a href="#启用与禁用" class="headerlink" title="启用与禁用"></a>启用与禁用</h1><ul>
-<li>Shader.EnableKeyword：启用全局关键字（静态方法）</li>
-<li>Shader.DisableKeyword：禁用全局关键字（静态方法）</li>
-<li>CommandBuffer.EnableShaderKeyword：使用 CommandBuffer 来启用全局关键字</li>
-<li>CommandBuffer.DisableShaderKeyword：使用 CommandBuffer 来禁用全局关键字</li>
-<li>Material.EnableKeyword：为常规着色器启用本地关键字</li>
-<li>Material.DisableKeyword：为常规着色器禁用本地关键字</li>
-<li>ComputeShader.EnableKeyword：为计算着色器启用本地关键字</li>
-<li>ComputeShader.DisableKeyword：为计算着色器禁用本地关键字</li>
-</ul>
-<h1 id="其他条件判断"><a href="#其他条件判断" class="headerlink" title="其他条件判断"></a>其他条件判断</h1><h2 id="静态分支"><a href="#静态分支" class="headerlink" title="静态分支"></a>静态分支</h2><p>编译时判断。<br>使用如用#if、#elif、#else和#endif预处理器指令，或#ifdef和#ifndef等，在编译时就确定的条件。<br>不影响性能。</p>
-<h2 id="动态分支"><a href="#动态分支" class="headerlink" title="动态分支"></a>动态分支</h2><p>运行时判断。<br>可以使用关键字来作为动态分支的条件。<br>也可以单纯使用if来创建。</p>
-<h2 id="变体"><a href="#变体" class="headerlink" title="变体"></a>变体</h2><p>根据条件来编译成多个着色器变体，在运行时选择与条件匹配的着色器程序。</p>
-<h1 id="关键字"><a href="#关键字" class="headerlink" title="关键字"></a>关键字</h1><p>可以不声明而直接使用关键字。但这样就不会产生对应的变体。</p>
-<h2 id="关键字集"><a href="#关键字集" class="headerlink" title="关键字集"></a>关键字集</h2><p>一组关键字合称为关键字集。不同的关键字集合组合起来就会产生数量相乘的组合变体。</p>
-<h2 id="声明"><a href="#声明" class="headerlink" title="声明"></a>声明</h2><p>声明时可以选择是用于变体还是动态分支。</p>
-<ul>
-<li>dynamic branch ： 用于动态分支</li>
-<li>multi compile ： 创建一组变体</li>
-<li>shader feature ： 如果不启用就不会生成对应的变体</li>
-</ul>
-<p>后两者顾名思义，前者是多重编译，即要为每种组合生成变体，而后者仅是开关着色器功能，如果编辑时不开启，那运行时也不会有。</p>
-<h2 id="范围"><a href="#范围" class="headerlink" title="范围"></a>范围</h2><p>除了上面的编译时的区别，还有范围的区别。有局部和全局的差别。<br>这决定了是否可以在运行时通过全局着色器关键字来重写。<br>默认是全局，但如果指定了局部，那就无非通过全局的方式来修改。<br>具体是添加“_local”</p>
-<h2 id="阶段"><a href="#阶段" class="headerlink" title="阶段"></a>阶段</h2><p>有以下几个阶段</p>
-<ul>
-<li>_vertex</li>
-<li>_fragment</li>
-<li>_hull</li>
-<li>_domain</li>
-<li>_geometry</li>
-<li>_raytracing</li>
-</ul>
-<p>可以指定变体生成的阶段，顶点还是片元。<br>虽然unity会自动判别，假如如果一个变体仅在片元中生效，那会自动删除重复的顶点着色器，但这会浪费编译时间，所以最好顺手设定一下。</p>
-<h2 id="用关键字来作为条件"><a href="#用关键字来作为条件" class="headerlink" title="用关键字来作为条件"></a>用关键字来作为条件</h2><p>假使有如下代码</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#pragma multi_compile QUALITY_LOW QUALITY_MED QUALITY_HIGH
-
-if (QUALITY_LOW)
+<p>最后这里是为了之后的计算方便，提前计算了很多变量。<br>逐行看<br>perceptualRoughness  计算感知粗糙度（这个名字很奇怪） 1-smoothness。<br>然后是真正使用的粗糙度</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">real PerceptualRoughnessToRoughness(real perceptualRoughness)
 &#123;
-    &#x2F;&#x2F; code for low quality setting
+    return perceptualRoughness * perceptualRoughness;
 &#125;</code></pre></div></figure>
-<p>如果这里改用dynamic_branch，那unity其实是为每个关键字创建了一个布尔变量，要求GPU去动态的判断。<br>而如果是shader_feature or multi_compile ，则会依据当前的关键字状态，将对应的变体发送到GPU。</p>
-<h2 id="其他语句"><a href="#其他语句" class="headerlink" title="其他语句"></a>其他语句</h2><p>除了if，还可以使用如下的hlsl语句</p>
+<p>并不理解为什么这里要刻意降低粗糙度。</p>
+<p>下面都是没有具体含义的仅为了优化计算的项了。</p>
+<p>回到反射率方程</p>
+<p>可以看到漫反射是贴图的albedo乘以吸收率得到Diffuse，吸收率仅与金属度相关。所以光滑度不影响漫反射。</p>
+<p>然后brdfSpecular高光颜色近似理解为albedo * metallic。</p>
+<h3 id="BRDF"><a href="#BRDF" class="headerlink" title="BRDF"></a>BRDF</h3><p>然后终于到了熟悉的Cook-Torrance BRDF的镜面反射部分了。即D，F与G函数。</p>
 <ul>
-<li>#if, #elif, #else and #endif.</li>
-<li>#ifdef and #ifndef.</li>
+<li>法线分布函数：估算在受到表面粗糙度的影响下，朝向方向与半程向量一致的微平面的数量。</li>
+<li>几何函数、可见性：描述了微平面自成阴影的属性。当一个平面相对比较粗糙的时候，平面表面上的微平面有可能挡住其他的微平面从而减少表面所反射的光线。</li>
+<li>菲涅尔方程：菲涅尔方程描述的是在不同的表面角下表面所反射的光线所占的比率。</li>
 </ul>
-<p>使用这些的话会导致以后更改#pragma更加困难，如更难将multi_compile 更改为 shader_feature。（存疑，没有体会到）</p>
-<h1 id="为禁用关键字创建变体"><a href="#为禁用关键字创建变体" class="headerlink" title="为禁用关键字创建变体"></a>为禁用关键字创建变体</h1><p>如果使用shader feature创建单关键字，那在禁用后还是会自动创建第二个启用的变体。即类似默认添加_。<br>而如果使用multi_compile创建单关键字，不声明则不会自动创建。</p>
-<p>但如果是在使用multi_compile或者shader_feature创建两个或以上的关键字组，则可以在之前声明”_”，即为禁用全部关键字时创建一个变体。</p>
-<p>shader_feature 如没有添加”_”，默认取第一个关键字，添加后则默认为空。 手动在mat中启用其他非默认的关键字，之前的默认关键字还是会生成变体。</p>
-<p>这里规则相当的绕，牵涉各种特殊情况，又和shader中的skip unused shader_feature有关，建议还是通过查看shader文件的变体文件来确认最终有多少和那些变体。</p>
-<h1 id="快捷方式"><a href="#快捷方式" class="headerlink" title="快捷方式"></a>快捷方式</h1><p>untiy定义了一些快捷指令，以方便开关某些具体的功能，如点光源阴影，雾气，GPU实例化等等。</p>
-<h1 id="配合材质窗口"><a href="#配合材质窗口" class="headerlink" title="配合材质窗口"></a>配合材质窗口</h1><p>可以通过在Properties中使用Toggle、ToggleOff或者KeywordEnum等来方便的控制。</p>
+<p>而具体的DFG函数采用哪一种，不同的引擎和管线有不同的选择。看看Untiy的URPLit用的是哪一种吧<br>Unity的注射中将F函数命名为V即可见性。</p>
+<p>D采用的是GGX。即D &#x3D; roughness^2 &#x2F; ( NoH^2 * (roughness^2 - 1) + 1 )^2。</p>
+<p>但是F与G就采用了一种近似的优化方程。<br>V * F &#x3D; 1.0 &#x2F; ( LoH^2 * (roughness + 0.5) )<br>来源<a target="_blank" rel="noopener" href="https://community.arm.com/events/1155">https://community.arm.com/events/1155</a></p>
+<h1 id="间接光"><a href="#间接光" class="headerlink" title="间接光"></a>间接光</h1><p>实时光看完了<br>再来看看环境光相关。</p>
+<h2 id="间接光漫反射"><a href="#间接光漫反射" class="headerlink" title="间接光漫反射"></a>间接光漫反射</h2><p>环境光照的漫反射直接取Lightmap或者SH 也是用的完全漫反射<br><code>    half3 indirectDiffuse = bakedGI;</code></p>
+<h2 id="间接光镜面反射"><a href="#间接光镜面反射" class="headerlink" title="间接光镜面反射"></a>间接光镜面反射</h2><p>环境光照的镜面反射颜色要根据反射向量，粗糙度，屏幕UV计算<br><code>    half3 indirectSpecular = GlossyEnvironmentReflection(reflectVector, positionWS, brdfData.perceptualRoughness, 1.0h, normalizedScreenSpaceUV);</code></p>
+<p><code>    half mip = PerceptualRoughnessToMipmapLevel(perceptualRoughness);</code><br>    从粗糙的映射出一个mip等级</p>
+<p><code>    half4 encodedIrradiance = half4(SAMPLE_TEXTURECUBE_LOD(unity_SpecCube0, samplerunity_SpecCube0, reflectVector, mip));</code></p>
+<p><code>    irradiance = DecodeHDREnvironment(encodedIrradiance, unity_SpecCube0_HDR);</code><br>    然后用反射向量采用采样</p>
+<p><code>    return irradiance * occlusion;</code><br>    最后还要计算遮蔽</p>
+<p><code>    half3 c = indirectDiffuse * brdfData.diffuse;</code></p>
+<figure><div class="code-wrapper"><pre class="language-none"><code class="language-none">这里看到indirectDiffuse仅包含了光照的强度
+</code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">    half3 EnvironmentBRDFSpecular(BRDFData brdfData, half fresnelTerm)
+&#123;
+    float surfaceReduction &#x3D; 1.0 &#x2F; (brdfData.roughness2 + 1.0);
+    return half3(surfaceReduction * lerp(brdfData.specular, brdfData.grazingTerm, fresnelTerm));
+&#125;</code></pre></div></figure>
+<p>依据粗糙度和菲涅尔调整高光。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>URP的lit为了性能做了很多优化，BRDF也是用的简化的版本。看来有必要去看看HDRP中的Lit的实现了。</p>
 
                 
               </div>
@@ -422,8 +366,8 @@ if (QUALITY_LOW)
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>着色器变体</div>
-      <div>https://www.kuanmi.top/2023/06/14/ShaderVariants/</div>
+      <div>URP-Lit-BRDF简析</div>
+      <div>https://www.kuanmi.top/2023/06/26/URP-Lit-BRDF/</div>
     </div>
     <div class="license-meta">
       
@@ -435,7 +379,7 @@ if (QUALITY_LOW)
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年6月15日</div>
+          <div>2023年6月27日</div>
         </div>
       
       
@@ -467,9 +411,9 @@ if (QUALITY_LOW)
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/06/26/URP-Lit-BRDF/" title="URP-Lit-BRDF简析">
+                      <a href="/2023/07/19/RThandle/" title="RThandle">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">URP-Lit-BRDF简析</span>
+                        <span class="hidden-mobile">RThandle</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -477,8 +421,8 @@ if (QUALITY_LOW)
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/06/14/ParallaxMapping/" title="URP下的视差遮蔽映射（带像素偏移）">
-                        <span class="hidden-mobile">URP下的视差遮蔽映射（带像素偏移）</span>
+                      <a href="/2023/06/14/ShaderVariants/" title="着色器变体">
+                        <span class="hidden-mobile">着色器变体</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

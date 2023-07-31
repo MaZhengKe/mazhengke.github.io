@@ -2,6 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.kuanmi.top/2023/07/26/TMP/</loc>
+    
+    <lastmod>2023-07-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.kuanmi.top/2023/06/26/URP-Lit-BRDF/</loc>
+    
+    <lastmod>2023-07-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.kuanmi.top/2023/07/19/RThandle/</loc>
+    
+    <lastmod>2023-07-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.kuanmi.top/2022/06/27/LensFlare-SRP-in-VR/</loc>
+    
+    <lastmod>2023-06-28</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.kuanmi.top/2023/06/14/ShaderVariants/</loc>
     
     <lastmod>2023-06-15</lastmod>
@@ -452,15 +488,6 @@
   </url>
   
   <url>
-    <loc>https://www.kuanmi.top/2022/06/27/LensFlare-SRP-in-VR/</loc>
-    
-    <lastmod>2022-11-10</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.kuanmi.top/2022/07/04/LoadShaderToy/</loc>
     
     <lastmod>2022-11-10</lastmod>
@@ -481,7 +508,7 @@
 
   <url>
     <loc>https://www.kuanmi.top/</loc>
-    <lastmod>2023-06-15</lastmod>
+    <lastmod>2023-07-31</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -489,63 +516,63 @@
   
   <url>
     <loc>https://www.kuanmi.top/tags/Entities/</loc>
-    <lastmod>2023-06-15</lastmod>
+    <lastmod>2023-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.kuanmi.top/tags/ECS/</loc>
-    <lastmod>2023-06-15</lastmod>
+    <lastmod>2023-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.kuanmi.top/tags/DOTS/</loc>
-    <lastmod>2023-06-15</lastmod>
+    <lastmod>2023-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.kuanmi.top/tags/URP/</loc>
-    <lastmod>2023-06-15</lastmod>
+    <lastmod>2023-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.kuanmi.top/tags/LensFlare/</loc>
-    <lastmod>2023-06-15</lastmod>
+    <lastmod>2023-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.kuanmi.top/tags/VR/</loc>
-    <lastmod>2023-06-15</lastmod>
+    <lastmod>2023-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.kuanmi.top/tags/RenderFeature/</loc>
-    <lastmod>2023-06-15</lastmod>
+    <lastmod>2023-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.kuanmi.top/tags/Outline/</loc>
-    <lastmod>2023-06-15</lastmod>
+    <lastmod>2023-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.kuanmi.top/tags/Reflection/</loc>
-    <lastmod>2023-06-15</lastmod>
+    <lastmod>2023-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
