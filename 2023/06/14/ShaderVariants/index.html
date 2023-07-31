@@ -16,16 +16,16 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="着色器变体汇总一下shader变体相关的内容 为什么要变体最根本的原因是因为着色器在运行时产生分支的开销太大，有必要为了不同的条件产生不同的shader，减轻GPU的压力，用空间换时间。主要是有以下几个目的  可以将同一着色器分配给不同的材质，然后为不同的材质配置不同的关键字，就可以做到在同一个地方维护代码，提高复用性。 可以在运行时通过开关关键字改变着色器行为。 利用变体禁用不必要的逻辑，优化运">
+    <meta name="description" content="着色器变体汇总一下shader变体相关的内容">
 <meta property="og:type" content="article">
 <meta property="og:title" content="着色器变体">
 <meta property="og:url" content="https://www.kuanmi.top/2023/06/14/ShaderVariants/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="着色器变体汇总一下shader变体相关的内容 为什么要变体最根本的原因是因为着色器在运行时产生分支的开销太大，有必要为了不同的条件产生不同的shader，减轻GPU的压力，用空间换时间。主要是有以下几个目的  可以将同一着色器分配给不同的材质，然后为不同的材质配置不同的关键字，就可以做到在同一个地方维护代码，提高复用性。 可以在运行时通过开关关键字改变着色器行为。 利用变体禁用不必要的逻辑，优化运">
+<meta property="og:description" content="着色器变体汇总一下shader变体相关的内容">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.kuanmi.top/images/ShaderV.png">
 <meta property="article:published_time" content="2023-06-14T23:15:56.000Z">
-<meta property="article:modified_time" content="2023-06-15T07:20:18.726Z">
+<meta property="article:modified_time" content="2023-07-31T02:32:04.745Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.kuanmi.top/images/ShaderV.png">
@@ -295,6 +295,7 @@
               <div class="markdown-body">
                 
                 <h1 id="着色器变体"><a href="#着色器变体" class="headerlink" title="着色器变体"></a>着色器变体</h1><p>汇总一下shader变体相关的内容</p>
+<span id="more"></span>
 <h1 id="为什么要变体"><a href="#为什么要变体" class="headerlink" title="为什么要变体"></a>为什么要变体</h1><p>最根本的原因是因为着色器在运行时产生分支的开销太大，有必要为了不同的条件产生不同的shader，减轻GPU的压力，用空间换时间。<br>主要是有以下几个目的</p>
 <ul>
 <li>可以将同一着色器分配给不同的材质，然后为不同的材质配置不同的关键字，就可以做到在同一个地方维护代码，提高复用性。</li>

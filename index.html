@@ -296,7 +296,7 @@
       
       <a class="index-excerpt " href="/2023/06/14/ParallaxMapping/" target="_self">
         <div>
-          前言之前之所以要重写一遍URP的lit，其实主要目的就是为了这里能实现真正的陡峭视差映射。URP自带的视差映射只是最最基本的用射线方向和高度去做偏移，只能在高度不高时有一点效果，要想更高一点的高度，只能像HDRP一样，分层用类似光线步进的方式去采样。 高度图高度图可以有多种使用方式，最简单的就是用来变化顶点，但需要模型面数很高。或者曲面细分后位移顶点，对GPU就有要求了。还可以在像素级别实现。通过
+          前言之前之所以要重写一遍URP的lit，其实主要目的就是为了这里能实现真正的带深度偏移的陡峭视差映射。
         </div>
       </a>
 
@@ -337,7 +337,7 @@
       
       <a class="index-excerpt " href="/2022/11/08/SSR-URP-In-VR/" target="_self">
         <div>
-          前言之前的那个VR中采用复用阴影贴图的方式，用独立的相机渲染反射贴图还是有很多不足，因为是复用的阴影贴图，如果镜子中的物体没有在正常相机内有阴影的话，镜子中也不会有阴影。所以还是想尝试一下SSR即平面空间反射在VR单通道模式下的实现。  分析目前URP还没有原生支持SSR，也不想再重复造一次轮子了，这里先选用ShinySSRR作为基础的SSR，在它的基础上适配VR。 直接在单通道下使用测试一下，理
+          前言之前的那个VR中采用复用阴影贴图的方式，用独立的相机渲染反射贴图还是有很多不足，因为是复用的阴影贴图，如果镜子中的物体没有在正常相机内有阴影的话，镜子中也不会有阴影。
         </div>
       </a>
 
@@ -477,6 +477,45 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/07/30/MirrorCamera/" target="_self">
+          <img src="/images/mirrorCamera.jpg" srcset="/img/loading.gif" lazyload alt="相机镜面反射">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2023/07/30/MirrorCamera/" target="_self">
+          相机镜面反射
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt " href="/2023/07/30/MirrorCamera/" target="_self">
+        <div>
+          除了常见的反射探针，SSR，之前变换相机矩阵，还有一种最简单的方式就是直接添加一个镜面相机。
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2023-07-31 02:12" pubdate>
+              2023-07-31
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2023/07/30/VolumeLight/" target="_self">
           <img src="/images/VLight.png" srcset="/img/loading.gif" lazyload alt="URP体积光">
         </a>
@@ -493,7 +532,7 @@
       
       <a class="index-excerpt " href="/2023/07/30/VolumeLight/" target="_self">
         <div>
-          前述又造一个轮子，为了庆祝URP终于出了TAA，撸一个简单体积光来庆祝一下。就最最基础的用光线步进，采样阴影贴图。稍微抖动一下搭配TAA。还是有一些URP的坑在里面的。简单记录一下，以备将来查验。  Renderer Feature因为不打算再写一个RenderFeature了，直接用现成的Full Screen Pass Renderer Feature，所以就按照这个Pass要求的Shader
+          前述又造一个轮子，为了庆祝URP终于出了TAA，撸一个简单体积光来庆祝一下。就最最基础的用光线步进，采样阴影贴图。稍微抖动一下搭配TAA。还是有一些URP的坑在里面的。简单记录一下，以备将来查验。
         </div>
       </a>
 
@@ -532,7 +571,7 @@
       
       <a class="index-excerpt " href="/2023/07/26/TMP/" target="_self">
         <div>
-          体积字为了方便美术去修改场景中的有体积字，在TMP基础上，用光线步进加SDF去渲染体积字。  先贴参考 Mesh直接改原版的TMP有点麻烦，退而求其次，在TMP构造好Mesh后，修改这个Mesh，以适应新的Shader。 原本TMP构造出的网格是一个个面片，每个字符由两个三角形拼成。  然后以这个mesh为基础，再添加4个点，5个面，纵向拉伸成一个个立方体.  新网格中除了保存之前的网格中的信息外
+          体积字为了方便美术去修改场景中的有体积字，在TMP基础上，用光线步进加SDF去渲染体积字。
         </div>
       </a>
 
@@ -571,7 +610,7 @@
       
       <a class="index-excerpt " href="/2023/07/19/RThandle/" target="_self">
         <div>
-          前言SRP的接口一直在更改，是时候仔细看看RTHandle系统了。看RTHandle之前，先看看RenderTexture。 基本的理解就是RT数据是保存在GPU上的，RT仅仅是CPU这里对其管理的一个工具。而Texture的数据才是能直接在CPU读取的，使用时会加载到显存中。 而RTHandle又是干啥的？ RTHandle system通篇看下来，最主要的目的就是为了处理不同RT的分辨率问题。
+          前言SRP的接口一直在更改，是时候仔细看看RTHandle系统了。
         </div>
       </a>
 
@@ -610,7 +649,7 @@
       
       <a class="index-excerpt " href="/2023/06/26/URP-Lit-BRDF/" target="_self">
         <div>
-          前述之前理清了lit包含的各个文件之间的联系，现在再回过头仔细看看到底它用的BRDF是什么。最终颜色分为两类实时光与间接光 实时光指平行光或者点光源等 反射率方程先来看主光源的反射率方程 half NdotL = saturate(dot(normalWS, lightDirectionWS));计算cosThetahalf3 radiance = lightColor * (lightAtten
+          前述之前理清了lit包含的各个文件之间的联系，现在再回过头仔细看看到底它用的BRDF是什么。
         </div>
       </a>
 
@@ -620,45 +659,6 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2023-06-27 03:08" pubdate>
               2023-06-27
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/06/14/ShaderVariants/" target="_self">
-          <img src="/images/ShaderV.png" srcset="/img/loading.gif" lazyload alt="着色器变体">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/06/14/ShaderVariants/" target="_self">
-          着色器变体
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2023/06/14/ShaderVariants/" target="_self">
-        <div>
-          着色器变体汇总一下shader变体相关的内容 为什么要变体最根本的原因是因为着色器在运行时产生分支的开销太大，有必要为了不同的条件产生不同的shader，减轻GPU的压力，用空间换时间。主要是有以下几个目的  可以将同一着色器分配给不同的材质，然后为不同的材质配置不同的关键字，就可以做到在同一个地方维护代码，提高复用性。 可以在运行时通过开关关键字改变着色器行为。 利用变体禁用不必要的逻辑，优化运
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-06-15 07:15" pubdate>
-              2023-06-15
             </time>
           </div>
         

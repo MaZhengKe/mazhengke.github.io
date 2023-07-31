@@ -16,16 +16,16 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="前述又造一个轮子，为了庆祝URP终于出了TAA，撸一个简单体积光来庆祝一下。就最最基础的用光线步进，采样阴影贴图。稍微抖动一下搭配TAA。还是有一些URP的坑在里面的。简单记录一下，以备将来查验。  Renderer Feature因为不打算再写一个RenderFeature了，直接用现成的Full Screen Pass Renderer Feature，所以就按照这个Pass要求的Shader">
+    <meta name="description" content="前述又造一个轮子，为了庆祝URP终于出了TAA，撸一个简单体积光来庆祝一下。就最最基础的用光线步进，采样阴影贴图。稍微抖动一下搭配TAA。还是有一些URP的坑在里面的。简单记录一下，以备将来查验。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="URP体积光">
 <meta property="og:url" content="https://www.kuanmi.top/2023/07/30/VolumeLight/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="前述又造一个轮子，为了庆祝URP终于出了TAA，撸一个简单体积光来庆祝一下。就最最基础的用光线步进，采样阴影贴图。稍微抖动一下搭配TAA。还是有一些URP的坑在里面的。简单记录一下，以备将来查验。  Renderer Feature因为不打算再写一个RenderFeature了，直接用现成的Full Screen Pass Renderer Feature，所以就按照这个Pass要求的Shader">
+<meta property="og:description" content="前述又造一个轮子，为了庆祝URP终于出了TAA，撸一个简单体积光来庆祝一下。就最最基础的用光线步进，采样阴影贴图。稍微抖动一下搭配TAA。还是有一些URP的坑在里面的。简单记录一下，以备将来查验。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.kuanmi.top/images/VLight.png">
 <meta property="article:published_time" content="2023-07-30T17:16:12.000Z">
-<meta property="article:modified_time" content="2023-07-31T01:40:43.750Z">
+<meta property="article:modified_time" content="2023-07-31T02:29:38.425Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.kuanmi.top/images/VLight.png">
@@ -295,6 +295,8 @@
               <div class="markdown-body">
                 
                 <h1 id="前述"><a href="#前述" class="headerlink" title="前述"></a>前述</h1><p>又造一个轮子，为了庆祝URP终于出了TAA，撸一个简单体积光来庆祝一下。<br>就最最基础的用光线步进，采样阴影贴图。稍微抖动一下搭配TAA。<br>还是有一些URP的坑在里面的。简单记录一下，以备将来查验。</p>
+<span id="more"></span>
+
 <p><img src="/images/VLight01.png" srcset="/img/loading.gif" lazyload alt="体积光"></p>
 <h1 id="Renderer-Feature"><a href="#Renderer-Feature" class="headerlink" title="Renderer Feature"></a>Renderer Feature</h1><p>因为不打算再写一个RenderFeature了，直接用现成的<code>Full Screen Pass Renderer Feature</code>，所以就按照这个Pass要求的Shader的写法，要写两个Pass</p>
 <ul>
@@ -413,6 +415,12 @@ return half4(density, density, density, 1.0);</code></pre></div></figure>
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2023/07/30/MirrorCamera/" title="相机镜面反射">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">相机镜面反射</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">

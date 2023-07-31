@@ -16,16 +16,16 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="复刻URPLit考虑到项目移植各个平台的顺利，URP还是目前最实用的管线了，但自带的lit还是缺少很多功能，比如对VR很重要的几何高光抗锯齿，混合SSR也不是很方便，各向异性，环境法线，高光遮蔽，视差映射等等功能都是缺少的。为了功能的收缩与扩张方便，还是有必要手撸一个PBR的。而且Lit的代码为了兼容各种环境，比如Dot，VR，LODCross，做了大量的判断，代码很杂乱，很难修改。整理一遍也是为">
+    <meta name="description" content="复刻URPLit">
 <meta property="og:type" content="article">
 <meta property="og:title" content="URP下定制PBRShader">
 <meta property="og:url" content="https://www.kuanmi.top/2023/06/14/pbr/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="复刻URPLit考虑到项目移植各个平台的顺利，URP还是目前最实用的管线了，但自带的lit还是缺少很多功能，比如对VR很重要的几何高光抗锯齿，混合SSR也不是很方便，各向异性，环境法线，高光遮蔽，视差映射等等功能都是缺少的。为了功能的收缩与扩张方便，还是有必要手撸一个PBR的。而且Lit的代码为了兼容各种环境，比如Dot，VR，LODCross，做了大量的判断，代码很杂乱，很难修改。整理一遍也是为">
+<meta property="og:description" content="复刻URPLit">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.kuanmi.top/images/PBR-lit.png">
 <meta property="article:published_time" content="2023-06-14T18:40:21.000Z">
-<meta property="article:modified_time" content="2023-06-15T03:21:59.216Z">
+<meta property="article:modified_time" content="2023-07-31T02:32:45.573Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.kuanmi.top/images/PBR-lit.png">
@@ -294,7 +294,8 @@
             
               <div class="markdown-body">
                 
-                <h1 id="复刻URPLit"><a href="#复刻URPLit" class="headerlink" title="复刻URPLit"></a>复刻URPLit</h1><p>考虑到项目移植各个平台的顺利，URP还是目前最实用的管线了，但自带的lit还是缺少很多功能，比如对VR很重要的几何高光抗锯齿，混合SSR也不是很方便，各向异性，环境法线，高光遮蔽，视差映射等等功能都是缺少的。<br>为了功能的收缩与扩张方便，还是有必要手撸一个PBR的。<br>而且Lit的代码为了兼容各种环境，比如Dot，VR，LODCross，做了大量的判断，代码很杂乱，很难修改。整理一遍也是为了更好的理解URP的Lit着色器。<br>以上存粹是为了说服自己造这个轮子。。。</p>
+                <h1 id="复刻URPLit"><a href="#复刻URPLit" class="headerlink" title="复刻URPLit"></a>复刻URPLit</h1><span id="more"></span>
+<p>考虑到项目移植各个平台的顺利，URP还是目前最实用的管线了，但自带的lit还是缺少很多功能，比如对VR很重要的几何高光抗锯齿，混合SSR也不是很方便，各向异性，环境法线，高光遮蔽，视差映射等等功能都是缺少的。<br>为了功能的收缩与扩张方便，还是有必要手撸一个PBR的。<br>而且Lit的代码为了兼容各种环境，比如Dot，VR，LODCross，做了大量的判断，代码很杂乱，很难修改。整理一遍也是为了更好的理解URP的Lit着色器。<br>以上存粹是为了说服自己造这个轮子。。。</p>
 <h1 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h1><p>先从简单的搞起，大致输入就先仿照URP最精简的Lit</p>
 <ul>
 <li>按金属粗糙的工作流</li>

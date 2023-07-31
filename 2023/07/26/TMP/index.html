@@ -16,16 +16,16 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="体积字为了方便美术去修改场景中的有体积字，在TMP基础上，用光线步进加SDF去渲染体积字。  先贴参考 Mesh直接改原版的TMP有点麻烦，退而求其次，在TMP构造好Mesh后，修改这个Mesh，以适应新的Shader。 原本TMP构造出的网格是一个个面片，每个字符由两个三角形拼成。  然后以这个mesh为基础，再添加4个点，5个面，纵向拉伸成一个个立方体.  新网格中除了保存之前的网格中的信息外">
+    <meta name="description" content="体积字为了方便美术去修改场景中的有体积字，在TMP基础上，用光线步进加SDF去渲染体积字。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="基于TMP、SDF、光线步进的体积字渲染">
 <meta property="og:url" content="https://www.kuanmi.top/2023/07/26/TMP/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="体积字为了方便美术去修改场景中的有体积字，在TMP基础上，用光线步进加SDF去渲染体积字。  先贴参考 Mesh直接改原版的TMP有点麻烦，退而求其次，在TMP构造好Mesh后，修改这个Mesh，以适应新的Shader。 原本TMP构造出的网格是一个个面片，每个字符由两个三角形拼成。  然后以这个mesh为基础，再添加4个点，5个面，纵向拉伸成一个个立方体.  新网格中除了保存之前的网格中的信息外">
+<meta property="og:description" content="体积字为了方便美术去修改场景中的有体积字，在TMP基础上，用光线步进加SDF去渲染体积字。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.kuanmi.top/images/VTMP_13.png">
 <meta property="article:published_time" content="2023-07-26T06:01:04.000Z">
-<meta property="article:modified_time" content="2023-07-31T01:09:39.754Z">
+<meta property="article:modified_time" content="2023-07-31T02:29:47.477Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.kuanmi.top/images/VTMP_13.png">
@@ -295,6 +295,7 @@
               <div class="markdown-body">
                 
                 <h1 id="体积字"><a href="#体积字" class="headerlink" title="体积字"></a>体积字</h1><p>为了方便美术去修改场景中的有体积字，在TMP基础上，用光线步进加SDF去渲染体积字。</p>
+<span id="more"></span>
 <p><img src="/images/VTMP_13.png" srcset="/img/loading.gif" lazyload alt="体积渲染"></p>
 <p>先贴<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/42923421">参考</a></p>
 <h1 id="Mesh"><a href="#Mesh" class="headerlink" title="Mesh"></a>Mesh</h1><p>直接改原版的TMP有点麻烦，退而求其次，在TMP构造好Mesh后，修改这个Mesh，以适应新的Shader。</p>

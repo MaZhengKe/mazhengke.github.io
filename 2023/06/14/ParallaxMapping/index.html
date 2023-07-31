@@ -16,16 +16,16 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="前言之前之所以要重写一遍URP的lit，其实主要目的就是为了这里能实现真正的陡峭视差映射。URP自带的视差映射只是最最基本的用射线方向和高度去做偏移，只能在高度不高时有一点效果，要想更高一点的高度，只能像HDRP一样，分层用类似光线步进的方式去采样。 高度图高度图可以有多种使用方式，最简单的就是用来变化顶点，但需要模型面数很高。或者曲面细分后位移顶点，对GPU就有要求了。还可以在像素级别实现。通过">
+    <meta name="description" content="前言之前之所以要重写一遍URP的lit，其实主要目的就是为了这里能实现真正的带深度偏移的陡峭视差映射。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="URP下的视差遮蔽映射（带像素偏移）">
 <meta property="og:url" content="https://www.kuanmi.top/2023/06/14/ParallaxMapping/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="前言之前之所以要重写一遍URP的lit，其实主要目的就是为了这里能实现真正的陡峭视差映射。URP自带的视差映射只是最最基本的用射线方向和高度去做偏移，只能在高度不高时有一点效果，要想更高一点的高度，只能像HDRP一样，分层用类似光线步进的方式去采样。 高度图高度图可以有多种使用方式，最简单的就是用来变化顶点，但需要模型面数很高。或者曲面细分后位移顶点，对GPU就有要求了。还可以在像素级别实现。通过">
+<meta property="og:description" content="前言之前之所以要重写一遍URP的lit，其实主要目的就是为了这里能实现真正的带深度偏移的陡峭视差映射。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.kuanmi.top/images/Parallax.png">
 <meta property="article:published_time" content="2023-06-14T20:00:31.000Z">
-<meta property="article:modified_time" content="2023-06-15T07:12:27.830Z">
+<meta property="article:modified_time" content="2023-07-31T02:31:38.277Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.kuanmi.top/images/Parallax.png">
@@ -294,7 +294,9 @@
             
               <div class="markdown-body">
                 
-                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>之前之所以要重写一遍URP的lit，其实主要目的就是为了这里能实现真正的陡峭视差映射。<br>URP自带的视差映射只是最最基本的用射线方向和高度去做偏移，只能在高度不高时有一点效果，要想更高一点的高度，只能像HDRP一样，分层用类似光线步进的方式去采样。</p>
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>之前之所以要重写一遍URP的lit，其实主要目的就是为了这里能实现真正的带深度偏移的陡峭视差映射。</p>
+<span id="more"></span>
+<p>URP自带的视差映射只是最最基本的用射线方向和高度去做偏移，只能在高度不高时有一点效果，要想更高一点的高度，只能像HDRP一样，分层用类似光线步进的方式去采样。</p>
 <h1 id="高度图"><a href="#高度图" class="headerlink" title="高度图"></a>高度图</h1><p>高度图可以有多种使用方式，最简单的就是用来变化顶点，但需要模型面数很高。<br>或者曲面细分后位移顶点，对GPU就有要求了。<br>还可以在像素级别实现。<br>通过偏移UV，来模拟高度。URP自身的高度图就是这样的，但URP没有支持像素深度位移。<br>即仅仅偏移了UV，但像素的深度没有改变，会导致看起来物体悬空。HDRP则实现了这一功能。</p>
 <p>先来看看URP默认的高度图是怎么做的吧。<br>主要是这个函数</p>
 <figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">ApplyPerPixelDisplacement(viewDirTS, input.uv);</code></pre></div></figure>

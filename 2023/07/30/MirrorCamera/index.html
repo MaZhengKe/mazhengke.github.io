@@ -16,23 +16,23 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="前言SRP的接口一直在更改，是时候仔细看看RTHandle系统了。">
+    <meta name="description" content="除了常见的反射探针，SSR，之前变换相机矩阵，还有一种最简单的方式就是直接添加一个镜面相机。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RThandle">
-<meta property="og:url" content="https://www.kuanmi.top/2023/07/19/RThandle/index.html">
+<meta property="og:title" content="相机镜面反射">
+<meta property="og:url" content="https://www.kuanmi.top/2023/07/30/MirrorCamera/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="前言SRP的接口一直在更改，是时候仔细看看RTHandle系统了。">
+<meta property="og:description" content="除了常见的反射探针，SSR，之前变换相机矩阵，还有一种最简单的方式就是直接添加一个镜面相机。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://www.kuanmi.top/images/RTHandle.png">
-<meta property="article:published_time" content="2023-07-19T16:58:18.000Z">
-<meta property="article:modified_time" content="2023-07-31T02:29:56.833Z">
+<meta property="og:image" content="https://www.kuanmi.top/images/mirrorCamera.jpg">
+<meta property="article:published_time" content="2023-07-30T18:12:26.000Z">
+<meta property="article:modified_time" content="2023-07-31T02:28:58.625Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://www.kuanmi.top/images/RTHandle.png">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/mirrorCamera.jpg">
   
   
   
-  <title>RThandle - KuanMi</title>
+  <title>相机镜面反射 - KuanMi</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -198,13 +198,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/images/RTHandle.png') no-repeat center center; background-size: cover;">
+     style="background: url('/images/mirrorCamera.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="RThandle"></span>
+            <span id="subtitle" data-typed-text="相机镜面反射"></span>
           
         </div>
 
@@ -215,8 +215,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-07-20 00:58" pubdate>
-          2023年7月20日 凌晨
+        <time datetime="2023-07-31 02:12" pubdate>
+          2023年7月31日 凌晨
         </time>
       </span>
     
@@ -227,7 +227,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          642 字
+          2k 字
         
       </span>
     
@@ -238,7 +238,7 @@
         
         
         
-          6 分钟
+          17 分钟
         
       </span>
     
@@ -289,20 +289,96 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">RThandle</h1>
+            <h1 style="display: none">相机镜面反射</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>SRP的接口一直在更改，是时候仔细看看RTHandle系统了。</p>
+                <p>除了常见的反射探针，SSR，之前变换相机矩阵，还有一种最简单的方式就是直接添加一个镜面相机。</p>
 <span id="more"></span>
-<p>看RTHandle之前，先看看RenderTexture。</p>
-<p>基本的理解就是RT数据是保存在GPU上的，RT仅仅是CPU这里对其管理的一个工具。<br>而Texture的数据才是能直接在CPU读取的，使用时会加载到显存中。</p>
-<p>而RTHandle又是干啥的？</p>
-<h1 id="RTHandle-system"><a href="#RTHandle-system" class="headerlink" title="RTHandle system"></a>RTHandle system</h1><p>通篇看下来，最主要的目的就是为了处理不同RT的分辨率问题。</p>
-<p>假使有多个相机要渲染不同的分辨率，那就要为各个RT分配不同分辨率的RT。而临时RT仅能在分辨率和属性完全相同的情况下复用，所以总体的内存使用量是全部各种分辨率的内存总和。<br>所以RTHandle system 应运而生，这使得在不同分辨率的相机之间复用RT变得简单。<br>不再固定分辨率分配纹理，而是用给定的全屏分辨率相关的比例来分配</p>
-<h1 id="具体使用"><a href="#具体使用" class="headerlink" title="具体使用"></a>具体使用</h1><p>具体的用法上，不再像之前每帧去取一个TMPRT，而是用RTHandles.Alloc来让RTHandle system分配一个。<br>为了解决分辨率动态修改的问题，SRP还提供了一些工具函数，比如<code>RenderingUtils.ReAllocateIfNeeded</code>这里根据是否已经分配和是否分辨率等参数需要修改，来重新分配一个RTHandle。这个一般在OnCameraSetup中调用。</p>
-<p>如果要设置渲染目标，就调用<code>CoreUtils.SetRenderTarget</code>。<br>设置全局或局部纹理，就普通的<code>cmd.SetGlobalTexture</code>就好。<br>最后不要忘记<code>Release()</code>释放</p>
+
+<p><img src="/images/mirrorCamera.jpg" srcset="/img/loading.gif" lazyload alt="相机镜面反射"></p>
+<h1 id="脚本"><a href="#脚本" class="headerlink" title="脚本"></a>脚本</h1><p>脚本方面主要是使镜面相机和主相机镜像同步，包含FOV等等。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">    void MirrorCam()
+    &#123;
+        Camera camera &#x3D; originalCamera;
+
+#if UNITY_EDITOR
+        var focusedWindow &#x3D; EditorWindow.focusedWindow;
+        if (focusedWindow &#x3D;&#x3D; null)
+            return;
+
+        var type &#x3D; focusedWindow.GetType().Name;
+        switch (type)
+        &#123;
+            case &quot;SceneView&quot;:
+            case &quot;GameView&quot;:
+                currentView &#x3D; type;
+                break;
+        &#125;
+
+        if (Application.isPlaying &#x3D;&#x3D; false &amp;&amp; currentView &#x3D;&#x3D; &quot;SceneView&quot;)
+        &#123;
+            var sceneView &#x3D; SceneView.lastActiveSceneView;
+            camera &#x3D; sceneView.camera;
+        &#125;
+#endif
+
+        if (camera !&#x3D; null)
+        &#123;
+            mirrorCamera.fieldOfView &#x3D; camera.fieldOfView;
+            mirrorCamera.aspect &#x3D; camera.aspect;
+            MirrorTransformForPlane(mirrorCamera.transform, camera.transform, plane);
+        &#125;
+    &#125;
+
+    public static Quaternion mirrorRot(Transform plane, Quaternion cam)
+    &#123;
+        var forward &#x3D; plane.forward;
+        var reflect &#x3D; Vector3.Reflect(cam * Vector3.forward, forward);
+        var reflectup &#x3D; Vector3.Reflect(cam * Vector3.up, forward);
+
+        return Quaternion.LookRotation(reflect, reflectup);
+    &#125;
+
+    public static Vector3 mirrorPos(Transform plane, Vector3 oldPos)
+    &#123;
+        var forward &#x3D; plane.forward;
+        var planPos &#x3D; plane.position;
+        var dis &#x3D; planPos - oldPos;
+        var cros &#x3D; Vector3.Cross(dis, forward).normalized;
+        var ccos &#x3D; Vector3.Cross(cros, forward);
+        var refDis &#x3D; Vector3.Reflect(dis, ccos);
+        return refDis + planPos;
+    &#125;
+
+    private static void MirrorTransformForPlane(Transform mirrorTransform, Transform originTransform, Transform plane)
+    &#123;
+        var originPosition &#x3D; originTransform.position;
+        var originRotation &#x3D; originTransform.rotation;
+
+        var mirrorPosition &#x3D; mirrorPos(plane, originPosition);
+        var mirrorRotation &#x3D; mirrorRot(plane, originRotation);
+
+        mirrorTransform.position &#x3D; mirrorPosition;
+        mirrorTransform.rotation &#x3D; mirrorRotation;
+    &#125;</code></pre></div></figure>
+<p>这里就设置一下镜面相机的位置和旋转。<br>编辑器中要特殊对待，取场景的相机。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">    private void LateUpdate()
+    &#123;
+        MirrorCam();
+    &#125;
+
+#if UNITY_EDITOR
+    void OnRenderObject()
+    &#123;
+        MirrorCam();
+    &#125;
+#endif</code></pre></div></figure>
+<p>运行时在LateUpdate中设置，编辑器中就用OnRenderObject吧。</p>
+<h1 id="Shader-Graph"><a href="#Shader-Graph" class="headerlink" title="Shader Graph"></a>Shader Graph</h1><p>这里的Shader很简单，用SG连一下就行了。</p>
+<p><img src="/images/mirrorSG.png" srcset="/img/loading.gif" lazyload alt="镜面SG"></p>
+<p>屏幕UV要取对称，用菲涅尔简单模拟一下全反射，采样一下法线稍微做一下偏移。</p>
 
                 
               </div>
@@ -320,8 +396,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>RThandle</div>
-      <div>https://www.kuanmi.top/2023/07/19/RThandle/</div>
+      <div>相机镜面反射</div>
+      <div>https://www.kuanmi.top/2023/07/30/MirrorCamera/</div>
     </div>
     <div class="license-meta">
       
@@ -333,7 +409,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年7月20日</div>
+          <div>2023年7月31日</div>
         </div>
       
       
@@ -365,18 +441,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/07/26/TMP/" title="基于TMP、SDF、光线步进的体积字渲染">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">基于TMP、SDF、光线步进的体积字渲染</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/06/26/URP-Lit-BRDF/" title="URP-Lit-BRDF简析">
-                        <span class="hidden-mobile">URP-Lit-BRDF简析</span>
+                      <a href="/2023/07/30/VolumeLight/" title="URP体积光">
+                        <span class="hidden-mobile">URP体积光</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
