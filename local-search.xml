@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>GitPackage</title>
+    <link href="/2023/07/30/GitPackage/"/>
+    <url>/2023/07/30/GitPackage/</url>
+    
+    <content type="html"><![CDATA[<p>为了便于复用，需要把一些常用的功能做成Package，要管理这些Package的话单独建一个UPM的库有点没有必要，直接用Git来管理就好。<br>这里记录下使用Git发布、更新包的流程。</p><h1 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h1><p>与一般的Package没有什么不同，可以参照Unity官方的一些包来配置。<br>其实这里对于文件夹命名等没有什么明确的要求，一般来说分成以下几个部分。</p><h2 id="Documentation"><a href="#Documentation" class="headerlink" title="Documentation~"></a>Documentation~</h2><p>文档的目录，一般存放一些md格式的说明。以~结尾的文件夹不会在编辑器中显示。</p><h2 id="Samples"><a href="#Samples" class="headerlink" title="Samples~"></a>Samples~</h2><p>存放示例的目录，一般来说这个目录下的每个文件夹就对应了Package Manager的Samples中的一个示例。<br>需要在Package.json文件中定义，这个下面再说。</p><h2 id="Tests"><a href="#Tests" class="headerlink" title="Tests"></a>Tests</h2><p>顾名思义，存放测试的地方。</p><h2 id="Runtime-Editor"><a href="#Runtime-Editor" class="headerlink" title="Runtime Editor"></a>Runtime Editor</h2><p>一般来说会有这两个文件夹，区分运行时代码与编辑器代码。<br>同时下面会有两个asmdef来定义两个程序集合。</p><h2 id="package-json"><a href="#package-json" class="headerlink" title="package.json"></a>package.json</h2><p>包的定义文件。</p><figure><div class="code-wrapper"><pre class="line-numbers language-json" data-language="json"><code class="language-json">&#123;  &quot;name&quot;: &quot;top.kuanmi.outline&quot;,  &quot;displayName&quot;: &quot;Outline&quot;,  &quot;version&quot;: &quot;0.1.1&quot;,  &quot;unity&quot;: &quot;2022.1&quot;,  &quot;description&quot;: &quot;Outline for URP&quot;,  &quot;dependencies&quot;: &#123;    &quot;com.unity.render-pipelines.universal&quot;: &quot;13.1.8&quot;  &#125;,  &quot;samples&quot;: [    &#123;      &quot;displayName&quot;: &quot;Outline for URP&quot;,      &quot;description&quot;: &quot;Simple Outline for URP&quot;,      &quot;path&quot;: &quot;Samples~&#x2F;Example&quot;    &#125;  ]&#125;</code></pre></div></figure><p>参数就不一一解释了。</p><h2 id="README-md-CHANGELOG-md-LICENSE-md"><a href="#README-md-CHANGELOG-md-LICENSE-md" class="headerlink" title="README.md CHANGELOG.md LICENSE.md"></a>README.md CHANGELOG.md LICENSE.md</h2><p>一些文本文件了，不影响实际使用。</p><h1 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h1><p>然后是Git相关的一些<br>可以通过打Tag的形式来管理版本。<br>git tag 1.0.0<br>git push -u origin main –tags</p><p>安装时就通过指定Tag，或者分支的形式选定版本</p><p><a href="https://github.com/MaZhengKe/URPOutline.git#1.0.0">https://github.com/MaZhengKe/URPOutline.git#1.0.0</a></p><p>但是目前还没有找到让Package manager扫描全部Tag的方式。</p><h1 id="subtree"><a href="#subtree" class="headerlink" title="subtree"></a>subtree</h1><p>那平时开发与维护还需要一个仓库，这两个仓库有依赖关系。</p><p>所以再新开一个空项目，初始化Git。</p><p>初次提交之后，可以通过如下命令来引入依赖的Git仓库<br>git subtree add –prefix&#x3D;Assets&#x2F;Outline <a href="https://github.com/MaZhengKe/URPOutline">https://github.com/MaZhengKe/URPOutline</a> main</p><p>这样就在子路径下引入了依赖。</p><p>然后就按照正常的流程去修改，提交。</p><p>当需要推送到子仓库或者发布版本时：<br>git subtree push –prefix&#x3D;Assets&#x2F;Outline <a href="https://github.com/MaZhengKe/URPOutline">https://github.com/MaZhengKe/URPOutline</a> main</p><p>打Tag仍需要回到原Git环境下去打。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>编码</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Git</tag>
+      
+      <tag>Package</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>相机镜面反射</title>
     <link href="/2023/07/30/MirrorCamera/"/>
     <url>/2023/07/30/MirrorCamera/</url>

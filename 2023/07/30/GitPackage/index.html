@@ -16,24 +16,25 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="xrtoolkit2.3预览版更新，测试一下新功能。 安装目前还是预览版本，记得在packageManager中打开预览开关。然后按名称载入com.unity.xr.interaction.toolkit，记得指定版本2.3.0-pre.1 戳又一个交互器，最大的亮点是对UI的支持。可以做到类似触摸屏的效果了，不用傻傻的再用射线交互了。做一些类似的按钮交互也更方便了。 凝视可惜手头上并没有Ocul">
+    <meta name="description" content="为了便于复用，需要把一些常用的功能做成Package，要管理这些Package的话单独建一个UPM的库有点没有必要，直接用Git来管理就好。这里记录下使用Git发布、更新包的流程。 目录结构与一般的Package没有什么不同，可以参照Unity官方的一些包来配置。其实这里对于文件夹命名等没有什么明确的要求，一般来说分成以下几个部分。 Documentation~文档的目录，一般存放一些md格式的说">
 <meta property="og:type" content="article">
-<meta property="og:title" content="xrtoolkit2.3预览版本体验">
-<meta property="og:url" content="https://www.kuanmi.top/2023/01/31/xrtoolkit2-3/index.html">
+<meta property="og:title" content="GitPackage">
+<meta property="og:url" content="https://www.kuanmi.top/2023/07/30/GitPackage/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="xrtoolkit2.3预览版更新，测试一下新功能。 安装目前还是预览版本，记得在packageManager中打开预览开关。然后按名称载入com.unity.xr.interaction.toolkit，记得指定版本2.3.0-pre.1 戳又一个交互器，最大的亮点是对UI的支持。可以做到类似触摸屏的效果了，不用傻傻的再用射线交互了。做一些类似的按钮交互也更方便了。 凝视可惜手头上并没有Ocul">
+<meta property="og:description" content="为了便于复用，需要把一些常用的功能做成Package，要管理这些Package的话单独建一个UPM的库有点没有必要，直接用Git来管理就好。这里记录下使用Git发布、更新包的流程。 目录结构与一般的Package没有什么不同，可以参照Unity官方的一些包来配置。其实这里对于文件夹命名等没有什么明确的要求，一般来说分成以下几个部分。 Documentation~文档的目录，一般存放一些md格式的说">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://www.kuanmi.top/images/affordance.gif">
-<meta property="article:published_time" content="2023-01-31T17:44:16.000Z">
-<meta property="article:modified_time" content="2023-07-31T04:18:00.889Z">
+<meta property="og:image" content="https://www.kuanmi.top/images/GitPackage.png">
+<meta property="article:published_time" content="2023-07-30T21:57:51.000Z">
+<meta property="article:modified_time" content="2023-07-31T14:45:02.653Z">
 <meta property="article:author" content="KuanMi">
-<meta property="article:tag" content="XRToolkit">
+<meta property="article:tag" content="Git">
+<meta property="article:tag" content="Package">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://www.kuanmi.top/images/affordance.gif">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/GitPackage.png">
   
   
   
-  <title>xrtoolkit2.3预览版本体验 - KuanMi</title>
+  <title>GitPackage - KuanMi</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -199,13 +200,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/images/affordance.gif') no-repeat center center; background-size: cover;">
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="xrtoolkit2.3预览版本体验"></span>
+            <span id="subtitle" data-typed-text="GitPackage"></span>
           
         </div>
 
@@ -221,8 +222,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-02-01 01:44" pubdate>
-          2023年2月1日 凌晨
+        <time datetime="2023-07-31 05:57" pubdate>
+          2023年7月31日 凌晨
         </time>
       </span>
     
@@ -233,7 +234,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          790 字
+          1.5k 字
         
       </span>
     
@@ -244,7 +245,7 @@
         
         
         
-          7 分钟
+          13 分钟
         
       </span>
     
@@ -295,19 +296,48 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">xrtoolkit2.3预览版本体验</h1>
+            <h1 style="display: none">GitPackage</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="xrtoolkit"><a href="#xrtoolkit" class="headerlink" title="xrtoolkit"></a>xrtoolkit</h1><p>2.3预览版更新，测试一下新功能。</p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>目前还是预览版本，记得在packageManager中打开预览开关。<br>然后按名称载入<code>com.unity.xr.interaction.toolkit</code>，记得指定版本2.3.0-pre.1</p>
-<h1 id="戳"><a href="#戳" class="headerlink" title="戳"></a>戳</h1><p>又一个交互器，最大的亮点是对UI的支持。可以做到类似触摸屏的效果了，不用傻傻的再用射线交互了。做一些类似的按钮交互也更方便了。</p>
-<h1 id="凝视"><a href="#凝视" class="headerlink" title="凝视"></a>凝视</h1><p>可惜手头上并没有Oculus，这个目前体验不了。</p>
-<h1 id="交互组"><a href="#交互组" class="headerlink" title="交互组"></a>交互组</h1><p>他们终于意识到搞这么多交互器，然后手动去控制何时应该启用和关闭哪个是多么复杂的事情了。<br>这个东西就是给交互器排序，然后在有多个交互器都可以悬停或选择时，按顺序只启用优先级最高的那个。<br>具体用起来就比如说，<code>Direct Interactor</code>比<code>Ray Interactor</code>优先级高的话，在距离物体很近，<code>Direct Interactor</code>可以悬停的时候，就会禁用<code>Ray Interactor</code>。体验上要好很多。</p>
-<h1 id="Affordance"><a href="#Affordance" class="headerlink" title="Affordance"></a>Affordance</h1><p>不知道怎么翻译才确切。<br>是个挺有意思的工具。感觉是为了无代码编程准备的。<br>总结起来就是类似<code>Button</code>的<code>Transition</code>。根据不同的状态，如未启用、闲置、悬浮、选择和使用等来设置需要的值（可以是颜色、数值、向量乃至音频）。然后由一类<code>AffordanceReceiver</code>的组件来依据这些设定好的<code>主题</code>来插值或者播放，最后把插值后的结果给到对应的材质、Player或者缩放。<br><img src="/images/affordance.gif" srcset="/img/loading.gif" lazyload alt="颜色插值"><br>虽然这些功能手动写也不会太麻烦，但还是很乐于看到官方给出现成的解决方案的。</p>
-<h1 id="模拟器"><a href="#模拟器" class="headerlink" title="模拟器"></a>模拟器</h1><p>xr模拟器也更新了一下，类似FPS的交互模式，增加了新的UI，总算是能用了。<br><img src="/images/XRm.png" srcset="/img/loading.gif" lazyload alt="xr模拟器"></p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>不大不小的更新吧，有了戳击交互，对于UI就更方便了。凝视目前手里没有能用的设备不好说，最后的那两个也算是锦上添花的功能了。<br>期待下次更新能把<code>XR Hands</code>和<code>xr toolkit</code>结合起来，那就算<code>xr toolkit</code>功能齐全了。</p>
+                <p>为了便于复用，需要把一些常用的功能做成Package，要管理这些Package的话单独建一个UPM的库有点没有必要，直接用Git来管理就好。<br>这里记录下使用Git发布、更新包的流程。</p>
+<h1 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h1><p>与一般的Package没有什么不同，可以参照Unity官方的一些包来配置。<br>其实这里对于文件夹命名等没有什么明确的要求，一般来说分成以下几个部分。</p>
+<h2 id="Documentation"><a href="#Documentation" class="headerlink" title="Documentation~"></a>Documentation~</h2><p>文档的目录，一般存放一些md格式的说明。以~结尾的文件夹不会在编辑器中显示。</p>
+<h2 id="Samples"><a href="#Samples" class="headerlink" title="Samples~"></a>Samples~</h2><p>存放示例的目录，一般来说这个目录下的每个文件夹就对应了Package Manager的Samples中的一个示例。<br>需要在Package.json文件中定义，这个下面再说。</p>
+<h2 id="Tests"><a href="#Tests" class="headerlink" title="Tests"></a>Tests</h2><p>顾名思义，存放测试的地方。</p>
+<h2 id="Runtime-Editor"><a href="#Runtime-Editor" class="headerlink" title="Runtime Editor"></a>Runtime Editor</h2><p>一般来说会有这两个文件夹，区分运行时代码与编辑器代码。<br>同时下面会有两个asmdef来定义两个程序集合。</p>
+<h2 id="package-json"><a href="#package-json" class="headerlink" title="package.json"></a>package.json</h2><p>包的定义文件。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-json" data-language="json"><code class="language-json">&#123;
+  &quot;name&quot;: &quot;top.kuanmi.outline&quot;,
+  &quot;displayName&quot;: &quot;Outline&quot;,
+  &quot;version&quot;: &quot;0.1.1&quot;,
+  &quot;unity&quot;: &quot;2022.1&quot;,
+  &quot;description&quot;: &quot;Outline for URP&quot;,
+  &quot;dependencies&quot;: &#123;
+    &quot;com.unity.render-pipelines.universal&quot;: &quot;13.1.8&quot;
+  &#125;,
+  &quot;samples&quot;: [
+    &#123;
+      &quot;displayName&quot;: &quot;Outline for URP&quot;,
+      &quot;description&quot;: &quot;Simple Outline for URP&quot;,
+      &quot;path&quot;: &quot;Samples~&#x2F;Example&quot;
+    &#125;
+  ]
+&#125;</code></pre></div></figure>
+<p>参数就不一一解释了。</p>
+<h2 id="README-md-CHANGELOG-md-LICENSE-md"><a href="#README-md-CHANGELOG-md-LICENSE-md" class="headerlink" title="README.md CHANGELOG.md LICENSE.md"></a>README.md CHANGELOG.md LICENSE.md</h2><p>一些文本文件了，不影响实际使用。</p>
+<h1 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h1><p>然后是Git相关的一些<br>可以通过打Tag的形式来管理版本。<br>git tag 1.0.0<br>git push -u origin main –tags</p>
+<p>安装时就通过指定Tag，或者分支的形式选定版本</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/MaZhengKe/URPOutline.git#1.0.0">https://github.com/MaZhengKe/URPOutline.git#1.0.0</a></p>
+<p>但是目前还没有找到让Package manager扫描全部Tag的方式。</p>
+<h1 id="subtree"><a href="#subtree" class="headerlink" title="subtree"></a>subtree</h1><p>那平时开发与维护还需要一个仓库，这两个仓库有依赖关系。</p>
+<p>所以再新开一个空项目，初始化Git。</p>
+<p>初次提交之后，可以通过如下命令来引入依赖的Git仓库<br>git subtree add –prefix&#x3D;Assets&#x2F;Outline <a target="_blank" rel="noopener" href="https://github.com/MaZhengKe/URPOutline">https://github.com/MaZhengKe/URPOutline</a> main</p>
+<p>这样就在子路径下引入了依赖。</p>
+<p>然后就按照正常的流程去修改，提交。</p>
+<p>当需要推送到子仓库或者发布版本时：<br>git subtree push –prefix&#x3D;Assets&#x2F;Outline <a target="_blank" rel="noopener" href="https://github.com/MaZhengKe/URPOutline">https://github.com/MaZhengKe/URPOutline</a> main</p>
+<p>打Tag仍需要回到原Git环境下去打。</p>
 
                 
               </div>
@@ -341,7 +371,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/XRToolkit/">#XRToolkit</a>
+        <a href="/tags/Git/">#Git</a>
+      
+        <a href="/tags/Package/">#Package</a>
       
     </div>
   
@@ -353,8 +385,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>xrtoolkit2.3预览版本体验</div>
-      <div>https://www.kuanmi.top/2023/01/31/xrtoolkit2-3/</div>
+      <div>GitPackage</div>
+      <div>https://www.kuanmi.top/2023/07/30/GitPackage/</div>
     </div>
     <div class="license-meta">
       
@@ -366,7 +398,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年2月1日</div>
+          <div>2023年7月31日</div>
         </div>
       
       
@@ -398,18 +430,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2023/02/01/CustomInputSystem/" title="自定义UDP设备 InputSystem">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">自定义UDP设备 InputSystem</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/01/29/multiplayer/" title="Netcode网络框架与XRToolkit交互">
-                        <span class="hidden-mobile">Netcode网络框架与XRToolkit交互</span>
+                      <a href="/2023/07/30/MirrorCamera/" title="相机镜面反射">
+                        <span class="hidden-mobile">相机镜面反射</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
