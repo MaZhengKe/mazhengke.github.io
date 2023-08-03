@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.kuanmi.top/images/VLight-slim.png">
 <meta property="article:published_time" content="2023-07-30T17:16:12.000Z">
-<meta property="article:modified_time" content="2023-08-02T08:20:24.675Z">
+<meta property="article:modified_time" content="2023-08-03T02:55:52.314Z">
 <meta property="article:author" content="KuanMi">
 <meta property="article:tag" content="Shader">
 <meta property="article:tag" content="体积光">
@@ -234,7 +234,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          7.4k 字
+          8.2k 字
         
       </span>
     
@@ -245,7 +245,7 @@
         
         
         
-          62 分钟
+          69 分钟
         
       </span>
     
@@ -604,6 +604,20 @@ public abstract class BaseVolumeLight : MonoBehaviour
     &#125;
 &#125;</code></pre></div></figure>
 <p>这里顺便用了VolumeComponent，方便在场景中调整全局平行体积光的效果。</p>
+<h1 id="优化与改进"><a href="#优化与改进" class="headerlink" title="优化与改进"></a>优化与改进</h1><h2 id="Blue-Noise"><a href="#Blue-Noise" class="headerlink" title="Blue Noise"></a>Blue Noise</h2><p>之前抖动步进距离是采用的一般的shader内的随机数，但还是有一种更好更适合光线步进的噪声，BlueNoise。<br>具体这东西有多神奇请移步<a target="_blank" rel="noopener" href="http://momentsingraphics.de/BlueNoise.html">BlueNoise</a>。</p>
+<p>可惜的是这没办法实时单帧内在GPU生成，只能预先生成然后采样，好消息是仅需64*64分辨率平铺，肉眼也很难发现重复结构，我觉得这才是BlueNoise最最神奇的地方，而且也基本发现不了有什么突出的结构。<br><img src="/images/BlueNoise01.png" srcset="/img/loading.gif" lazyload alt="64*64平铺"></p>
+<p>为了搭配TAA，有两种方式，一是随时间随机抖动整体偏移一张噪声图，二是用TextureArray，随时间随机采样不同的噪声图。好在噪声图不大，即使放上64张，一共也才512<em>512。<br>为了方便使用，下面打包了一张512</em>512的包含了64张64*64的噪声图，可以方便在Untiy中直接生成TextureArray，图片来源<a target="_blank" rel="noopener" href="http://momentsingraphics.de/BlueNoise.html">图片来源</a><br><img src="/images/output.png" srcset="/img/loading.gif" lazyload alt="512*512图集"></p>
+<p>只能说这个噪声太神奇了，原先平行光需要采样15次的效果，搭配TAA仅需4次。射灯原先10次采样，现在仅需3次就能有不错的效果。</p>
+<p><img src="/images/VLight-32.png" srcset="/img/loading.gif" lazyload alt="采样32次"><br><img src="/images/VLight-4.png" srcset="/img/loading.gif" lazyload alt="采样4次"></p>
+<h2 id="可控性"><a href="#可控性" class="headerlink" title="可控性"></a>可控性</h2><p>其实在日常中，很少能发现体积光的现象，一般只有在山洞，森林等光线单一且潮湿的地方才有。<br>但这种效果却在游戏中经常运用。</p>
+<p>会过来看Shader，发现其实这里也没有多么“物理”，比如平行光就没有计算衰减，最后的归一化函数也是基于经验。<br>所以调整一下最后的归一化函数，增加几个系数，便于调整美术效果。</p>
+<ul>
+<li>均匀度：调整步进总量光线强度与实际显示亮度的关系</li>
+<li>最大强度：便于调整整体的颜色和强度</li>
+<li>距离衰减系数：是否考虑距离或角度的衰减</li>
+<li>阴影反向衰减强度：阴影不仅不计入光线总量，反而会反向衰减现有的光线总量，会加深阴影的表现，但“不物理”。</li>
+</ul>
+<h2 id="升降采样与模糊"><a href="#升降采样与模糊" class="headerlink" title="升降采样与模糊"></a>升降采样与模糊</h2><p>算最常见的优化方案了，确实体积光也没必要全分辨率渲染，而且模糊后再搭配TAA效果应该也不错，边缘也不会那么锐利。<br>这就单独再开一篇文章记录吧，打算在URP中用RenderFeature和Volume框架复刻毛星云大佬的那个模糊后处理的库。</p>
 
                 
               </div>
