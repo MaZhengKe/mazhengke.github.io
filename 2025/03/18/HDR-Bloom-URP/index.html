@@ -16,23 +16,23 @@
   <meta name="author" content="KuanMi">
   <meta name="keywords" content="">
   
-    <meta name="description" content="概述 产品现有一需求，要运行时更改文字且添加消融与粒子消散。 虽然不算很复杂，还是记录一下。 想了下从TMP文字的SDF图来着手应该是比较不错的方案。 TMP消融Shader 这里先看下TMP的原始shader，就是采样SDF图，再根据是否要轮廓、阴影等效果加上对应的代码。 那就很简单了，采样个噪声图，根据时间clip一下，再取个宽度，step后给个颜色就完事了。 这就简单贴一下">
+    <meta name="description" content="概述 在MR环境下，HDR Bloom是一个很重要的效果，很多美术效果尤其是光效都需要HDR Bloom来提升画面的质感。 但是在URP中，启用HDR默认是用的B10G11R11_UFloatPack32的格式，这个格式会牺牲透明通道，导致MR失效。 所以翻看Pico或者Meta的文档，他们都不允许开启HDR。 然后是Bloom。URP的bloom是按照RGBM编码在rgba四个通道中">
 <meta property="og:type" content="article">
-<meta property="og:title" content="基于TMP与VEG的实时文字粒子消融效果">
-<meta property="og:url" content="https://www.kuanmi.top/2025/03/18/TMP-VEG/index.html">
+<meta property="og:title" content="MR环境下在URP中实现HDR Bloom">
+<meta property="og:url" content="https://www.kuanmi.top/2025/03/18/HDR-Bloom-URP/index.html">
 <meta property="og:site_name" content="KuanMi">
-<meta property="og:description" content="概述 产品现有一需求，要运行时更改文字且添加消融与粒子消散。 虽然不算很复杂，还是记录一下。 想了下从TMP文字的SDF图来着手应该是比较不错的方案。 TMP消融Shader 这里先看下TMP的原始shader，就是采样SDF图，再根据是否要轮廓、阴影等效果加上对应的代码。 那就很简单了，采样个噪声图，根据时间clip一下，再取个宽度，step后给个颜色就完事了。 这就简单贴一下">
+<meta property="og:description" content="概述 在MR环境下，HDR Bloom是一个很重要的效果，很多美术效果尤其是光效都需要HDR Bloom来提升画面的质感。 但是在URP中，启用HDR默认是用的B10G11R11_UFloatPack32的格式，这个格式会牺牲透明通道，导致MR失效。 所以翻看Pico或者Meta的文档，他们都不允许开启HDR。 然后是Bloom。URP的bloom是按照RGBM编码在rgba四个通道中">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://www.kuanmi.top/images/tmp-veg.png">
-<meta property="article:published_time" content="2025-03-18T01:35:22.000Z">
-<meta property="article:modified_time" content="2025-03-18T01:41:13.056Z">
+<meta property="og:image" content="https://www.kuanmi.top/images/bloomMR.png">
+<meta property="article:published_time" content="2025-03-18T02:16:57.000Z">
+<meta property="article:modified_time" content="2025-03-18T05:30:04.022Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://www.kuanmi.top/images/tmp-veg.png">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/bloomMR.png">
   
   
   
-  <title>基于TMP与VEG的实时文字粒子消融效果 - KuanMi</title>
+  <title>MR环境下在URP中实现HDR Bloom - KuanMi</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -198,13 +198,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/images/tmp-veg.png') no-repeat center center; background-size: cover;">
+     style="background: url('/images/bloomMR.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="基于TMP与VEG的实时文字粒子消融效果"></span>
+            <span id="subtitle" data-typed-text="MR环境下在URP中实现HDR Bloom"></span>
           
         </div>
 
@@ -220,7 +220,7 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-03-18 09:35" pubdate>
+        <time datetime="2025-03-18 10:16" pubdate>
           2025年3月18日 上午
         </time>
       </span>
@@ -232,7 +232,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.7k 字
+          3.8k 字
         
       </span>
     
@@ -243,7 +243,7 @@
         
         
         
-          15 分钟
+          32 分钟
         
       </span>
     
@@ -293,100 +293,170 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">基于TMP与VEG的实时文字粒子消融效果</h1>
+            <h1 id="seo-header">MR环境下在URP中实现HDR Bloom</h1>
             
             
               <div class="markdown-body">
                 
                 <h1 id="概述">概述</h1>
-<p>产品现有一需求，要运行时更改文字且添加消融与粒子消散。<br />
-虽然不算很复杂，还是记录一下。</p>
-<p>想了下从TMP文字的SDF图来着手应该是比较不错的方案。</p>
-<h1 id="tmp消融shader">TMP消融Shader</h1>
-<p>这里先看下TMP的原始shader，就是采样SDF图，再根据是否要轮廓、阴影等效果加上对应的代码。<br />
-那就很简单了，采样个噪声图，根据时间clip一下，再取个宽度，step后给个颜色就完事了。<br />
-这就简单贴一下</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-glsl" data-language="glsl"><code class="language-glsl">float noise &#x3D; tex2D(_NoiseTex, input.atlas *  100).a;
-
-float w &#x3D; noise - _BleedCompensation;
-
-clip(w);
-
-float isEdge &#x3D; step(w - _Width, 0);
-
-         ......           
-
-         faceColor +&#x3D; isEdge * _OutlineColor;
-
-faceColor.a &#x3D; saturate(faceColor.a);</code></pre></div></figure>
-<p>一开始忘了去限制alpha，导致溢出</p>
+<p>在MR环境下，HDR
+Bloom是一个很重要的效果，很多美术效果尤其是光效都需要HDR
+Bloom来提升画面的质感。<br />
+但是在URP中，启用HDR默认是用的B10G11R11_UFloatPack32的格式，这个格式会牺牲透明通道，导致MR失效。<br />
+所以翻看Pico或者Meta的文档，他们都不允许开启HDR。</p>
+<p>然后是Bloom。URP的bloom是按照RGBM编码在rgba四个通道中，计算时解码，也丢失了透明通道。</p>
+<p>所以在MR环境下，要实现HDR Bloom，就需要自己对URP进行一些修改。</p>
 <figure>
-<img src="TMP文字消融.gif" srcset="/img/loading.gif" lazyload alt="TMP文字消融" />
-<figcaption aria-hidden="true">TMP文字消融</figcaption>
+<img src="bloom.png" srcset="/img/loading.gif" lazyload alt="bloom开关效果对比" />
+<figcaption aria-hidden="true">bloom开关效果对比</figcaption>
 </figure>
-<h1 id="粒子">粒子</h1>
-<p>粒子用的是VEG，大体思路是</p>
-<ul>
-<li>用脚本把TMP的mesh和字体SDF贴图传进去</li>
-<li>用表面模式去随机采样，拿到位置和UV以及颜色。</li>
-<li>UV就可以直接采样SDF了，然后小于指定参数的粒子就消灭掉</li>
-</ul>
-<p>到这里粒子就是生成在文字上的了。</p>
-<p><img src="粒子.png" srcset="/img/loading.gif" lazyload /></p>
-<p>然后是消融</p>
-<ul>
-<li>传入同样一张噪声图，一样的参数去把边缘取出来。非边缘部分的粒子同样就直接消灭</li>
-<li>然后放出来一些参数去配置大小和颜色。</li>
-<li>最后随便给个Turbulence和速度就完活了</li>
-</ul>
-<p><img src="SG.png" srcset="/img/loading.gif" lazyload /></p>
-<p>要根据当前文字数量可以动态调整要生成的粒子数量，避免浪费。</p>
-<p>最后用Timeline去统一配置下动画就完工。</p>
-<p><img src="TMP文字粒子.gif" srcset="/img/loading.gif" lazyload /></p>
-<h1 id="vfxbinderbase">VFXBinderBase</h1>
-<p>为了以后方便使用，参照VFXBinderBase的写法，写个VFXTMPBinder来自动绑定TMP的Mesh</p>
-<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">
-using TMPro;
-using UnityEngine;
-using UnityEngine.VFX;
-using UnityEngine.VFX.Utility;
+<h1 id="hdr">HDR</h1>
+<p>首先来处理HDR</p>
+<h2 id="启用64位hdr精度">启用64位HDR精度</h2>
+<p>首先是启用64位HDR精度，这个在URP中是有的（印象中2021的版本没有？），只是默认没有开启。</p>
+<p>URP的配置文件中把很多选项隐藏了起来，要通过勾选<code>Show Additional Properties</code>来显示。</p>
+<figure>
+<img src="setting.png" srcset="/img/loading.gif" lazyload alt="URP配置" />
+<figcaption aria-hidden="true">URP配置</figcaption>
+</figure>
+<p>然后就可以看到<code>HDR Precision</code>选项了，把它改成<code>64 Bits</code>就可以了。</p>
+<figure>
+<img src="HDRPrecisionpng.png" srcset="/img/loading.gif" lazyload alt="HDR Precision" />
+<figcaption aria-hidden="true">HDR Precision</figcaption>
+</figure>
+<p>这里会导致显存带宽的增加，要注意。</p>
+<h2 id="修改uberpost">修改UberPost</h2>
+<p>URP的后处理比如色调映射、HDR
+Mapping等都是在UberPost这一个Shader中实现的。<br />
+这里可以看到，它根本没有采样透明通道。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">half3 color &#x3D; (0.0).xxx;
 
-namespace DefaultNamespace
 &#123;
-    [VFXBinder(&quot;GameObject&#x2F;TextMeshPro&quot;)]
-    public class VFXTMPBinder : VFXBinderBase
-    &#123;
-        
-        public TextMeshPro Target;
-        
-        public string Property &#123; get &#123; return (string)m_Property; &#125; set &#123; m_Property &#x3D; value; &#125; &#125;
-         
+    color &#x3D; SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, SCREEN_COORD_REMOVE_SCALEBIAS(uvDistorted)).xyz;
+&#125;</code></pre></div></figure>
+<p>所以要修改这个Shader，把透明通道也采样进来。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">half3 color &#x3D; (0.0).xxx;
+float alpha &#x3D; 1.0;
 
-        [VFXPropertyBinding( &quot;UnityEngine.Mesh&quot;) ,SerializeField]
-        protected ExposedProperty m_Property &#x3D; &quot;mesh&quot;;
-        
-        
-        public override bool IsValid(VisualEffect component)
-        &#123;
-            return Target !&#x3D; null &amp;&amp; component.HasMesh(m_Property);
-        &#125;
+&#123;
+    float4 vv &#x3D; SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, SCREEN_COORD_REMOVE_SCALEBIAS(uvDistorted));
+    color &#x3D; vv.xyz;
+    alpha &#x3D; vv.w;
+&#125;</code></pre></div></figure>
+<p>到这里，MR环境下的HDR就可以正常工作了。</p>
+<h1 id="bloom">Bloom</h1>
+<p>然后是Bloom</p>
+<h2 id="shader修改">Shader修改</h2>
+<p>先来看看<code>Bloom.Shader</code></p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">half4 EncodeHDR(half3 color)
+&#123;
+#if _USE_RGBM
+    half4 outColor &#x3D; EncodeRGBM(color);
+#else
+    half4 outColor &#x3D; half4(color, 1.0);
+#endif
 
-        public override void UpdateBinding(VisualEffect component)
-        &#123;
-            component.SetMesh(m_Property, Target.mesh);
-        &#125;
-        
-        
-        public override string ToString()
-        &#123;
-            return string.Format(&quot;Mesh : &#39;&#123;0&#125;&#39; -&gt; &#123;1&#125;&quot;, m_Property, Target &#x3D;&#x3D; null ? &quot;(null)&quot; : Target.name);
-        &#125;
-    &#125;
+#if UNITY_COLORSPACE_GAMMA
+    return half4(sqrt(outColor.xyz), outColor.w); &#x2F;&#x2F; linear to γ
+#else
+    return outColor;
+#endif
 &#125;
-</code></pre></div></figure>
-<h1 id="优化">优化</h1>
-<p>这里有个小问题就是比较小的字的网格也比较小，但随机取样没有考虑这一点，所以导致每个字上的粒子数量密度不均匀。</p>
-<p>解决的办法就是去改TMP源码，写网格的时候比如在UV里在加上当前网格的大小，然后粒子采样时用这个参数去过滤掉多出来的粒子就可以了。</p>
+
+half3 DecodeHDR(half4 color)
+&#123;
+#if UNITY_COLORSPACE_GAMMA
+    color.xyz *&#x3D; color.xyz; &#x2F;&#x2F; γ to linear
+#endif
+
+#if _USE_RGBM
+    return DecodeRGBM(color);
+#else
+    return color.xyz;
+#endif
+&#125;</code></pre></div></figure>
+<p>可以看到，Bloom是用RGBM编码的，这个编码会丢失透明通道。<br />
+所以把这种编码全部干掉，直接用RGBA编码，因为用了R16G16B16A16格式，所以不用担心精度问题。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">half4 EncodeHDR(half4 color)
+&#123;
+    return color;
+&#125;
+
+half4 DecodeHDR(half4 color)
+&#123;
+    return color;
+&#125;</code></pre></div></figure>
+<p>其他的大同小异，宗旨就是不要丢失透明通道。比如在上下采样时都要保留透明通道。<br />
+以上采样为例<br />
+从<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">half3 Upsample(float2 uv)
+&#123;
+    half3 highMip &#x3D; DecodeHDR(SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv));
+
+#if _BLOOM_HQ &amp;&amp; !defined(SHADER_API_GLES)
+    half3 lowMip &#x3D; DecodeHDR(SampleTexture2DBicubic(TEXTURE2D_X_ARGS(_SourceTexLowMip, sampler_LinearClamp), uv, _SourceTexLowMip_TexelSize.zwxy, (1.0).xx, unity_StereoEyeIndex));
+#else
+    half3 lowMip &#x3D; DecodeHDR(SAMPLE_TEXTURE2D_X(_SourceTexLowMip, sampler_LinearClamp, uv));
+#endif
+
+    return lerp(highMip, lowMip, Scatter);
+&#125;
+
+half4 FragUpsample(Varyings input) : SV_Target
+&#123;
+    UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+    half3 color &#x3D; Upsample(UnityStereoTransformScreenSpaceTex(input.texcoord));
+    return EncodeHDR(color);
+&#125;</code></pre></div></figure><br />
+改成<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">half4 Upsample(float2 uv)
+&#123;
+    half4 highMip &#x3D; DecodeHDR(SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv));
+
+    #if _BLOOM_HQ &amp;&amp; !defined(SHADER_API_GLES)
+        half4 lowMip &#x3D; DecodeHDR(SampleTexture2DBicubic(TEXTURE2D_X_ARGS(_SourceTexLowMip, sampler_LinearClamp), uv, _SourceTexLowMip_TexelSize.zwxy, (1.0).xx, unity_StereoEyeIndex));
+    #else
+    half4 lowMip &#x3D; DecodeHDR(SAMPLE_TEXTURE2D_X(_SourceTexLowMip, sampler_LinearClamp, uv));
+    #endif
+
+    return lerp(highMip, lowMip, Scatter);
+&#125;
+
+half4 FragUpsample(Varyings input) : SV_Target
+&#123;
+    UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+    half4 color &#x3D; Upsample(UnityStereoTransformScreenSpaceTex(input.texcoord));
+    return EncodeHDR(color);
+&#125;</code></pre></div></figure></p>
+<p>这样就得到了保留透明通道的Bloom贴图。<br />
+<img src="bloomWithAlpha.png" srcset="/img/loading.gif" lazyload alt="Bloom" /></p>
+<h2 id="最终绘制">最终绘制</h2>
+<p>最后在<code>UberPost</code>中把Bloom的结果和HDR的结果合并。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">half4 bloom &#x3D; SAMPLE_TEXTURE2D_X(_Bloom_Texture, sampler_LinearClamp, SCREEN_COORD_REMOVE_SCALEBIAS(uvBloom));
+alpha &#x3D;  alpha +  bloom.w  * _Bloom_Alpha;</code></pre></div></figure>
+<p>这里有个问题，一般的bloom是加到Color上，但这里要考虑透明通道，最终和MR相机的图层进行混合时，是用透明通道来混合的。<br />
+这导致含有透明度的bloom颜色再叠加透明度会变淡。所以这里再传一个参数进去，适当提高透明度。</p>
+<p>但不能加太多，否则周围没有bloom颜色的地方（默认黑色），就会被多出来的透明度混合成黑色。<br />
+这里只能寄希望于Meta或者Pico给出MR透视的贴图，当作天空盒提前渲染到相机的buffer上才能解决这个问题。<br />
+但如果这样做，又会导致MR相机的贴图被二次采样，势必会降低渲染质量。（目前meta和pico都给出了对应的SDK来获取相机图像，但都有一些限制）<br />
+所以没什么好办法</p>
+<h1 id="便于在编辑器调试的mr背景图">便于在编辑器调试的MR背景图</h1>
+<p>在编辑器中，MR背景图是黑色的，这样在调试时就看不到背景了，也就无法确认Bloom经过透明度混合后的效果。</p>
+<p>所以在<code>UberPost</code>中加入一张背景图，模仿alpha混合的效果。</p>
+<p>这样就可以在编辑器中看到背景了。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#ifdef BG_TEXTURE
+float4 bg &#x3D; SAMPLE_TEXTURE2D_X(_BG_Texture, sampler_PointClamp, input.texcoord);
+alpha &#x3D; clamp(alpha, 0, 1);
+color &#x3D; color * alpha + bg * (1 - alpha);
+return half4(color, 1);
+#endif</code></pre></div></figure>
+<figure>
+<img src="bg.png" srcset="/img/loading.gif" lazyload alt="BG" />
+<figcaption aria-hidden="true">BG</figcaption>
+</figure>
+<h1 id="结语">结语</h1>
+<p>到这里，HDR Bloom在MR环墋下就可以正常工作了。<br />
+但凡事都有代价，这里的代价就是显存带宽的增加，要根据实际情况来决定是否使用。</p>
 
                 
               </div>
@@ -404,8 +474,8 @@ namespace DefaultNamespace
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>基于TMP与VEG的实时文字粒子消融效果</div>
-      <div>https://www.kuanmi.top/2025/03/18/TMP-VEG/</div>
+      <div>MR环境下在URP中实现HDR Bloom</div>
+      <div>https://www.kuanmi.top/2025/03/18/HDR-Bloom-URP/</div>
     </div>
     <div class="license-meta">
       
@@ -449,18 +519,12 @@ namespace DefaultNamespace
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/03/18/HDR-Bloom-URP/" title="MR环境下在URP中实现HDR Bloom">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">MR环境下在URP中实现HDR Bloom</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2023/08/14/depth/" title="Shader中深度相关坐标的转换">
-                        <span class="hidden-mobile">Shader中深度相关坐标的转换</span>
+                      <a href="/2025/03/18/TMP-VEG/" title="基于TMP与VEG的实时文字粒子消融效果">
+                        <span class="hidden-mobile">基于TMP与VEG的实时文字粒子消融效果</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
