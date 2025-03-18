@@ -1,0 +1,1706 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="组件 组件代表实体组件系统 (ECS) 架构中的数据。实体将组件关联在一起，系统提供可以读取和写入组件数据的逻辑。本节介绍 ECS 组件并说明如何使用它们。    标题 描述     组件类型 了解不同的组件类型以及如何使用它们。   向实体添加组件 使用 csharp 脚本从实体添加组件。   从实体中移除组件 使用 csharp 脚本从实体中移除组件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ECS 组件">
+<meta property="og:url" content="https://www.kuanmi.top/2022/11/17/ECS-components-intro/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="组件 组件代表实体组件系统 (ECS) 架构中的数据。实体将组件关联在一起，系统提供可以读取和写入组件数据的逻辑。本节介绍 ECS 组件并说明如何使用它们。    标题 描述     组件类型 了解不同的组件类型以及如何使用它们。   向实体添加组件 使用 csharp 脚本从实体添加组件。   从实体中移除组件 使用 csharp 脚本从实体中移除组件">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/entities-splash-image.png">
+<meta property="article:published_time" content="2022-11-16T22:12:48.000Z">
+<meta property="article:modified_time" content="2025-03-18T01:12:02.897Z">
+<meta property="article:author" content="KuanMi">
+<meta property="article:tag" content="Entities">
+<meta property="article:tag" content="ECS">
+<meta property="article:tag" content="DOTS">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/entities-splash-image.png">
+  
+  
+  
+  <title>ECS 组件 - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/entities-splash-image.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ECS 组件"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-11-17 06:12" pubdate>
+          2022年11月17日 早上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          23k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          196 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">ECS 组件</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="组件">组件</h1>
+<p>组件代表实体组件系统 (ECS)
+架构中的数据。实体将组件关联在一起，系统提供可以读取和写入组件数据的逻辑。本节介绍
+ECS 组件并说明如何使用它们。</p>
+<table>
+<thead>
+<tr class="header">
+<th>标题</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>组件类型</td>
+<td>了解不同的组件类型以及如何使用它们。</td>
+</tr>
+<tr class="even">
+<td>向实体添加组件</td>
+<td>使用 csharp 脚本从实体添加组件。</td>
+</tr>
+<tr class="odd">
+<td>从实体中移除组件</td>
+<td>使用 csharp 脚本从实体中移除组件。</td>
+</tr>
+<tr class="even">
+<td>读取和写入组件值</td>
+<td>使用 csharp 脚本读取或写入组件值。</td>
+</tr>
+</tbody>
+</table>
+<h1 id="组件类型">组件类型</h1>
+<p>为了服务于各种用例，有多种类型的 ECS 组件。文档的这一部分描述了 ECS
+组件类型、它们的用例和性能注意事项，以及如何创建它们。</p>
+<table>
+<thead>
+<tr class="header">
+<th>主题</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>非托管组件</td>
+<td>了解非托管组件以及如何使用它们。</td>
+</tr>
+<tr class="even">
+<td>托管组件</td>
+<td>了解托管组件以及如何使用它们。</td>
+</tr>
+<tr class="odd">
+<td>共享组件</td>
+<td>了解共享组件以及如何使用它们。</td>
+</tr>
+<tr class="even">
+<td>清理组件</td>
+<td>了解清理组件以及如何使用它们。</td>
+</tr>
+<tr class="odd">
+<td>清理共享组件</td>
+<td>了解清理共享组件以及如何使用它们。</td>
+</tr>
+<tr class="even">
+<td>标记组件</td>
+<td>了解标记组件以及如何使用它们。</td>
+</tr>
+<tr class="odd">
+<td>缓冲区组件</td>
+<td>了解缓冲区组件及其使用方法。</td>
+</tr>
+<tr class="even">
+<td>块组件</td>
+<td>了解块组件以及如何使用它们。</td>
+</tr>
+<tr class="odd">
+<td>可启用的组件</td>
+<td>了解可启用的组件以及如何使用它们。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="编辑器中的组件类型">编辑器中的组件类型</h2>
+<p>在编辑器中，以下图标代表不同类型的组件。您可以在相关的实体窗口和检查器中看到这些。</p>
+<table>
+<thead>
+<tr class="header">
+<th>图标</th>
+<th>组件类型</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td>托管组件。</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>共享组件。</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>标签组件。</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>缓冲组件。</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>块组件。</td>
+</tr>
+</tbody>
+</table>
+<div class="note note-info">
+            <p>Unity 为不在上面列表中的组件类型使用通用组件图标。</p>
+          </div>
+<h3 id="非托管组件">非托管组件</h3>
+<p>非托管组件存储最常见的数据类型，这意味着它们在大多数用例中都很有用。<br />
+| 主题 | 描述 |<br />
+| —————— | ———————————————- |<br />
+| 介绍非托管组件 | 了解非托管组件和它们可以存储的属性类型。 |<br />
+| 创建一个非托管组件 | 创建一个新的非托管组件以在您的应用程序中使用。
+|</p>
+<h4 id="引入非托管组件">引入非托管组件</h4>
+<p>非托管组件存储最常见的数据类型，这意味着它们在大多数用例中都很有用。</p>
+<p>非托管组件可以存储以下类型的属性：</p>
+<ul>
+<li>可复制类型</li>
+<li>布尔值</li>
+<li>字符</li>
+<li>BlobAssetReference<T>（对 Blob 数据结构的引用）</li>
+<li>Collections.FixedString（固定大小的字符缓冲区）</li>
+<li>集合.FixedList</li>
+<li>固定数组（仅在不安全的上下文中允许）</li>
+<li>符合这些相同限制的其他结构</li>
+</ul>
+<h3 id="创建非托管组件">创建非托管组件</h3>
+<p>要创建非托管组件，请创建一个继承自 IcomponentData 的结构。</p>
+<p>以下代码示例显示了一个非托管组件：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public struct ExampleUnmanagedComponent : IComponentData
+&#123;
+    public int Value;
+&#125;</code></pre></div></figure><br />
+将使用兼容类型的属性添加到结构中以定义组件的数据。如果您不向组件添加任何属性，它就充当标记组件。</p>
+<h2 id="托管组件">托管组件</h2>
+<p>托管组件可以存储任何类型的属性，但存储和访问需要更多资源，并且包括对如何使用它们的限制。</p>
+<table>
+
+<thead>
+<tr class="header">
+<th>主题</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>托管组件简介</td>
+<td>了解非托管组件、它们可以存储的属性类型以及适用于它们的限制。</td>
+</tr>
+<tr class="even">
+<td>创建一个托管组件</td>
+<td>创建一个新的托管组件以在您的应用程序中使用。</td>
+</tr>
+<tr class="odd">
+<td>优化托管组件</td>
+<td>了解解释托管组件最佳使用方式的最佳实践信息。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="引入托管组件">引入托管组件</h3>
+<p>与非托管组件不同，托管组件可以存储任何类型的属性。但是，它们的存储和访问需要更多资源，并且有以下限制：</p>
+<ul>
+<li>您无法在工作中访问它们。</li>
+<li>您不能在 Burst 编译代码中使用它们。</li>
+<li>他们需要垃圾收集。</li>
+<li>它们必须包含一个不带参数的构造函数以用于序列化目的。</li>
+</ul>
+<h4 id="托管类型属性">托管类型属性</h4>
+<p>如果托管组件中的属性使用托管类型，您可能需要手动添加克隆、比较和序列化该属性的能力。</p>
+<h3 id="创建托管组件">创建托管组件</h3>
+<p>要创建托管组件，请创建一个继承自 IComponentData
+且没有构造函数或包含无参数构造函数的类。</p>
+<p>以下代码示例显示了一个托管组件：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class ExampleManagedComponent : IComponentData
+&#123;
+    public int Value;
+&#125;</code></pre></div></figure></p>
+<h4 id="管理外部资源的生命周期">管理外部资源的生命周期</h4>
+<p>对于引用外部资源的托管组件，最佳做法是实现 ICloneable 和
+IDisposable，例如，对于存储对 ParticleSystem 的引用的托管组件。</p>
+<p>如果您复制此托管组件的实体，默认情况下会创建两个引用同一粒子系统的托管组件。如果为托管组件实现
+ICloneable，则可以为第二个托管组件复制粒子系统。如果销毁托管组件，默认情况下粒子系统会保留。如果为托管组件实现
+IDisposable，则可以在销毁组件时销毁粒子系统。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class ManagedComponentWithExternalResource : IComponentData, IDisposable, ICloneable
+&#123;
+    public ParticleSystem ParticleSystem;
+
+    public void Dispose()
+    &#123;
+        UnityEngine.Object.Destroy(ParticleSystem);
+    &#125;
+
+    public object Clone()
+    &#123;
+        return new ManagedComponentWithExternalResource &#123; ParticleSystem &#x3D; UnityEngine.Object.Instantiate(ParticleSystem) &#125;;
+    &#125;
+&#125;</code></pre></div></figure></p>
+<h3 id="优化托管组件">优化托管组件</h3>
+<p>与非托管组件不同，Unity 不直接将托管组件存储在块中。相反，Unity
+将它们存储在一个大数组中以供整个世界使用。然后块存储相关托管组件的数组索引。这意味着当您访问实体的托管组件时，Unity
+会处理额外的索引查找。这使得托管组件不如非托管组件优化。</p>
+<p>托管组件的性能影响意味着您应该尽可能使用非托管组件。</p>
+<h2 id="共享组件">共享组件</h2>
+<p>共享组件根据其共享 cComponent
+的值将实体分组为块，这有助于数据的重复数据删除。</p>
+<table>
+<thead>
+<tr class="header">
+<th>主题</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>介绍共享组件</td>
+<td>了解共享组件及其用例。</td>
+</tr>
+<tr class="even">
+<td>创建一个共享组件</td>
+<td>创建一个新的共享组件以在您的应用程序中使用。</td>
+</tr>
+<tr class="odd">
+<td>优化共享组件</td>
+<td>了解解释使用共享组件的最佳方式的最佳实践信息。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="引入共享组件">引入共享组件</h3>
+<p>共享组件根据其共享组件的值将实体分组为块，这有助于数据的重复数据删除。为此，Unity
+将具有相同共享组件值的原型的所有实体存储在一起。这会删除实体之间的重复值。</p>
+<p>共享组件是结构，但根据添加到共享组件的属性类型，您可以创建托管和非托管共享组件。如果共享组件包含托管类型，例如字符串或其他类对象，则共享组件是托管共享组件。否则，它是一个非托管共享组件。托管共享组件与常规托管组件具有相同的优点和限制。</p>
+<h4 id="共享组件值存储">共享组件值存储</h4>
+<p>对于每个世界，Unity 将共享组件值存储在与 ECS
+块分开的数组中，并且该世界存储句柄中的块可以为其原型找到适当的共享组件值。同一块中的实体共享相同的共享组件值。多个块可以存储相同的共享组件句柄，这意味着可以使用相同共享组件值的实体数量没有限制。</p>
+<p>如果更改实体的共享组件值，Unity
+会将实体移动到使用新共享组件值的块。这意味着更改实体的共享组件值是一种结构更改。如果共享组件值数组中已经存在相等的值，Unity
+会将实体移动到存储现有值的索引的块中。否则，Unity
+将新值添加到共享组件值数组并将实体移动到存储该新值索引的新块。有关如何更改
+ECS 比较共享组件值的方式的信息，请参阅覆盖默认比较行为。</p>
+<p>Unity 将非托管和托管共享组件彼此分开存储，并通过非托管共享组件
+API（例如 SetUnmanagedSharedComponentData）使非托管共享组件可用于 Burst
+编译代码。有关详细信息，请参阅优化共享组件。</p>
+<h4 id="覆盖默认比较行为">覆盖默认比较行为</h4>
+<p>要更改 ECS 比较共享组件实例的方式，请为共享组件实施
+IEquatable<YourSharedComponent>。如果您这样做，ECS
+将使用您的实现来检查共享组件的实例是否相等。如果共享组件是非托管的，您可以将[BurstCompile]
+属性添加到共享组件结构、Equals 方法和GetHashCode 方法中以提高性能。</p>
+<h4 id="在世界之间共享共享组件">在世界之间共享共享组件</h4>
+<p>对于创建和保留资源密集型的托管对象（例如 blob
+资产），您可以使用共享组件在所有世界中仅存储该对象的一个​​副本。为此，使用
+Retain 和 Release 实现 IRefCounted 接口。实施 Retain 和
+Release，以便这些方法正确管理底层资源的生命周期。如果共享组件是非托管的，可以在共享组件结构体、Retain方法和Release方法中添加[BurstCompile]属性来提高性能。</p>
+<h4 id="不要修改共享组件引用的对象">不要修改共享组件引用的对象</h4>
+<p>要正常工作，共享组件依赖于您使用 Entities API
+来更改它们的值。这包括引用的对象。如果共享组件包含引用类型或指针，请注意不要在不使用
+Entities API 的情况下修改引用的对象。</p>
+<h3 id="创建共享组件">创建共享组件</h3>
+<p>您可以创建托管和非托管共享组件。</p>
+<h4 id="创建非托管共享组件">创建非托管共享组件</h4>
+<p>要创建非托管共享组件，请创建一个实现标记接口 ISharedComponentData
+的结构。</p>
+<p>以下代码示例显示了一个非托管共享组件：</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public struct ExampleUnmanagedSharedComponent : ISharedComponentData
+&#123;
+    public int Value;
+&#125;</code></pre></div></figure>
+<h4 id="创建托管共享组件">创建托管共享组件</h4>
+<p>要创建托管共享组件，请创建一个实现标记接口 ISharedComponentData
+的类。</p>
+<p>以下代码示例显示了一个托管共享组件：</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class ExampleManagedSharedComponent : ISharedComponentData
+&#123;
+    public int Value;
+&#125;</code></pre></div></figure>
+<h3 id="优化共享组件">优化共享组件</h3>
+<p>共享组件对其他组件类型有不同的性能考虑。本页描述共享组件特定的性能注意事项和优化技术。</p>
+<h4 id="使用非托管共享组件">使用非托管共享组件</h4>
+<p>如果可能，在托管共享组件上使用非托管共享组件。这是因为 Unity
+将非托管共享组件存储在 Burst 编译代码可通过非托管共享组件 API（例如
+SetUnmanagedSharedComponentData）访问的位置。这提供了优于托管组件的性能优势。</p>
+<h4 id="避免频繁更新">避免频繁更新</h4>
+<p>更新实体的共享组件值是一种结构更改，这意味着 Unity
+将实体移动到另一个块。出于性能原因，尽量避免经常这样做。</p>
+<h4 id="避免大量独特的共享组件值">避免大量独特的共享组件值</h4>
+<p>块中的所有实体必须共享相同的共享组件值。这意味着如果您为大量实体提供唯一的共享组件值，它会将这些实体分割成许多几乎是空的块。</p>
+<p>例如，如果一个原型有 500
+个实体具有共享组件，并且每个实体都有一个唯一的共享组件值，Unity
+会将每个实体存储在一个单独的块中。这浪费了每个块中的大部分空间，也意味着要循环遍历原型的所有实体，Unity
+必须循环遍历所有 500 个块。这抵消了 ECS
+块布局的好处并降低了性能。为避免此问题，请尝试使用尽可能少的唯一共享组件值。如果
+500 个示例实体仅共享十个唯一的共享组件值，Unity
+可以将它们存储在少至十个块中。</p>
+<p>小心具有多个共享组件类型的原型。原型块中的所有实体必须具有相同的共享组件值组合，因此具有多个共享组件类型的原型容易产生碎片。</p>
+<div class="note note-info">
+            <p>要检查块碎片，您可以在 Archetypes 窗口中查看块利用率。</p>
+          </div>
+<h2 id="清理组件">清理组件</h2>
+<p>清理组件就像常规组件，但当您销毁包含一个实体的实体时，Unity
+会移除所有非清理组件。该实体仍然存在，直到您从中删除所有清理组件。这对于标记销毁时需要清理的实体很有用。</p>
+<table>
+
+<thead>
+<tr class="header">
+<th>主题</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>介绍清理组件</td>
+<td>了解清理组件及其用例。</td>
+</tr>
+<tr class="even">
+<td>创建清理组件</td>
+<td>创建一个新的清理组件以在您的应用程序中使用。</td>
+</tr>
+<tr class="odd">
+<td>使用清理组件执行清理</td>
+<td>使用清理组件管理销毁时需要清理的实体。</td>
+</tr>
+<tr class="even">
+<td>清理共享组件</td>
+<td>清理共享组件是托管共享组件，它们具有清理组件的销毁语义。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="引入清理组件">引入清理组件</h3>
+<p>清理组件就像常规组件，但当您销毁包含一个实体的实体时，Unity
+会移除所有非清理组件。该实体仍然存在，直到您从中删除所有清理组件。这对于标记销毁时需要清理的实体很有用。有关如何执行此操作的信息，请参阅使用清理组件执行清理。</p>
+<h4 id="清理组件生命周期">清理组件生命周期</h4>
+<p>以下代码示例解释了包含清理组件的实体的生命周期：</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; Creates an entity that contains a cleanup component.
+Entity e &#x3D; EntityManger.CreateEntity(
+    typeof(Translation), typeof(Rotation), typeof(ExampleCleanup));
+
+&#x2F;&#x2F; Attempts to destroy the entity but, because the entity has a cleanup component, Unity doesn&#39;t actually destroy the entity. Instead, Unity just removes the Translation and Rotation components. 
+EntityManager.DestroyEntity(e);
+
+&#x2F;&#x2F; The entity still exists so this demonstrates that you can still use the entity normally.
+EntityManager.AddComponent&lt;Translation&gt;(e);
+
+&#x2F;&#x2F; Removes all the components from the entity. This destroys the entity.
+EntityManager.DestroyEntity(e, new ComponentTypes(typeof(ExampleCleanup), typeof(Translation)));
+
+&#x2F;&#x2F; Demonstrates that the entity no longer exists. entityExists is false. 
+bool entityExists &#x3D; EntityManager.Exists(e);</code></pre></div></figure>
+<div class="note note-info">
+            <p>清除组件是非托管组件，并且具有与非托管组件相同的所有限制。</p>
+          </div>
+<h3 id="创建清理组件">创建清理组件</h3>
+<p>要创建清理组件，请创建一个继承自 ICleanupComponentData 的结构。</p>
+<p>以下代码示例显示了一个空的清理组件：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public struct ExampleCleanupComponent : ICleanupComponentData
+&#123;
+
+&#125;</code></pre></div></figure></p>
+<div class="note note-info">
+            <p>空的清理组件通常就足够了，但您可以添加属性来存储清理目标原型所需的信息。</p>
+          </div>
+<h3 id="使用清理组件进行清理">使用清理组件进行清理</h3>
+<p>清理组件的主要用例是帮助您管理销毁时需要清理的实体。为了实现这一点，它们会阻止您销毁包含清理组件的实体。相反，当您尝试销毁带有附加清理组件的实体时，Unity
+会移除所有非清理组件。该实体仍然存在，直到您从中删除所有清理组件。</p>
+<p>要对特定原型的实体执行清理：</p>
+<ol type="1">
+<li>创建一个新的标签组件并将标签组件添加到原型中。</li>
+<li>创建一个新的清理组件，其中包含清理特定实体原型所需的信息。</li>
+<li>创建一个系统：
+<ol type="1">
+<li>获取目标原型的新创建实体。这些是包含标签组件但不包含清理组件的实体。</li>
+<li>将清理组件添加到这些实体。</li>
+</ol></li>
+<li>创建一个系统：
+<ol type="1">
+<li>获取已被临时销毁并需要清理的实体。这些是包含清理组件但不包含标记组件的实体。</li>
+<li>为实体执行适当的清理工作。</li>
+<li>从实体中删除清理组件。</li>
+</ol></li>
+</ol>
+<h3 id="清理共享组件">清理共享组件</h3>
+<p>清理共享组件是托管共享组件，具有清理组件的销毁语义。它们对于标记需要相同信息进行清理的实体很有用。</p>
+<h4 id="创建清理共享组件">创建清理共享组件</h4>
+<p>要创建清理共享组件，请创建一个继承自 ICleanupSharedComponentData
+的结构。</p>
+<p>以下代码示例显示了一个空的系统清理组件：</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public struct ExampleSharedCleanupComponent : ICleanupSharedComponentData
+&#123;
+
+&#125;</code></pre></div></figure>
+<h2 id="标记组件">标记组件</h2>
+<p>标记组件不包含任何属性，并且表现得像非托管组件。因为标记组件不包含任何数据，所以块不会为它们存储任何组件数组。</p>
+<table>
+<thead>
+<tr class="header">
+<th>主题</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>标签组件简介</td>
+<td>了解标签组件及其用例。</td>
+</tr>
+<tr class="even">
+<td>创建标签组件</td>
+<td>创建一个新的标签组件以在您的应用程序中使用。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="引入标签组件">引入标签组件</h3>
+<p>标签组件是非托管组件，不存储数据也不占用空间。从概念上讲，标签组件实现与
+GameObject
+标签类似的目的，它们在查询中很有用，因为您可以根据实体是否具有标签组件来过滤实体。例如，您可以将它们与清理组件和过滤器实体一起使用以执行清理。</p>
+<h4 id="额外资源">额外资源</h4>
+<ul>
+<li>创建标签组件</li>
+</ul>
+<h3 id="创建标签组件">创建标签组件</h3>
+<p>要创建标记组件，请创建一个没有任何属性的非托管组件。</p>
+<p>以下代码示例显示了一个标记组件：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public struct ExampleTagComponent : IComponentData
+&#123;
+
+&#125;</code></pre></div></figure></p>
+<h2 id="动态缓冲组件">动态缓冲组件</h2>
+<p>动态缓冲区组件是充当可调整大小数组的组件。</p>
+<table>
+
+<thead>
+<tr class="header">
+<th>主题</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>介绍动态缓冲区组件</td>
+<td>了解动态缓冲区组件及其用例。</td>
+</tr>
+<tr class="even">
+<td>创建一个动态缓冲区组件</td>
+<td>创建一个新的动态缓冲区组件以在您的应用程序中使用。</td>
+</tr>
+<tr class="odd">
+<td>访问块中的所有动态缓冲区使用 BufferAccessor<T></td>
+<td>获取块中特定类型的所有动态缓冲区。</td>
+</tr>
+<tr class="even">
+<td>为多个实体重用动态缓冲区</td>
+<td>访问主线程上的动态缓冲区并将其数据用于多个实体。</td>
+</tr>
+<tr class="odd">
+<td>从作业访问动态缓冲区</td>
+<td>创建 BufferLookup 查找以在不在主线程上时访问动态缓冲区。</td>
+</tr>
+<tr class="even">
+<td>使用 EntityCommandBuffer 修改动态缓冲区</td>
+<td>使用 EntityCommandBuffer 来推迟动态缓冲区修改。</td>
+</tr>
+<tr class="odd">
+<td>重新解释动态缓冲区</td>
+<td>将动态缓冲区的内容重新解释为另一种类型。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="引入动态缓冲组件">引入动态缓冲组件</h3>
+<p>动态缓冲区组件是充当可调整大小的非托管结构数组的组件。您可以使用它来存储实体的数组数据，例如实体在其间导航的路径点位置。</p>
+<p>除了数据，每个缓冲区还存储一个长度、一个容量和一个内部指针：</p>
+<ul>
+<li>Length 是缓冲区中的元素数。它从 0
+开始，并在您将值附加到缓冲区时递增。</li>
+<li>容量是缓冲区中的存储量。它开始匹配内部缓冲容量。设置容量调整缓冲区的大小。</li>
+<li>该指针指示动态缓冲区数据所在的位置。最初它是 null
+表示数据在实体块中，如果 Unity
+将数据移到块外，指针将设置为指向新数组。有关 Unity
+如何存储动态缓冲区组件的更多信息，请参阅容量。</li>
+</ul>
+<h4 id="容量">容量</h4>
+<p>动态缓冲区的初始容量由缓冲区存储的类型定义。默认情况下，容量默认为适合
+128 字节的元素数。有关详细信息，请参阅
+DefaultBufferCapacityNumerator。您可以使用 InternalBufferCapacity
+属性指定自定义容量。有关如何创建动态缓冲区组件类型的信息，请参阅创建动态缓冲区组件类型。</p>
+<p>最初，Unity
+将动态缓冲区数据直接存储在组件所属实体的块中。如果动态缓冲区的长度大于容量，Unity
+会将动态缓冲区数据复制到块外的数组中。如果动态缓冲区的长度后来收缩到小于容量，Unity
+仍然将数据存储在块之外；如果 Unity
+将动态缓冲区数据移出块，它永远不会将数据移回块中。</p>
+<p>原始内部缓冲区容量是块的一部分，Unity 仅在 Unity
+自己释放块时释放它。这意味着如果动态缓冲区长度超过内部容量并且 Unity
+将数据复制到块外，则块内会浪费空间。最佳做法是尽可能使用块中的数据。为此，请确保您的大多数实体不超过缓冲区容量，但如果实体不使用它，也不要将容量设置得太高。如果动态缓冲区的大小变化太大，最好将其数据存储在块之外。为此，将
+InternalBufferCapacity 设置为 0。</p>
+<p>还有其他选项可用于存储数组数据：</p>
+<ul>
+<li>Blob
+资产：存储紧密打包的只读结构化数据，包括数组，多个实体可以共享一个 blob
+资产。因为它们是只读的，所以您可以同时从多个线程访问它们。</li>
+<li>托管组件：存储本机或托管对象的数组。但是，与动态缓冲区组件数据相比，访问托管组件数据的限制更多且性能更低。您还需要手动克隆和处理阵列数据。</li>
+<li>共享组件：与托管组件类似，它们存储本机或托管对象的数组，您的实体可以将索引存储到这些更大的数组中。它们具有与托管组件相同的限制和性能注意事项。</li>
+</ul>
+<h4 id="结构变化">结构变化</h4>
+<p>结构更改可能会破坏或移动动态缓冲区引用的数组，这意味着动态缓冲区的任何句柄在结构更改后都会变得无效。您必须在任何结构更改后重新获取动态缓冲区。例如：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public void DynamicBufferExample(Entity e)
+&#123;
+    &#x2F;&#x2F; Acquires a dynamic buffer of type MyElement.
+    DynamicBuffer&lt;MyElement&gt; myBuff &#x3D; EntityManager.GetBuffer&lt;MyElement&gt;(e);
+
+    &#x2F;&#x2F; This structural change invalidates the previously acquired DynamicBuffer.
+    EntityManager.CreateEntity();
+
+    &#x2F;&#x2F; A safety check will throw an exception on any read or write actions on the buffer.
+    var x &#x3D; myBuff[0];
+
+    &#x2F;&#x2F; Reacquires the dynamic buffer after the above structural changes.
+    myBuff &#x3D; EntityManager.GetBuffer&lt;MyElement&gt;(e);
+    var y &#x3D; myBuff[0];
+&#125;</code></pre></div></figure></p>
+<h4 id="额外资源-1">额外资源</h4>
+<ul>
+<li>创建动态缓冲组件</li>
+</ul>
+<h3 id="创建动态缓冲组件">创建动态缓冲组件</h3>
+<p>创建动态缓冲组件<br />
+要创建动态缓冲区组件，请创建一个继承自 IBufferElementData
+的结构。这个结构定义了动态缓冲区类型的元素，也代表了动态缓冲区组件本身。</p>
+<p>要指定缓冲区的初始容量，请使用 InternalBufferCapacity 属性。有关
+Unity 如何管理缓冲区容量的信息，请参阅容量。</p>
+<p>以下代码示例显示了一个缓冲区组件：</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[InternalBufferCapacity(16)]
+public struct ExampleBufferComponent : IBufferElementData
+&#123;
+    public int Value;
+&#125;&#96;&#96;&#96;
+与其他组件一样，您可以向实体添加动态缓冲区组件。但是，您使用 DynamicBuffer&lt;ExampleBufferComponent&gt; 表示动态缓冲区组件，并使用特定于动态缓冲区组件的 EntityManager API（例如 EntityManager.GetBuffer&lt;T&gt;）与它们进行交互。例如：
+
+&#96;&#96;&#96;cs
+public void GetDynamicBufferComponentExample(Entity e)
+&#123;
+    DynamicBuffer&lt;MyElement&gt; myDynamicBuffer &#x3D; EntityManager.GetBuffer&lt;MyElement&gt;(e);
+&#125;</code></pre></div></figure>
+<h3 id="访问块中的动态缓冲区">访问块中的动态缓冲区</h3>
+<p>要访问块中的所有动态缓冲区，请使用 ArchetypeChunk.GetBufferAccessor
+方法。这需要一个 BufferTypeHandle<T> 并返回一个
+BufferAccessor<T>。如果您索引 BufferAccessor<T>，它会返回块的类型为 T
+的缓冲区：</p>
+<p>以下代码示例显示了如何访问块中某种类型的每个动态缓冲区。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[InternalBufferCapacity(16)]
+public struct ExampleBufferComponent : IBufferElementData
+&#123;
+    public int Value;
+&#125;</code></pre></div></figure>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public partial class ExampleSystem : SystemBase
+&#123;
+    protected override void OnUpdate()
+    &#123;
+        var query &#x3D; EntityManager.CreateEntityQuery(typeof(ExampleBufferComponent));
+        NativeArray&lt;ArchetypeChunk&gt; chunks &#x3D; query.ToArchetypeChunkArray(Allocator.Temp);
+        for (int i &#x3D; 0; i &lt; chunks.Length; i++)
+        &#123;
+            UpdateChunk(chunks[i]);
+        &#125;
+        chunks.Dispose();
+    &#125;
+
+    private void UpdateChunk(ArchetypeChunk chunk)
+    &#123;
+        &#x2F;&#x2F; Get a BufferTypeHandle representing dynamic buffer type ExampleBufferComponent from SystemBase.
+        BufferTypeHandle&lt;ExampleBufferComponent&gt; myElementHandle &#x3D; GetBufferTypeHandle&lt;ExampleBufferComponent&gt;();
+        &#x2F;&#x2F; Get a BufferAccessor from the chunk.
+        BufferAccessor&lt;ExampleBufferComponent&gt; buffers &#x3D; chunk.GetBufferAccessor(myElementHandle);
+        &#x2F;&#x2F; Iterate through all ExampleBufferComponent buffers of each entity in the chunk.
+        for (int i &#x3D; 0, chunkEntityCount &#x3D; chunk.Count; i &lt; chunkEntityCount; i++)
+        &#123;
+            DynamicBuffer&lt;ExampleBufferComponent&gt; buffer &#x3D; buffers[i];
+            &#x2F;&#x2F; Iterate through all elements of the buffer.
+            for (int j &#x3D; 0; j &lt; buffer.Length; j++)
+            &#123;
+                &#x2F;&#x2F; ...
+            &#125;
+        &#125;
+    &#125;
+&#125;
+</code></pre></div></figure>
+<h3 id="为多个实体重用动态缓冲区">为多个实体重用动态缓冲区</h3>
+<p>如果 Entities.ForEach 的所有实体都需要相同的缓冲区，您可以在
+Entities.ForEach 之上的主线程上将该缓冲区作为局部变量获取。</p>
+<p>以下代码示例显示了如何为多个实体使用相同的动态缓冲区。它假设存在一个名为
+MyElement 的动态缓冲区，并且存在另一个名为 OtherComponent 的组件。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public void DynamicBufferExample(Entity e)
+&#123;
+    var myBuff &#x3D; EntityManager.GetBuffer&lt;MyElement&gt;(e);
+
+    Entities.ForEach((in OtherComponent component) &#x3D;&gt; &#123;
+        &#x2F;&#x2F; ... use myBuff
+    &#125;).Schedule();
+&#125;</code></pre></div></figure></p>
+<div class="note note-info">
+            <p>如果您使用ScheduleParallel，请注意您不能并行写入动态缓冲区。但是，您可以使用EntityCommandBuffer.ParallelWriter 并行记录更改。</p>
+          </div>
+<h3 id="从作业访问动态缓冲区">从作业访问动态缓冲区</h3>
+<p>如果一项作业需要在其代码中查找一个或多个缓冲区，则该作业需要使用
+BufferLookup
+查找表。您在系统中创建这些，然后将它们传递给需要它们的作业。</p>
+<h4 id="修改作业">修改作业</h4>
+<p>在需要随机访问动态缓冲区的作业中：</p>
+<ol type="1">
+<li>添加一个 ReadOnly BufferLookup 成员变量。</li>
+<li>在 IJobEntity.Execute 方法中，按实体对 BufferLookup
+查找表进行索引。这提供了对附加到实体的动态缓冲区的访问。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public partial struct AccessDynamicBufferJob : IJobEntity
+&#123;
+    [ReadOnly] public BufferLookup&lt;ExampleBufferComponent&gt; BufferLookup;
+    public void Execute()
+      &#123;
+              &#x2F;&#x2F; ...
+      &#125;
+&#125;
+</code></pre></div></figure></li>
+</ol>
+<h4 id="修改系统">修改系统</h4>
+<p>在创建作业实例的系统中：</p>
+<ol type="1">
+<li>添加一个 BufferLookup 成员变量。</li>
+<li>在 OnCreate 中，使用 SystemState.GetBufferLookup 分配 BufferLookup
+变量。</li>
+<li>在 OnUpdate 开始时，对 BufferLookup 变量调用
+Update。这会更新查找表。</li>
+<li>创建作业实例时，将查找表传递给作业。</li>
+</ol>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public partial struct AccessDynamicBufferFromJobSystem : ISystem
+&#123;
+    private BufferLookup&lt;ExampleBufferComponent&gt; _bufferLookup;
+
+    public void OnCreate(ref SystemState state)
+    &#123;
+        _bufferLookup &#x3D; state.GetBufferLookup&lt;ExampleBufferComponent&gt;(true);
+    &#125;
+
+    public void OnUpdate(ref SystemState state)
+    &#123;
+        _bufferLookup.Update(ref state);
+        var exampleBufferAccessJob &#x3D; new AccessDynamicBufferJob &#123; BufferLookup &#x3D; _bufferLookup &#125;;
+        exampleBufferAccessJob.ScheduleParallel();
+    &#125;
+
+    public void OnDestroy(ref SystemState state) &#123; &#125;
+&#125;</code></pre></div></figure>
+<h3 id="使用-entitycommandbuffer-修改动态缓冲区">使用
+EntityCommandBuffer 修改动态缓冲区</h3>
+<p>EntityCommandBuffer
+记录为实体添加、删除或设置缓冲区组件的命令。存在不同于常规组件 API
+的特定于动态缓冲区的 API。</p>
+<p>以下代码示例介绍了一些通用的特定于动态缓冲区的 EntityCommandBuffer
+API。它假设存在一个名为 MyElement 的动态缓冲区。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">private void Example(Entity e, Entity otherEntity)
+&#123;
+    EntityCommandBuffer ecb &#x3D; new EntityCommandBuffer(Allocator.TempJob);
+
+    &#x2F;&#x2F; Record a command to remove the MyElement dynamic buffer from an entity.
+    ecb.RemoveComponent&lt;MyElement&gt;(e);
+
+    &#x2F;&#x2F; Record a command to add a MyElement dynamic buffer to an existing entity.
+    &#x2F;&#x2F; The data of the returned DynamicBuffer is stored in the EntityCommandBuffer, 
+    &#x2F;&#x2F; so changes to the returned buffer are also recorded changes. 
+    DynamicBuffer&lt;MyElement&gt; myBuff &#x3D; ecb.AddBuffer&lt;MyElement&gt;(e);
+
+    &#x2F;&#x2F; After playback, the entity will have a MyElement buffer with 
+    &#x2F;&#x2F; Length 20 and these recorded values.
+    myBuff.Length &#x3D; 20;
+    myBuff[0] &#x3D; new MyElement &#123; Value &#x3D; 5 &#125;;
+    myBuff[3] &#x3D; new MyElement &#123; Value &#x3D; -9 &#125;;
+
+    &#x2F;&#x2F; SetBuffer is like AddBuffer, but safety checks will throw an exception at playback if 
+    &#x2F;&#x2F; the entity doesn&#39;t already have a MyElement buffer. 
+    DynamicBuffer&lt;MyElement&gt; otherBuf &#x3D; ecb.SetBuffer&lt;MyElement&gt;(otherEntity);
+
+    &#x2F;&#x2F; Records a MyElement value to append to the buffer. Throws an exception at 
+    &#x2F;&#x2F; playback if the entity doesn&#39;t already have a MyElement buffer.
+    ecb.AppendToBuffer&lt;MyElement&gt;(otherEntity, new MyElement &#123; Value &#x3D; 12 &#125;);
+&#125;</code></pre></div></figure><br />
+当您设置 DynamicBuffer 的 Length、Capacity 和内容时，ECS
+会将这些更改记录到 EntityCommandBuffer 中。当您回放 EntityCommandBuffer
+时，ECS 会对动态缓冲区进行更改。</p>
+<h3 id="重新解释动态缓冲区">重新解释动态缓冲区</h3>
+<p>您可以重新解释 <code>DynamicBuffer&lt;T&gt;</code> 以获得另一个
+<code>DynamicBuffer&lt;U&gt;</code>，其中 T 和 U
+具有相同的大小。如果您想将组件的动态缓冲区重新解释为组件所附加的实体的动态缓冲区，这将很有用。这种重新解释为相同的内存设置了别名，因此更改一个索引
+i 处的值会更改另一个索引 i 处的值。</p>
+<div class="note note-info">
+            <p>Reinterpret 方法仅强制原始类型和新类型具有相同的大小。例如，您可以将uint 重新解释为 float，因为这两种类型都是 32位的。您有责任决定重新解释是否对您的目的有意义。</p>
+          </div>
+<p>以下代码示例显示了如何解释动态缓冲区。它假设存在一个名为 MyElement
+的动态缓冲区，并包含一个名为 Value 的 int 字段。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class ExampleSystem : SystemBase
+&#123;
+    private void ReinterpretEntitysChunk(Entity e)
+    &#123;
+        DynamicBuffer&lt;MyElement&gt; myBuff &#x3D; EntityManager.GetBuffer&lt;MyElement&gt;(e);
+
+        &#x2F;&#x2F; Valid as long as each MyElement struct is four bytes. 
+        DynamicBuffer&lt;int&gt; intBuffer &#x3D; myBuff.Reinterpret&lt;int&gt;();
+
+        intBuffer[2] &#x3D; 6;  &#x2F;&#x2F; same effect as: myBuff[2] &#x3D; new MyElement &#123; Value &#x3D; 6 &#125;;
+
+        &#x2F;&#x2F; The MyElement value has the same four bytes as int value 6. 
+        MyElement myElement &#x3D; myBuff[2];
+        Debug.Log(myElement.Value);    &#x2F;&#x2F; 6
+    &#125;
+&#125;</code></pre></div></figure>
+<div class="note note-info">
+            <p>重新解释的缓冲区共享原始缓冲区的安全句柄，因此受到所有相同的安全限制。</p>
+          </div>
+<h2 id="块组件">块组件</h2>
+<p>块组件是一种组件，它按块而不是按实体存储值。它们提供与共享组件类似的功能，但在一些基本方面有所不同。</p>
+<table>
+<thead>
+<tr class="header">
+<th>主题</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>介绍块组件</td>
+<td>了解块组件及其用例。</td>
+</tr>
+<tr class="even">
+<td>创建块组件</td>
+<td>创建一个新的块组件以在您的应用程序中使用。</td>
+</tr>
+<tr class="odd">
+<td>使用块组件</td>
+<td>了解如何使用特定于块组件的 API。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="引入块组件">引入块组件</h3>
+<p>块组件存储每个块而不是每个实体的值。它们的主要目的是作为一种优化，因为您可以在每个块级别上运行代码以检查是否为每个块中的所有实体处理某些行为。例如，块组件可以存储其中所有实体的边界。您可以检查边界是否在屏幕上，如果是，则只处理该块中的实体。</p>
+<p>块组件提供与共享组件类似的功能，但在以下方面有所不同：</p>
+<ul>
+<li>块组件值在概念上属于块本身，而不是块的各个实体。</li>
+<li>设置块组件值不是结构更改。</li>
+<li>与共享组件不同，Unity
+不会重复删除唯一的块组件值：具有相同块组件值的块存储它们自己的单独副本。</li>
+<li>块组件始终是非托管的：您无法创建托管块组件。</li>
+<li>当实体的原型更改或实体的共享组件值更改时，Unity
+会将实体移动到新块，但这些移动不会修改源块或目标块的块组件值。</li>
+</ul>
+<h3 id="创建块组件">创建块组件</h3>
+<p>块组件的定义与非托管组件相同。这意味着您创建一个继承自 IComponentData
+的常规结构来创建块组件。块组件和非托管组件之间的区别在于将它们添加到实体的方式。</p>
+<p>以下代码示例显示了一个非托管组件：</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public struct ExampleChunkComponent : IComponentData
+&#123;
+    public int Value;
+&#125;</code></pre></div></figure>
+<p>要将非托管组件用作块组件，请使用
+EntityManager.AddChunkComponentData<YourChunkComponent>(Entity)
+将其添加到实体中。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">private void ChunkComponentExample(Entity e)
+&#123;
+    &#x2F;&#x2F; Adds ExampleChunkComp to the passed in entity&#39;s chunk.
+    EntityManager.AddChunkComponent&lt;ExampleChunkComp&gt;(e);
+
+    &#x2F;&#x2F; Finds all chunks with an ExampleComponent and an ExampleChunkComponent.
+    &#x2F;&#x2F; To distinguish chunk components from a regular IComponentData, You must
+    &#x2F;&#x2F; specify the chunk component with ComponentType.ChunkComponent.
+    EntityQuery query &#x3D; GetEntityQuery(typeof(ExampleComponent), ComponentType.ChunkComponent&lt;ExampleChunkComp&gt;());
+    NativeArray&lt;ArchetypeChunk&gt; chunks &#x3D; query.ToArchetypeChunkArray(Allocator.Temp);
+
+    &#x2F;&#x2F; Sets the ExampleChunkComp value of the first chunk.
+    EntityManager.SetChunkComponentData&lt;ExampleChunkComp&gt;(chunks[0], new ExampleChunkComp &#123; Value &#x3D; 6 &#125;);
+
+    &#x2F;&#x2F; Gets the ExampleChunkComp value of the first chunk.
+    ExampleChunkComp exampleChunkComp &#x3D; EntityManager.GetChunkComponentData&lt;ExampleChunkComp&gt;(chunks[0]);
+    Debug.Log(exampleChunkComp.Value)    &#x2F;&#x2F; 6
+&#125;</code></pre></div></figure>
+<div class="note note-info">
+            <p>如果您只想从块组件读取而不写入，请在定义查询时使用ComponentType.ChunkComponentReadOnly。将查询中包含的组件标记为只读有助于避免不必要的作业调度约束。</p>
+          </div>
+<p>虽然块组件属于块本身，但在实体上添加或删除块组件会改变其原型并导致结构变化。</p>
+<div class="note note-info">
+            <p>Unity 将新创建的块组件值初始化为这些类型的默认值。</p>
+          </div>
+<p>您还可以通过任何块的实体获取和设置块的块组件：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">private void ChunkComponentExample(Entity e)
+&#123;
+    &#x2F;&#x2F; Sets the ExampleChunkComp value of the entity&#39;s chunk.
+    EntityManager.SetChunkComponentData&lt;MyChunkComp&gt;(e, new MyChunkComp &#123; Value &#x3D; 6 &#125;);
+
+    &#x2F;&#x2F; Sets the ExampleChunkComp value of the entity&#39;s chunk.
+    MyChunkComp myChunkComp &#x3D; EntityManager.GetChunkComponentData&lt;MyChunkComp&gt;(e);
+    Debug.Log(myChunkComp.Value)    &#x2F;&#x2F; 6
+&#125;</code></pre></div></figure></p>
+<h4 id="在作业中使用块组件">在作业中使用块组件</h4>
+<p>作业不能使用 EntityManager，因此要访问块组件，您需要使用其
+ComponentTypeHandle。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">struct MyJob : IJobChunk
+&#123;
+    public ComponentTypeHandle&lt;ExampleChunkComponent&gt; ExampleChunkCompHandle;
+
+    public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
+    &#123;
+        &#x2F;&#x2F; Get the chunk&#39;s MyChunkComp.
+        ExampleChunkComponent myChunkComp &#x3D; chunk.GetChunkComponentData(ExampleChunkCompHandle);
+
+        &#x2F;&#x2F; Set the chunk&#39;s MyChunkComp. 
+        chunk.SetChunkComponentData(ExampleChunkCompHandle, new ExampleChunkComponent &#123; Value &#x3D; 7 &#125;);
+    &#125;
+&#125;</code></pre></div></figure>
+<h2 id="启用组件">启用组件</h2>
+<p>使用可启用的组件在运行时禁用或启用实体上的各个组件。这在处理您希望频繁且不可预测地更改的状态时非常有用，因为与添加或删除组件相比，它们产生的结构更改更少。</p>
+<table>
+
+<thead>
+<tr class="header">
+<th>主题</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>可启用组件概述</td>
+<td>可启用组件的概述，您可以在运行时禁用或启用这些组件。</td>
+</tr>
+<tr class="even">
+<td>使用可用组件</td>
+<td>有关使用可用组件的信息。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="启用组件概述">启用组件概述</h3>
+<p>您可以在 IComponentData 和 IBufferElementData
+组件上使用可启用组件，以在运行时禁用或启用实体上的各个组件。要使组件可用，请从
+IEnableableComponent 继承它们。</p>
+<p>可启用组件非常适合您期望频繁且不可预测地更改的状态，或者状态排列数量在逐帧基础上很高的情况。添加和删​​除组件是管理低频状态更改组件的首选方法，您希望状态在许多帧中持续存在。</p>
+<h4 id="结构变化-1">结构变化</h4>
+<p>与添加和删除组件不同，可启用组件不会创建结构更改。在确定实体是否与实体查询匹配时，ECS
+将禁用的组件视为实体没有该组件。这意味着具有禁用组件的实体不匹配需要该组件的查询，并且匹配排除该组件的查询，假设它满足所有其他查询条件。</p>
+<h4 id="标记组件替代">标记组件替代</h4>
+<p>您还可以使用可启用组件而不是一组零大小标记组件来表示实体状态。这减少了唯一实体原型的数量，并鼓励更好地利用块以减少内存消耗。</p>
+<h4 id="启用的组件语义">启用的组件语义</h4>
+<p>现有组件操作的语义不会改变。 EntityManager
+认为具有禁用组件的实体仍然具有该组件。</p>
+<p>具体来说，如果组件 T 在实体 E 上被禁用：</p>
+<ul>
+<li>HasComponent<T>(E) 返回真。</li>
+<li>GetComponent<T>(E) 返回组件的当前值。</li>
+<li>SetComponent<T>(E,value) 更新组件的值。</li>
+<li>RemoveComponent<T>(E) 从 E 中移除组件。</li>
+<li>AddComponent<T>(E) 静静地什么也不做，因为组件已经存在。</li>
+</ul>
+<h3 id="使用可启用的组件">使用可启用的组件</h3>
+<p>您只能启用 IComponentData 和 IBufferElementData 组件。为此，实现
+IEnableableComponent 接口。</p>
+<p>当您使用可启用的组件时，目标实体不会更改其原型，ECS
+不会移动任何数据，并且组件的现有值保持不变。这意味着您可以在工作线程上运行的作业上启用和禁用组件，而无需使用实体命令缓冲区或创建同步点。</p>
+<p>但是，为防止出现竞争情况，对可启用组件具有写入权限的作业可能会导致主线程操作阻塞，直到作业完成，即使该作业未在任何实体上启用或禁用该组件。</p>
+<p>在使用 CreateEntity()
+创建的新实体上默认启用所有可启用的组件。从预制件实例化的实体继承预制件的启用或禁用状态。</p>
+<h4 id="启用组件方法">启用组件方法</h4>
+<p>要使用可启用的组件，您可以在
+EntityManager、ComponentLookup<T>、EntityCommandBuffer 和 ArchetypeChunk
+上使用以下方法：</p>
+<ul>
+<li>IsComponentEnabled<T>(Entity e)：如果实体 e 具有组件 T
+并且它已启用，则返回 true。如果实体 e 有组件 T，但它被禁用，则返回
+false。断言实体 e 是否没有组件 T，或者 T 是否未实现
+IEnableableComponent。</li>
+<li>SetComponentEnabled<T>(Entity e, bool enable)：如果实体 e 有组件
+T，则根据 enable 的值启用或禁用它。断言实体 e 是否没有组件 T，或者 T
+是否未实现 IEnableableComponent。<br />
+例如：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; ... in a SystemBase OnUpdate()
+Entity e &#x3D; this.EntityManager.CreateEntity(typeof(Health));
+
+ComponentLookup&lt;Health&gt; healthLookup &#x3D; this.GetComponentLookup&lt;&gt;();
+
+&#x2F;&#x2F; true
+bool b &#x3D; healthLookup.IsComponentEnabled(e);
+
+&#x2F;&#x2F; disable the Health component of the entity
+healthLookup.SetComponentEnabled(e, false);
+
+&#x2F;&#x2F; though disabled, the component can still be read and modified
+Health h &#x3D; healthLookup(e);</code></pre></div></figure><br />
+您可以使用 ComponentLookup<T>.SetComponentEnabled(Entity,bool)
+从工作线程安全地启用或禁用实体，因为不需要进行结构更改。该作业必须具有对组件
+T
+的写访问权。您应该避免启用或禁用另一个线程可能在运行中处理的实体上的组件，因为这通常会导致竞争条件。</li>
+</ul>
+<h4 id="查询启用组件">查询启用组件</h4>
+<p>禁用组件 T 的实体匹配查询，就好像它根本没有组件 T
+一样。例如，如果实体 E 具有组件 T1（启用）、T2（禁用）和
+T3（禁用）：</p>
+<ul>
+<li>它与同时需要 T1 和 T2 的查询不匹配</li>
+<li>它匹配需要 T1 并排除 T2 的查询</li>
+<li>它不匹配将 T2 和 T3
+作为可选组件的查询，因为它没有启用这些组件中的至少一个。</li>
+</ul>
+<p>所有 EntityQuery
+方法都会自动处理可启用的组件。例如，query.CalculateEntityCount()
+计算与查询匹配的实体数，同时考虑启用和禁用它们的哪些组件。有两个例外：</p>
+<ul>
+<li>以 IgnoreFilter
+结尾的方法名称将所有组件视为已启用。这些方法不需要同步点，因为只有结构变化会影响它们的结果。它们往往比尊重过滤的变体更有效。</li>
+<li>使用 EntityQueryOptions.IgnoreComponentEnabledState
+创建的查询在确定它们是否与查询匹配时忽略匹配原型中所有实体的当前启用/禁用状态。</li>
+</ul>
+<p>以下是查询已使用 EntityManager.IsComponentEnabled
+禁用的组件的示例：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public struct Health : IComponentData, IEnableableComponent
+&#123;
+    public float Value;
+&#125;
+&#x2F;&#x2F; ... in a SystemBase OnUpdate()
+Entity e1 &#x3D; this.EntityManager.CreateEntity(typeof(Health), typeof(Translation));
+Entity e2 &#x3D; this.EntityManager.CreateEntity(typeof(Health), typeof(Translation));
+
+&#x2F;&#x2F; true (components begin life enabled)
+bool b &#x3D; this.EntityManager.IsComponentEnabled&lt;Health&gt;(e1);
+
+&#x2F;&#x2F; disable the Health component on the first entity
+this.EntityManager.SetComponentEnabled&lt;Health&gt;(e1, false);
+
+EntityQuery query &#x3D; new EntityQueryBuilder(Allocator.Temp).WithAll&lt;Health, Translation&gt;().Build(this);
+
+&#x2F;&#x2F; the returned array does not include the first entity
+var entities &#x3D; query.ToEntityArray(Allocator.Temp);
+
+&#x2F;&#x2F; the returned array does not include the Health of the first entity
+var healths &#x3D; query.ToComponentDataArray&lt;Health&gt;(Allocator.Temp);
+
+&#x2F;&#x2F; the returned array does not include the Translation of the first entity
+var translations &#x3D; query.ToComponentDataArray&lt;Translation&gt;(Allocator.Temp);
+
+&#x2F;&#x2F; This query matches components whether they&#39;re enabled or disabled
+var queryIgnoredEnableable &#x3D; new EntityQueryBuilder(Allocator.Temp).WithAll&lt;Health, Translation&gt;().WithOptions(EntityQueryOptions.IgnoreComponentEnabledState).Build(this);
+
+&#x2F;&#x2F; the returned array includes the Translations of both entities
+var translationsAll &#x3D; queryIgnoreEnableable.ToComponentDataArray&lt;Translation&gt;(Allocator.Temp);</code></pre></div></figure></p>
+<h4 id="异步操作">异步操作</h4>
+<p>为了安全且确定地处理可启用组件，所有同步 EntityQuery
+操作（忽略过滤的操作除外）会自动等待任何正在运行的作业完成，这些作业对查询的可启用组件具有写访问权限。所有异步
+EntityQuery 操作（以 Async
+结尾的操作）也会自动插入对这些正在运行的作业的输入依赖项。</p>
+<p>异步 EntityQuery 收集和分散操作，例如
+EntityQuery.ToEntityArrayAsync()
+安排一个作业来执行请求的操作。这些方法必须返回 NativeList 而不是
+NativeArray，因为查询匹配的实体数量在作业运行之前是未知的，但容器必须立即返回给调用者。</p>
+<p>此列表的初始容量根据可以匹配查询的最大实体数进行了保守调整，但其最终长度可能会更短。在异步收集或分散作业完成之前，对列表的任何读取或写入（包括其当前长度、容量或基指针）都会导致
+JobsDebugger
+安全错误。但是，您可以安全地将列表传递给依赖的后续作业。</p>
+<h1 id="向实体添加组件">向实体添加组件</h1>
+<p>要将组件添加到实体，请使用实体所在世界的
+EntityManager。您可以将组件添加到单个实体，或同时添加到多个实体。</p>
+<p>将组件添加到实体是一种结构更改，这意味着实体移动到不同的块。这意味着您不能直接从作业中将组件添加到实体。相反，您必须使用
+EntityCommandBuffer 来记录您稍后添加组件的意图。</p>
+<h2 id="将组件添加到单个实体">将组件添加到单个实体</h2>
+<p>以下代码示例创建一个新实体，然后从主线程向该实体添加一个组件。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public partial struct AddComponentToSingleEntitySystemExample : ISystem
+&#123;
+    public void OnCreate(ref SystemState state)
+    &#123;
+        var entity &#x3D; state.EntityManager.CreateEntity();
+        state.EntityManager.AddComponent&lt;Rotation&gt;(entity);
+    &#125;
+
+    public void OnUpdate(ref SystemState state) &#123; &#125;
+
+    public void OnDestroy(ref SystemState state) &#123; &#125;
+&#125;</code></pre></div></figure></p>
+<h2 id="将组件添加到多个实体">将组件添加到多个实体</h2>
+<p>以下代码示例获取带有附加 ComponentA
+组件的每个实体，并从主线程向它们添加 ComponentB 组件。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">struct ComponentA : IComponentData &#123;&#125;
+struct ComponentB : IComponentData &#123;&#125;
+public partial struct AddComponentToMultipleEntitiesSystemExample : ISystem
+&#123;
+    public void OnCreate(ref SystemState state)
+    &#123;
+        var query &#x3D; state.GetEntityQuery(typeof(ComponentA));
+        state.EntityManager.AddComponent&lt;ComponentB&gt;(query);
+    &#125;
+
+    public void OnUpdate(ref SystemState state) &#123; &#125;
+
+    public void OnDestroy(ref SystemState state) &#123; &#125;
+&#125;</code></pre></div></figure></p>
+<h1 id="从实体中移除组件">从实体中移除组件</h1>
+<p>要从实体中移除组件，请使用实体所在世界的 EntityManager。</p>
+<div class="note note-warning">
+            <p>将组件添加到实体是一种结构更改，这意味着实体移动到不同的原型块。</p>
+          </div>
+<h2 id="从主线程">从主线程</h2>
+<p>您可以直接从主线程中的实体中删除组件。以下代码示例获取每个带有附加
+Rotation 组件的实体，然后删除 Rotation 组件。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public partial struct RemoveComponentSystemExample : ISystem
+&#123;
+    public void OnCreate(ref SystemState state)
+    &#123;
+        var query &#x3D; state.GetEntityQuery(typeof(Rotation));
+        state.EntityManager.RemoveComponent&lt;Rotation&gt;(query);
+    &#125;
+
+    public void OnUpdate(ref SystemState state) &#123; &#125;
+
+    public void OnDestroy(ref SystemState state) &#123; &#125;
+&#125;</code></pre></div></figure></p>
+<h2 id="从一份工作">从一份工作</h2>
+<p>因为从实体中删除组件是一种结构更改，所以您不能直接在作业中执行此操作。相反，您必须使用
+EntityCommandBuffer 来记录您稍后删除组件的意图。</p>
+<h1 id="读取和写入组件值">读取和写入组件值</h1>
+<p>将组件添加到实体后，您的系统可以访问、读取和写入组件值。根据您的用例，您可以使用多种方法来实现此目的。</p>
+<h2 id="访问单个组件">访问单个组件</h2>
+<p>有时您可能希望一次读取或写入一个实体的单个组件。为此，在主线程上，您可以让
+EntityManager 读取或写入单个实体的组件值。 EntityManager
+保留一个查找表以快速找到每个实体的块和块内的索引。</p>
+<h2 id="访问多个组件">访问多个组件</h2>
+<p>对于大多数工作，您需要读取或写入一个块或一组块中所有实体的组件：</p>
+<ul>
+<li>ArchetypeChunk 直接读取和写入块的组件数组。</li>
+<li>EntityQuery 有效地检索与查询匹配的组块集。</li>
+<li>IJobEntity 使用作业在查询中遍历组件。</li>
+</ul>
+<h2 id="延迟组件值更改">延迟组件值更改</h2>
+<p>要推迟组件值的更改以备后用，请使用 EntityCommandBuffer
+来记录您写入（而非读取）组件值的意图。这些更改只会在您稍后在主线程上播放
+EntityCommandBuffer 时发生。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%85%B6%E4%BB%96/" class="category-chain-item">其他</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Entities/" class="print-no-link">#Entities</a>
+      
+        <a href="/tags/ECS/" class="print-no-link">#ECS</a>
+      
+        <a href="/tags/DOTS/" class="print-no-link">#DOTS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>ECS 组件</div>
+      <div>https://www.kuanmi.top/2022/11/17/ECS-components-intro/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年11月17日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/11/17/ECS-Scripting/" title="ECS 脚本">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">ECS 脚本</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/11/17/ECS-systems-intro/" title="ECS 系统">
+                        <span class="hidden-mobile">ECS 系统</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

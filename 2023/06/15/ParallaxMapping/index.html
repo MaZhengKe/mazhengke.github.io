@@ -1,0 +1,948 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 之前之所以要重写一遍URP的lit，其实主要目的就是为了这里能实现真正的带深度偏移的陡峭视差映射。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="URP下的视差遮蔽映射（带像素偏移）">
+<meta property="og:url" content="https://www.kuanmi.top/2023/06/15/ParallaxMapping/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="前言 之前之所以要重写一遍URP的lit，其实主要目的就是为了这里能实现真正的带深度偏移的陡峭视差映射。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.kuanmi.top/images/Parallax-slim.png">
+<meta property="article:published_time" content="2023-06-14T20:00:31.000Z">
+<meta property="article:modified_time" content="2025-03-18T01:12:03.140Z">
+<meta property="article:author" content="KuanMi">
+<meta property="article:tag" content="视差">
+<meta property="article:tag" content="视差遮蔽映射">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/Parallax-slim.png">
+  
+  
+  
+  <title>URP下的视差遮蔽映射（带像素偏移） - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/Parallax.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="URP下的视差遮蔽映射（带像素偏移）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-15 04:00" pubdate>
+          2023年6月15日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          75 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">URP下的视差遮蔽映射（带像素偏移）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前言">前言</h1>
+<p>之前之所以要重写一遍URP的lit，其实主要目的就是为了这里能实现真正的带深度偏移的陡峭视差映射。<br />
+<span id="more"></span><br />
+URP自带的视差映射只是最最基本的用射线方向和高度去做偏移，只能在高度不高时有一点效果，要想更高一点的高度，只能像HDRP一样，分层用类似光线步进的方式去采样。</p>
+<h1 id="高度图">高度图</h1>
+<p>高度图可以有多种使用方式，最简单的就是用来变化顶点，但需要模型面数很高。<br />
+或者曲面细分后位移顶点，对GPU就有要求了。<br />
+还可以在像素级别实现。<br />
+通过偏移UV，来模拟高度。URP自身的高度图就是这样的，但URP没有支持像素深度位移。<br />
+即仅仅偏移了UV，但像素的深度没有改变，会导致看起来物体悬空。HDRP则实现了这一功能。</p>
+<p>先来看看URP默认的高度图是怎么做的吧。<br />
+主要是这个函数<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">ApplyPerPixelDisplacement(viewDirTS, input.uv);</code></pre></div></figure></p>
+<p>这里传入一个切线空间中的视线方向，以及UV，然后偏移这个UV，后续都采用偏移的UV来采样贴图。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">uv +&#x3D; ParallaxMapping(TEXTURE2D_ARGS(_ParallaxMap, sampler_ParallaxMap), viewDirTS, _Parallax, uv);</code></pre></div></figure></p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">half2 ParallaxOffset1Step(half height, half amplitude, half3 viewDirTS)
+&#123;
+    &#x2F;&#x2F; 应用缩放， 范围是[-amplitude&#x2F;2, amplitude&#x2F;2]
+    height &#x3D; height * amplitude - amplitude &#x2F; 2.0;
+    half3 v &#x3D; normalize(viewDirTS);
+    &#x2F;&#x2F; 魔法数0.42
+    v.z +&#x3D; 0.42;
+    &#x2F;&#x2F; v.xy &#x2F; v.z 反映出了视角方向的倾斜程度，倾斜程度越大，偏移越大
+    &#x2F;&#x2F; 如果视角方向和法线方向平行，那么偏移为0
+    return height * (v.xy &#x2F; v.z);
+&#125;</code></pre></div></figure>
+<p>这里的采样高度是最简单的一种方式，单纯用原点向视线方向偏移的方式，采样一次即可。<br />
+具体效果如下</p>
+<p><img src="ParallaxMappingSimple.gif" srcset="/img/loading.gif" lazyload alt="简单视差映射" /><br />
+在缩放比例较小时效果还可以，稍微增大一些就不如下面提到的方法了。</p>
+<h2 id="陡峭视差映射">陡峭视差映射</h2>
+<p>主要参考自<a
+target="_blank" rel="noopener" href="https://learnopengl-cn.github.io/05%20Advanced%20Lighting/05%20Parallax%20Mapping/">LearnOpenGL</a><br />
+具体的原理也不复杂，参看原文吧，下面给出Unity中的实现<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float2 ParallaxMapping2(Texture2D heightMap, SamplerState sampler_heightMap, half3 viewDir, half heightScale,
+                        float2 texCoords, float numLayers,float2 noiseUV,float _HeightMin, float _HeightMax)
+&#123;
+    &#x2F;&#x2F;每层深度
+    float layerDepth &#x3D; 1.0 &#x2F; numLayers;
+
+    &#x2F;&#x2F; 当前层级深度
+    float currentLayerDepth &#x3D; 0.0;
+
+    &#x2F;&#x2F;视点方向UV偏移总量
+    float2 P &#x3D; viewDir.xy &#x2F; (viewDir.z) * heightScale&#x2F;10;
+
+    &#x2F;&#x2F;每层高度UV偏移量
+    float2 deltaTexCoords &#x3D; P &#x2F; numLayers;
+
+    &#x2F;&#x2F;当前 UV
+    float2 currentTexCoords &#x3D; texCoords;
+
+    float currentDepthMapValue &#x3D; 1 - GetHeight(heightMap, sampler_heightMap, currentTexCoords,_HeightMin,_HeightMax);
+
+    &#x2F;&#x2F; 层高小于采样点高度，继续采样，直至采样点高度小于层高
+    for (int i &#x3D; 1; i &lt; 200 &amp;&amp; currentLayerDepth &lt; currentDepthMapValue; i++)
+    &#123;
+        &#x2F;&#x2F; 按高度层级进行 UV 偏移
+        currentTexCoords -&#x3D; deltaTexCoords;
+        &#x2F;&#x2F; 从高度贴图采样获取的高度
+        currentDepthMapValue &#x3D; 1 - GetHeight(heightMap, sampler_heightMap, currentTexCoords,_HeightMin,_HeightMax);
+        &#x2F;&#x2F; currentDepthMapValue &#x3D; 1 - getHeight(currentTexCoords);
+        &#x2F;&#x2F; 层高增加
+        currentLayerDepth +&#x3D; layerDepth;
+    &#125;
+
+    return (currentTexCoords - texCoords);
+&#125;</code></pre></div></figure><br />
+这就最简单的仅分层的视差映射了，当层数足够时，效果还可以，但如果层数太低，就会有分层的感觉，也算是光线步进的通病了。<br />
+<img src="ParallaxMapping02.gif" srcset="/img/loading.gif" lazyload alt="陡峭视差映射" /></p>
+<h1 id="视差遮蔽映射">视差遮蔽映射</h1>
+<p>再然后就是对上述方式的改进，不是单纯用一个点来确定高度，而是用一个范围然后线性插值来得到，<br />
+改动如下<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float2 ParallaxMapping2(Texture2D heightMap, SamplerState sampler_heightMap, half3 viewDir, half heightScale,
+                        float2 texCoords, float numLayers,float2 noiseUV,float _HeightMin, float _HeightMax)
+&#123;
+    &#x2F;&#x2F;每层深度
+    float layerDepth &#x3D; 1.0 &#x2F; numLayers;
+
+    &#x2F;&#x2F; 当前层级深度
+    float currentLayerDepth &#x3D; 0.0;
+
+    &#x2F;&#x2F;视点方向UV偏移总量
+    float2 P &#x3D; viewDir.xy &#x2F; (viewDir.z) * heightScale&#x2F;10;
+
+    &#x2F;&#x2F;每层高度UV偏移量
+    float2 deltaTexCoords &#x3D; P &#x2F; numLayers;
+
+    &#x2F;&#x2F;当前 UV
+    float2 currentTexCoords &#x3D; texCoords;
+
+    float currentDepthMapValue &#x3D; 1 - GetHeight(heightMap, sampler_heightMap, currentTexCoords,_HeightMin,_HeightMax);
+
+    float2 prevTexCoords &#x3D; currentTexCoords;
+    float prevDepthMapValue &#x3D; currentDepthMapValue;
+    float preLayerDepth &#x3D; currentLayerDepth;
+
+    &#x2F;&#x2F; [UNITY_LOOP]
+    &#x2F;&#x2F; 层高小于采样点高度，继续采样，直至采样点高度小于层高
+    for (int i &#x3D; 1; i &lt; 200 &amp;&amp; currentLayerDepth &lt; currentDepthMapValue; i++)
+    &#123;
+        prevTexCoords &#x3D; currentTexCoords;
+        prevDepthMapValue &#x3D; currentDepthMapValue;
+        preLayerDepth &#x3D; currentLayerDepth;
+
+        &#x2F;&#x2F; 按高度层级进行 UV 偏移
+        currentTexCoords -&#x3D; deltaTexCoords;
+        &#x2F;&#x2F; 从高度贴图采样获取的高度
+        currentDepthMapValue &#x3D; 1 - GetHeight(heightMap, sampler_heightMap, currentTexCoords,_HeightMin,_HeightMax);
+        &#x2F;&#x2F; currentDepthMapValue &#x3D; 1 - getHeight(currentTexCoords);
+        &#x2F;&#x2F; 层高增加
+        currentLayerDepth +&#x3D; layerDepth;
+    &#125;
+
+    &#x2F;&#x2F; return (currentTexCoords - texCoords);
+
+    float prevDifference &#x3D; preLayerDepth - prevDepthMapValue;
+    float difference &#x3D; currentDepthMapValue - currentLayerDepth;
+    float t &#x3D; prevDifference &#x2F; (prevDifference + difference);
+    return lerp(prevTexCoords, currentTexCoords, t) - texCoords;
+&#125;</code></pre></div></figure></p>
+<p><img src="ParallaxMapping03.gif" srcset="/img/loading.gif" lazyload alt="视差遮蔽映射" /><br />
+能看出比之前要好上不少，尤其是相同层数的情况下，分层感少了很多，但还是有。</p>
+<h1 id="再加上抖动">再加上抖动</h1>
+<p>这个做法来自<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/458069534">这里</a>，采用屏幕空间的随机噪声，来抖动采样层数。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">
+float noise(float2 uv,float FrameId)
+&#123;
+    uv +&#x3D; FrameId * (float2(47.0f,17.0f) * 0.695f);
+    const float3 magic &#x3D; float3(0.06711056f, 0.00583715f, 52.9829189f);
+    return frac(magic.z * frac(dot(uv, magic.xy)));
+&#125;
+
+    float minLayers &#x3D; 10;
+    float maxLayers &#x3D; numLayers;
+    maxLayers &#x3D; maxLayers * 0.5f + maxLayers * noise(noiseUV,_Time.y);
+    float adaptive &#x3D; abs(dot(viewDir, float3(0, 0, 1)));
+    numLayers &#x3D; lerp(minLayers, maxLayers, adaptive);</code></pre></div></figure></p>
+<p><img src="ParallaxMapping04.gif" srcset="/img/loading.gif" lazyload alt="加上抖动" /><br />
+可能在有TAA的情况下效果会不错，但目前URP还没有（2023会有），这个就等下次手撸TAA的时候再来看吧。</p>
+<h1 id="hdrp中的做法">HDRP中的做法</h1>
+<p>然后去翻了翻HDRP中对视差的做法，大体一致，但最后选择采样点时，不是单纯的用两个点来插值，<br />
+而是又加上了割线法，迭代三次，取一个更近似的解。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">real2 ParallaxOcclusionMapping(TEXTURE2D_PARAM(heightMap,sampler_heightMap),real lod, real lodThreshold, int numSteps, real3 viewDirTS, float2 uv , out real outHeight)
+&#123;
+    real stepSize &#x3D; 1.0 &#x2F; (real)numSteps;
+
+    real2 parallaxMaxOffsetTS &#x3D; viewDirTS.xy &#x2F; -viewDirTS.z;
+    real2 texOffsetPerStep &#x3D; stepSize * parallaxMaxOffsetTS;
+
+    real2 texOffsetCurrent &#x3D; real2(0.0, 0.0);
+    
+    &#x2F;&#x2F; real prevHeight &#x3D; SAMPLE_TEXTURE2D_LOD(heightMap, sampler_heightMap, uv + texOffsetCurrent, lod).r;
+    real prevHeight &#x3D; ComputePerPixelHeightDisplacement(texOffsetCurrent, lod, uv,heightMap, sampler_heightMap);
+    texOffsetCurrent +&#x3D; texOffsetPerStep;
+    &#x2F;&#x2F; real currHeight &#x3D; SAMPLE_TEXTURE2D_LOD(heightMap, sampler_heightMap, uv + texOffsetCurrent, lod).r;
+    real currHeight &#x3D; ComputePerPixelHeightDisplacement(texOffsetCurrent, lod, uv,heightMap, sampler_heightMap);
+    real rayHeight &#x3D; 1.0 - stepSize; &#x2F;&#x2F; Start at top less one sample
+
+    &#x2F;&#x2F; Linear search
+    for (int stepIndex &#x3D; 0; stepIndex &lt; numSteps; ++stepIndex)
+    &#123;
+        &#x2F;&#x2F; Have we found a height below our ray height ? then we have an intersection
+        if (currHeight &gt; rayHeight)
+            break; &#x2F;&#x2F; end the loop
+
+        prevHeight &#x3D; currHeight;
+        rayHeight -&#x3D; stepSize;
+        texOffsetCurrent +&#x3D; texOffsetPerStep;
+
+        &#x2F;&#x2F; Sample height map which in this case is stored in the alpha channel of the normal map:
+        &#x2F;&#x2F; currHeight &#x3D; ComputePerPixelHeightDisplacement(texOffsetCurrent, lod, uv,heightMap, sampler_heightMap);
+        currHeight &#x3D; ComputePerPixelHeightDisplacement(texOffsetCurrent, lod, uv,heightMap, sampler_heightMap);
+    &#125;
+    
+    real pt0 &#x3D; rayHeight + stepSize;
+    real pt1 &#x3D; rayHeight;
+    real delta0 &#x3D; pt0 - prevHeight;
+    real delta1 &#x3D; pt1 - currHeight;
+
+    real delta;
+    real2 offset;
+    
+    &#x2F;&#x2F; Secant method to affine the search
+    &#x2F;&#x2F; Ref: Faster Relief Mapping Using the Secant Method - Eric Risser
+    for (int i &#x3D; 0; i &lt; 3; ++i)
+    &#123;
+        &#x2F;&#x2F; intersectionHeight is the height [0..1] for the intersection between view ray and heightfield line
+        real intersectionHeight &#x3D; (pt0 * delta1 - pt1 * delta0) &#x2F; (delta1 - delta0);
+        &#x2F;&#x2F; Retrieve offset require to find this intersectionHeight
+        offset &#x3D; (1 - intersectionHeight) * texOffsetPerStep * numSteps;
+
+        currHeight &#x3D; ComputePerPixelHeightDisplacement(offset, lod, uv,heightMap, sampler_heightMap);
+        &#x2F;&#x2F; currHeight &#x3D; getHeight(uv + texOffsetCurrent);
+
+        delta &#x3D; intersectionHeight - currHeight;
+
+        if (abs(delta) &lt;&#x3D; 0.01)
+            break;
+
+        &#x2F;&#x2F; intersectionHeight &lt; currHeight &#x3D;&gt; new lower bounds
+        if (delta &lt; 0.0)
+        &#123;
+            delta1 &#x3D; delta;
+            pt1 &#x3D; intersectionHeight;
+        &#125;
+        else
+        &#123;
+            delta0 &#x3D; delta;
+            pt0 &#x3D; intersectionHeight;
+        &#125;
+    &#125;
+
+    outHeight &#x3D; currHeight;
+    
+    &#x2F;&#x2F; Fade the effect with lod (allow to avoid pop when switching to a discrete LOD mesh)
+    offset *&#x3D; (1.0 - saturate(lod - lodThreshold));
+
+    return offset;
+&#125;</code></pre></div></figure></p>
+<h1 id="像素深度偏移">像素深度偏移</h1>
+<p>先看看没有深度偏移之前的样子</p>
+<p><img src="ParallaxMapping05.gif" srcset="/img/loading.gif" lazyload alt="没有像素深度偏移" /><br />
+其他物体是浮在之前的平面上的，凹陷下去的部分也不会透显出其他物体。<br />
+这是因为写入的深度没有改变，还是之前平面的深度，实际应该根据视角和高度（深度），来像素级别的改变深度图。<br />
+所以这里需要<code>SV_Depth</code>这个关键字。<br />
+改动下原来的Shader片元的函数声明</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">void LitPassFragment(Varyings input, out half4 outColor : SV_Target0,out float outDepth : SV_Depth)
+&#123;
+    &#96;&#96;&#96;&#96;&#96;&#96;
+    float depthOffset  &#x3D; ApplyPerPixelDisplacement(viewDirTS, input.uv,input.positionCS.xy);
+    
+    
+    &#x2F;&#x2F; ApplyDepthOffsetPositionInput(viewDirWS, depthOffset, GetViewForwardDir(), GetWorldToHClipMatrix(), input);
+
+    input.positionWS +&#x3D; depthOffset * (-viewDirWS);
+
+    float deviceDepth &#x3D; ComputeNormalizedDeviceCoordinatesWithZ( input.positionWS, GetWorldToHClipMatrix()).z;
+    
+    outDepth &#x3D; deviceDepth ;
+&#125;</code></pre></div></figure>
+<p>这里的逻辑很清晰，就是把片元的世界坐标沿着视线的反方向偏移，然后再手动计算一次深度，最后吧把深度写入。</p>
+<p><img src="ParallaxMapping06.gif" srcset="/img/loading.gif" lazyload alt="像素深度偏移" /><br />
+这时深度信息就正确了。</p>
+<h1 id="阴影">阴影</h1>
+<p>同样的，在绘制阴影贴图时，也要添加对应的深度偏移<br />
+改动一下阴影pass的片元着色器<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">half4 ShadowPassFragment(Varyings input,out float outDepth : SV_Depth) : SV_Target
+&#123;
+    UNITY_SETUP_INSTANCE_ID(input);
+    UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+    
+    float3 lightDirectionWS &#x3D; _LightDirection;
+    
+    &#x2F;&#x2F; half3 viewDirWS &#x3D; GetWorldSpaceNormalizeViewDir(input.positionWS);
+    half3 viewDirWS &#x3D; normalize(lightDirectionWS);
+    half3 viewDirTS &#x3D; GetViewDirectionTangentSpace(input.tangentWS, input.normalWS, viewDirWS);
+    float depthOffset  &#x3D; ApplyPerPixelDisplacement(viewDirTS, input.uv,input.positionCS.xy);
+    
+    input.positionWS +&#x3D; depthOffset * (-viewDirWS);
+    input.positionWS &#x3D; ApplyShadowBias(input.positionWS, input.normalWS, lightDirectionWS);
+    
+    float deviceDepth &#x3D; ComputeNormalizedDeviceCoordinatesWithZ( input.positionWS, GetWorldToHClipMatrix()).z;
+    outDepth &#x3D; deviceDepth ;
+    return 0;
+&#125;</code></pre></div></figure><br />
+这里要注意的是，对于平行光来说，视线方向应该就是光线方向。</p>
+<figure>
+<img src="ParallaxMapping07.gif" srcset="/img/loading.gif" lazyload alt="阴影" />
+<figcaption aria-hidden="true">阴影</figcaption>
+</figure>
+<p>阴影也考虑高度的话其实挺吃性能的，一般这种用作地面的平面，不投射阴影仅接收阴影也可以，或者阴影少几层影响也不大。</p>
+<h1 id="vr">VR</h1>
+<p>得益于URP的单通道渲染，几乎不需要什么改动就可以完美适配VR，VR下视差贴图的效果确实惊人，因为视差考虑到了双眼位置的不同，双眼的画面也就不同，这就比单纯的法线要生动真实的多。看来虚幻的VR开发指南中推荐用视差还是有道理的。</p>
+<figure>
+<img src="ParallaxMapping08.gif" srcset="/img/loading.gif" lazyload alt="VR" />
+<figcaption aria-hidden="true">VR</figcaption>
+</figure>
+<h1 id="后续">后续</h1>
+<p>如果说还有什么可以改进的，那就考虑软阴影，抗锯齿之类，以后有需要再说吧。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%B8%B2%E6%9F%93/" class="category-chain-item">渲染</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E8%A7%86%E5%B7%AE/" class="print-no-link">#视差</a>
+      
+        <a href="/tags/%E8%A7%86%E5%B7%AE%E9%81%AE%E8%94%BD%E6%98%A0%E5%B0%84/" class="print-no-link">#视差遮蔽映射</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>URP下的视差遮蔽映射（带像素偏移）</div>
+      <div>https://www.kuanmi.top/2023/06/15/ParallaxMapping/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/06/15/ShaderVariants/" title="着色器变体">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">着色器变体</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/06/15/pbr/" title="URP下定制PBRShader">
+                        <span class="hidden-mobile">URP下定制PBRShader</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

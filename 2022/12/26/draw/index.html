@@ -1,0 +1,874 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="喷涂与绘制 又是一个烂大街的效果，但毕竟还没有做过。这里记录和总结一下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="喷涂、绘制与填充">
+<meta property="og:url" content="https://www.kuanmi.top/2022/12/26/draw/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="喷涂与绘制 又是一个烂大街的效果，但毕竟还没有做过。这里记录和总结一下。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.kuanmi.top/images/drawsdf-slim.png">
+<meta property="article:published_time" content="2022-12-26T00:39:56.000Z">
+<meta property="article:modified_time" content="2025-03-18T01:12:02.961Z">
+<meta property="article:author" content="KuanMi">
+<meta property="article:tag" content="喷涂">
+<meta property="article:tag" content="绘制">
+<meta property="article:tag" content="填充">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/drawsdf-slim.png">
+  
+  
+  
+  <title>喷涂、绘制与填充 - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/drawsdf.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="喷涂、绘制与填充"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-12-26 08:39" pubdate>
+          2022年12月26日 早上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          38 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">喷涂、绘制与填充</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="喷涂与绘制">喷涂与绘制</h1>
+<p>又是一个烂大街的效果，但毕竟还没有做过。这里记录和总结一下。<br />
+<span id="more"></span><br />
+最为出名的应该就是老任的Splatoon了，不仅是视觉效果，整个游戏的玩法都是建立在喷涂上的。<br />
+另一个有印象的就是V社的alyx的开头一章上的玻璃或者黑板上用水彩绘制了。<br />
+最近Unity官方也分享了一个视频，利用了SDF，效果也很好。</p>
+<h1 id="实现">实现</h1>
+<p>最基础的想法就是用世界坐标来判断是否接触<br />
+<img src="dis.png" srcset="/img/loading.gif" lazyload alt="距离判断" /></p>
+<p>然后要求模型有一套不重叠的UV，使用这个UV作为顶点着色器的坐标输出，把接触的部分在UV空间下绘制到一张RT上。<br />
+<img src="draw_rt.png" srcset="/img/loading.gif" lazyload alt="RT" /></p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">&#x2F;&#x2F; 使用UV作为顶点着色器的坐标输出
+float4 uv &#x3D; float4(0, 0, 0, 1);
+uv.xy &#x3D; float2(1, _ProjectionParams.x) * (OUT.uv.xy * 2 - 1);
+OUT.positionHCS &#x3D; uv;</code></pre></div></figure>
+<p>最后再使用这张RT去渲染就好了。</p>
+<p>简单贴一下<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">CBUFFER_START(UnityPerMaterial)
+float4 _BaseMap_ST;
+float4 _SplatColor;
+float3 _position;
+float _radius;
+CBUFFER_END
+
+Varyings vert(Attributes IN)
+&#123;
+    Varyings OUT;
+    OUT.positionHCS &#x3D; TransformObjectToHClip(IN.positionOS.xyz);
+    OUT.uv &#x3D; TRANSFORM_TEX(IN.uv, _BaseMap);
+
+    float4 uv &#x3D; float4(0, 0, 0, 1);
+    uv.xy &#x3D; float2(1, _ProjectionParams.x) * (OUT.uv.xy * 2 - 1);
+    OUT.positionHCS &#x3D; uv;
+    OUT.positionWS &#x3D; TransformObjectToWorld(IN.positionOS.xyz);
+
+    return OUT;
+&#125;
+
+half4 frag(Varyings IN) : SV_Target
+&#123;
+    half4 color &#x3D; SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv);
+
+    float3 distence &#x3D; IN.positionWS - _position;
+    float distenceLength &#x3D; length(distence);
+    if (distenceLength &lt; _radius)
+    &#123;
+        color &#x3D; _SplatColor;
+    &#125;
+    else
+    &#123;
+        clip(-1);
+    &#125;
+
+    return color;
+&#125;</code></pre></div></figure></p>
+<p>然后是对应的RenderFeature的pass</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+&#123;
+    if(renderTexture!&#x3D;null &amp;&amp; material!&#x3D;null)
+    &#123;
+        foreach (var splatable in Splatable.splatables)
+        &#123;
+                
+            var cmd &#x3D; CommandBufferPool.Get(&quot;SplatRenderPass&quot;);
+            cmd.SetRenderTarget(splatable.splatTexture);
+            cmd.ClearRenderTarget(true, false, Color.black);
+
+            cmd.SetViewProjectionMatrices(Matrix4x4.identity, Matrix4x4.Ortho(0, 1, 0, 1, -1, 1));
+        
+            material.SetVector(&quot;_position&quot;, splatable.targetPen.position);
+            
+            cmd.DrawMesh(splatable.mesh, splatable.transform.localToWorldMatrix, material);
+
+            context.ExecuteCommandBuffer(cmd);
+            CommandBufferPool.Release(cmd);
+        &#125;
+
+    &#125;
+&#125;</code></pre></div></figure>
+<figure>
+<img src="yu2.gif" srcset="/img/loading.gif" lazyload alt="绘制" />
+<figcaption aria-hidden="true">绘制</figcaption>
+</figure>
+<h2 id="连续问题">连续问题</h2>
+<p>可以看到，因为是每一帧仅绘制一个点，手柄快速移动就会出现不连贯的点，这里改成记录前后两帧的位置，用一个胶囊体的sdf去计算。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float sdCapsule( vec3 p, vec3 a, vec3 b, float r )
+&#123;
+  vec3 pa &#x3D; p - a, ba &#x3D; b - a;
+  float h &#x3D; clamp( dot(pa,ba)&#x2F;dot(ba,ba), 0.0, 1.0 );
+  return length( pa - ba*h ) - r;
+&#125;</code></pre></div></figure>
+<figure>
+<img src="draw2.gif" srcset="/img/loading.gif" lazyload alt="连续绘制" />
+<figcaption aria-hidden="true">连续绘制</figcaption>
+</figure>
+<h2 id="利用sdf解决锯齿">利用SDF解决锯齿</h2>
+<p>这里用到了一个之前没用过的ShaderLab命令<code>BlendOp</code>，用来定义混合的操作，默认是add，这里改成max。<br />
+贴图的rgb存储颜色，a通道用来存储SDF。</p>
+<p>最后显示时用A通道来判定是否是喷涂区域：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">
+fixed4 col &#x3D; tex2D(_MainTex, i.uv);
+float aa &#x3D; col.a;
+aa &#x3D; aa - 0.5;
+if(aa&lt;0)
+&#123;
+    clip(-1);
+&#125;</code></pre></div></figure></p>
+<figure>
+<img src="drawsdf.png" srcset="/img/loading.gif" lazyload alt="SDF绘制" />
+<figcaption aria-hidden="true">SDF绘制</figcaption>
+</figure>
+<p>这里的贴图分辨率降低为1024（之前是4096），也可以明显看到去除了边缘锯齿。但颜色过度地方的锯齿还是存在，可以统一颜色或者提高分辨率来解决这个问题。</p>
+<h2 id="防抖">防抖</h2>
+<p>VR下难免手抖，这里就偷懒同官方的XR
+toolkit中的<code>XR Grab Interactable</code>组件自带的平滑移动解决。</p>
+<h2 id="其他">其他</h2>
+<p>仅就复刻ALYX中的水彩笔还算是比较成功了，后续如果还要添加功能，可以考虑像Splatoon一样，考虑水彩的厚度，喷溅的墨点，对法线的影响以及人物的交互等等花活了。</p>
+<h2 id="封闭区域判断">封闭区域判断</h2>
+<p>还有一个需求，要求提取出其中被线包围的封闭区域。这里就简单用DFS实现吧。</p>
+<p>把RenderTexture中的像素提出来，用alpha通道来作为边界判断依据，转换成二维的布尔数组，true表示涂上了颜色，false表示没有。</p>
+<p>从左上角开始深度优先遍历每个像素，</p>
+<ul>
+<li>如果这个像素为True，跳过。</li>
+<li>为false，临时记录到一个数组中，然后遍历他的上下左右像素，
+<ul>
+<li>如果存在一个像素越界了，说明这里和外边界相通，标记失败，表示这是和外边界相通的像素。</li>
+<li>如果没有越界，但是值为true，说明和喷涂的像素相连，不用再遍历他的上下左右了</li>
+<li>最后没有越界，但是值为false，还是要遍历他的上下左右</li>
+</ul></li>
+<li>遍历完成后，判断是否有像素越界，如果有，临时记录的全部像素结果记为false，反之记为true。</li>
+</ul>
+<p>深度优先虽然简单，但对于512*512这种体量的数据都会堆栈溢出。还是改成bfs吧。</p>
+<p>用一个队列来保存相邻的像素，广度优先遍历，一旦发现与外边界连通就全记为false，反之说明这个连通区域是封闭的。</p>
+<p>因为全部搜索都是在二维UV平面进行的，所以要求模型的UV只能有一块，且接缝处无法算作闭合区域。<br />
+因为这里涉及了对GPU贴图的读写，效率只能说马马虎虎。也许可以使用computeShader来实现，<del>但目前我还是想不到。</del></p>
+<figure>
+<img src="draw3.gif" srcset="/img/loading.gif" lazyload alt="封闭区域判断与绘制" />
+<figcaption aria-hidden="true">封闭区域判断与绘制</figcaption>
+</figure>
+<h2 id="计算着色器实现">计算着色器实现</h2>
+<p>鼓捣了半天，又把计算着色器翻出来看了看。<br />
+很少用到，之前写SSR时用过一次，然后就忘干净了。这次为了优化之前写的封闭区域判断，即泛洪算法，尝试用computeShader来实现一次，加深一下印象。</p>
+<h3 id="泛洪算法">泛洪算法</h3>
+<p>画图工具中的油漆桶工具，以及PS中的魔棒工具都属于典型的泛洪算法的用例。如果是用CPU实现，那就是之前写的简单的DFS或者BFS都可以，既然在Unity中实现，那就不能错过用GPU实现的机会了。</p>
+<h3 id="gpu泛洪">GPU泛洪</h3>
+<p>首先是精确的GPU泛洪，从一个点出发，颜色设置为白色，然后对每个像素，如果它是白色，那就把他四周不是黑色的像素也置为白色，就这样一直循环N遍，就可以得到类似下图的效果了：</p>
+<figure>
+<img src="fill.png" srcset="/img/loading.gif" lazyload alt="原图" />
+<figcaption aria-hidden="true">原图</figcaption>
+</figure>
+<figure>
+<img src="draw4.gif" srcset="/img/loading.gif" lazyload alt="GPU泛洪" />
+<figcaption aria-hidden="true">GPU泛洪</figcaption>
+</figure>
+<p>再结合之前的喷涂的贴图，就可以快速的从边缘开始泛洪，以此来判断封闭区域了。</p>
+<p><img src="draw5.gif" srcset="/img/loading.gif" lazyload alt="GPU泛洪分步骤演示" /><br />
+改成用GPU算果然快了很多，尤其是省略了从GPU读取像素到内存的开销，可以说不在一个数量级上。<br />
+如果还是要优化的话，我只能想到降低分辨率再上采样了，因为使用了SDF，所以低分辨率也可以接受。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#pragma kernel CSMain
+#pragma kernel CSClean
+
+#define thread_group_x 8
+#define thread_group_y 8
+#define thread_x 8
+#define thread_y 8
+
+&#x2F;&#x2F; Create a RenderTexture with enableRandomWrite flag and set it
+&#x2F;&#x2F; with cs.SetTexture
+RWTexture2D&lt;float4&gt; Result;
+Texture2D&lt;float4&gt; Source;
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+&#123;
+    if (Result[id.xy].a &lt; 0.5)
+    &#123;
+        float4 top &#x3D; Source[id.xy + uint2(0, 1)];
+        float4 bottom &#x3D; Source[id.xy + uint2(0, -1)];
+        float4 left &#x3D; Source[id.xy + uint2(-1, 0)];
+        float4 right &#x3D; Source[id.xy + uint2(1, 0)];
+
+        if (top.a &lt; 0.5)
+            Result[id.xy + uint2(0, 1)] &#x3D; float4(0, 0, 0, 0);
+
+        if (bottom.a &lt; 0.5)
+            Result[id.xy + uint2(0, -1)] &#x3D; float4(0, 0, 0, 0);
+
+        if (left.a &lt; 0.5)
+            Result[id.xy + uint2(-1, 0)] &#x3D; float4(0, 0, 0, 0);
+
+        if (right.a &lt; 0.5)
+            Result[id.xy + uint2(1, 0)] &#x3D; float4(0, 0, 0, 0);
+    &#125;
+&#125;
+
+
+[numthreads(8,8,1)]
+void CSClean(uint3 id : SV_DispatchThreadID)
+&#123;
+    if (id.x &#x3D;&#x3D; 0 || id.x &#x3D;&#x3D; 255 || id.y &#x3D;&#x3D; 0 || id.y &#x3D;&#x3D; 255)
+        Result[id.xy] &#x3D; float4(0, 0, 0, 0);
+    else
+        Result[id.xy] &#x3D; float4(1, 1, 1, 1);
+&#125;</code></pre></div></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%B8%B2%E6%9F%93/" class="category-chain-item">渲染</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%96%B7%E6%B6%82/" class="print-no-link">#喷涂</a>
+      
+        <a href="/tags/%E7%BB%98%E5%88%B6/" class="print-no-link">#绘制</a>
+      
+        <a href="/tags/%E5%A1%AB%E5%85%85/" class="print-no-link">#填充</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>喷涂、绘制与填充</div>
+      <div>https://www.kuanmi.top/2022/12/26/draw/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年12月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/12/30/openxr/" title="XR开发的各种SDK以及相关概念">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">XR开发的各种SDK以及相关概念</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/12/12/Unity2022-2/" title="Unity 2022.2.0光追效果测试">
+                        <span class="hidden-mobile">Unity 2022.2.0光追效果测试</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

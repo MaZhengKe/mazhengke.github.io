@@ -1,0 +1,1157 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="体积字 为了方便美术去修改场景中的有体积字，在TMP基础上，用光线步进加SDF去渲染体积字。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于TMP、SDF、光线步进的体积字渲染">
+<meta property="og:url" content="https://www.kuanmi.top/2023/07/26/TMP/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="体积字 为了方便美术去修改场景中的有体积字，在TMP基础上，用光线步进加SDF去渲染体积字。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.kuanmi.top/images/VTMP_13-slim.png">
+<meta property="article:published_time" content="2023-07-26T06:01:04.000Z">
+<meta property="article:modified_time" content="2025-03-18T01:12:03.942Z">
+<meta property="article:author" content="KuanMi">
+<meta property="article:tag" content="SDF">
+<meta property="article:tag" content="光线步进">
+<meta property="article:tag" content="体积字">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/VTMP_13-slim.png">
+  
+  
+  
+  <title>基于TMP、SDF、光线步进的体积字渲染 - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/VTMP_13.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="基于TMP、SDF、光线步进的体积字渲染"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-07-26 14:01" pubdate>
+          2023年7月26日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          97 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">基于TMP、SDF、光线步进的体积字渲染</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="体积字">体积字</h1>
+<p>为了方便美术去修改场景中的有体积字，在TMP基础上，用光线步进加SDF去渲染体积字。<br />
+<span id="more"></span><br />
+<img src="VTMP_13.png" srcset="/img/loading.gif" lazyload alt="体积渲染" /></p>
+<p>先贴<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/42923421">参考</a></p>
+<h1 id="mesh">Mesh</h1>
+<p>直接改原版的TMP有点麻烦，退而求其次，在TMP构造好Mesh后，修改这个Mesh，以适应新的Shader。</p>
+<p>原本TMP构造出的网格是一个个面片，每个字符由两个三角形拼成。</p>
+<figure>
+<img src="VTMP_01.png" srcset="/img/loading.gif" lazyload alt="原始TMP网格" />
+<figcaption aria-hidden="true">原始TMP网格</figcaption>
+</figure>
+<p>然后以这个mesh为基础，再添加4个点，5个面，纵向拉伸成一个个立方体.</p>
+<figure>
+<img src="VTMP_02.png" srcset="/img/loading.gif" lazyload alt="拉伸后网格" />
+<figcaption aria-hidden="true">拉伸后网格</figcaption>
+</figure>
+<p>新网格中除了保存之前的网格中的信息外，还要额外添加几个。分别是</p>
+<ul>
+<li>每个字符左下角顶点的坐标</li>
+<li>每个字符右上角顶点坐标</li>
+<li>每个字符左下角顶点的UV</li>
+</ul>
+<p>除了这些，整体的厚度也写入材质中去。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public void SetMesh()
+&#123;
+    var mesh &#x3D; textMeshPro.mesh;
+    var newMesh &#x3D; new Mesh();
+    newMesh.name &#x3D; &quot;km&quot;;
+
+    var vertices &#x3D; new Vector3[mesh.vertices.Length * 2];
+    for (var i &#x3D; 0; i &lt; mesh.vertices.Length; i++)
+    &#123;
+        vertices[i] &#x3D; mesh.vertices[i];
+        vertices[i + mesh.vertices.Length] &#x3D; mesh.vertices[i] + new Vector3(0, 0, width);
+    &#125;
+
+    newMesh.vertices &#x3D; vertices;
+
+
+    var sum &#x3D; mesh.triangles.Length &#x2F; (2 * 3);
+    
+    var triangles &#x3D; new int[mesh.triangles.Length * 6];
+    
+    for (var i &#x3D; 0; i &lt; sum; i++)
+    &#123;
+        var s &#x3D; i * 6;
+        &#x2F;&#x2F; 前面
+        triangles[s + 0] &#x3D; mesh.triangles[s + 0];
+        triangles[s + 1] &#x3D; mesh.triangles[s + 1];
+        triangles[s + 2] &#x3D; mesh.triangles[s + 2];
+
+        triangles[s + 3] &#x3D; mesh.triangles[s + 3];
+        triangles[s + 4] &#x3D; mesh.triangles[s + 4];
+        triangles[s + 5] &#x3D; mesh.triangles[s + 5];
+
+        &#x2F;&#x2F; 后面
+        triangles[s + 0 + mesh.triangles.Length] &#x3D; mesh.triangles[s + 4] + mesh.vertices.Length;
+        triangles[s + 1 + mesh.triangles.Length] &#x3D; mesh.triangles[s + 3] + mesh.vertices.Length;
+        triangles[s + 2 + mesh.triangles.Length] &#x3D; mesh.triangles[s + 1] + mesh.vertices.Length;
+
+        triangles[s + 3 + mesh.triangles.Length] &#x3D; mesh.triangles[s + 1] + mesh.vertices.Length;
+        triangles[s + 4 + mesh.triangles.Length] &#x3D; mesh.triangles[s + 0] + mesh.vertices.Length;
+        triangles[s + 5 + mesh.triangles.Length] &#x3D; mesh.triangles[s + 4] + mesh.vertices.Length;
+
+        &#x2F;&#x2F; 右面
+        triangles[s + 0 + mesh.triangles.Length * 2] &#x3D; mesh.triangles[s + 0] + mesh.vertices.Length;
+        triangles[s + 1 + mesh.triangles.Length * 2] &#x3D; mesh.triangles[s + 1] + mesh.vertices.Length;
+        triangles[s + 2 + mesh.triangles.Length * 2] &#x3D; mesh.triangles[s + 1];
+
+        triangles[s + 3 + mesh.triangles.Length * 2] &#x3D; mesh.triangles[s + 1];
+        triangles[s + 4 + mesh.triangles.Length * 2] &#x3D; mesh.triangles[s + 0];
+        triangles[s + 5 + mesh.triangles.Length * 2] &#x3D; mesh.triangles[s + 0] + mesh.vertices.Length;
+
+        &#x2F;&#x2F; 下面
+        triangles[s + 0 + mesh.triangles.Length * 3] &#x3D; mesh.triangles[s + 5] + mesh.vertices.Length;
+        triangles[s + 1 + mesh.triangles.Length * 3] &#x3D; mesh.triangles[s + 5];
+        triangles[s + 2 + mesh.triangles.Length * 3] &#x3D; mesh.triangles[s + 4];
+
+        triangles[s + 3 + mesh.triangles.Length * 3] &#x3D; mesh.triangles[s + 4];
+        triangles[s + 4 + mesh.triangles.Length * 3] &#x3D; mesh.triangles[s + 4] + mesh.vertices.Length;
+        triangles[s + 5 + mesh.triangles.Length * 3] &#x3D; mesh.triangles[s + 5] + mesh.vertices.Length;
+
+        &#x2F;&#x2F; 左面
+        triangles[s + 0 + mesh.triangles.Length * 4] &#x3D; mesh.triangles[s + 4];
+        triangles[s + 1 + mesh.triangles.Length * 4] &#x3D; mesh.triangles[s + 3];
+        triangles[s + 2 + mesh.triangles.Length * 4] &#x3D; mesh.triangles[s + 3] + mesh.vertices.Length;
+
+        triangles[s + 3 + mesh.triangles.Length * 4] &#x3D; mesh.triangles[s + 3] + mesh.vertices.Length;
+        triangles[s + 4 + mesh.triangles.Length * 4] &#x3D; mesh.triangles[s + 4] + mesh.vertices.Length;
+        triangles[s + 5 + mesh.triangles.Length * 4] &#x3D; mesh.triangles[s + 4];
+
+        &#x2F;&#x2F; 上面
+        triangles[s + 0 + mesh.triangles.Length * 5] &#x3D; mesh.triangles[s + 1];
+        triangles[s + 1 + mesh.triangles.Length * 5] &#x3D; mesh.triangles[s + 1] + mesh.vertices.Length;
+        triangles[s + 2 + mesh.triangles.Length * 5] &#x3D; mesh.triangles[s + 2] + mesh.vertices.Length;
+
+        triangles[s + 3 + mesh.triangles.Length * 5] &#x3D; mesh.triangles[s + 2] + mesh.vertices.Length;
+        triangles[s + 4 + mesh.triangles.Length * 5] &#x3D; mesh.triangles[s + 2];
+        triangles[s + 5 + mesh.triangles.Length * 5] &#x3D; mesh.triangles[s + 1];
+    &#125;
+
+    newMesh.triangles &#x3D; triangles;
+
+
+    var normals &#x3D; new Vector3[mesh.normals.Length * 2];
+    for (var i &#x3D; 0; i &lt; mesh.normals.Length; i++)
+    &#123;
+        normals[i] &#x3D; mesh.normals[i];
+        normals[i + mesh.normals.Length] &#x3D; mesh.normals[i];
+    &#125;
+
+    newMesh.normals &#x3D; normals;
+
+    var tangents &#x3D; new Vector4[mesh.tangents.Length * 2];
+
+    for (var i &#x3D; 0; i &lt; mesh.tangents.Length; i++)
+    &#123;
+        tangents[i] &#x3D; mesh.tangents[i];
+        tangents[i + mesh.tangents.Length] &#x3D; mesh.tangents[i];
+    &#125;
+
+    newMesh.triangles &#x3D; triangles;
+
+    var colors32 &#x3D; new Color32[mesh.colors.Length * 2];
+
+    for (var i &#x3D; 0; i &lt; mesh.colors32.Length; i++)
+    &#123;
+        colors32[i] &#x3D; mesh.colors32[i];
+        colors32[i + mesh.colors32.Length] &#x3D; mesh.colors32[i];
+    &#125;
+
+    newMesh.colors32 &#x3D; colors32;
+
+    var uv &#x3D; new Vector2[mesh.uv.Length * 2];
+
+    for (var i &#x3D; 0; i &lt; mesh.uv.Length; i++)
+    &#123;
+        uv[i] &#x3D; mesh.uv[i];
+        uv[i + mesh.uv.Length] &#x3D; mesh.uv[i];
+    &#125;
+
+    newMesh.uv &#x3D; uv;
+
+
+    var sum2 &#x3D; newMesh.vertices.Length &#x2F; (4);
+    Debug.Log(sum2);
+
+    var uv3 &#x3D; new Vector2[mesh.uv.Length * 2];
+    var uv4 &#x3D; new Vector2[mesh.uv.Length * 2];
+    var uv5 &#x3D; new Vector2[mesh.uv.Length * 2];
+
+    for (int i &#x3D; 0; i &lt; sum2; i++)
+    &#123;
+        var s &#x3D; i * 4;
+        &#x2F;&#x2F; 左下角顶点坐标
+        Vector2 v &#x3D; newMesh.vertices[s + 0];
+        uv3[s + 0] &#x3D; v;
+        uv3[s + 1] &#x3D; v;
+        uv3[s + 2] &#x3D; v;
+        uv3[s + 3] &#x3D; v;
+
+        Vector2 tr &#x3D; newMesh.vertices[s + 2];
+        uv5[s + 0] &#x3D; tr;
+        uv5[s + 1] &#x3D; tr;
+        uv5[s + 2] &#x3D; tr;
+        uv5[s + 3] &#x3D; tr;
+
+        Vector2 blUV &#x3D; uv[s];
+
+        uv4[s + 0] &#x3D; blUV;
+        uv4[s + 1] &#x3D; blUV;
+        uv4[s + 2] &#x3D; blUV;
+        uv4[s + 3] &#x3D; blUV;
+    &#125;
+
+    newMesh.uv3 &#x3D; uv3;
+    newMesh.uv4 &#x3D; uv4;
+    newMesh.uv5 &#x3D; uv5;
+
+    var uv2 &#x3D; new Vector2[mesh.uv2.Length * 2];
+
+    for (var i &#x3D; 0; i &lt; mesh.uv2.Length; i++)
+    &#123;
+        uv2[i] &#x3D; mesh.uv2[i];
+        uv2[i + mesh.uv2.Length] &#x3D; mesh.uv2[i];
+    &#125;
+
+    newMesh.uv2 &#x3D; uv2;
+
+    meshFilter.mesh &#x3D; newMesh;
+
+    material.SetFloat(Width, width);
+&#125;</code></pre></div></figure>
+<h1 id="shader">Shader</h1>
+<p>网格准备好就轮到Shader了。</p>
+<h2 id="顶点着色器">顶点着色器</h2>
+<p>这里没什么特殊的，只要把相关的顶点属性传递到片元中就行了。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">pixel_t VertShader(vertex_t input)
+&#123;
+    pixel_t output;
+
+    UNITY_SETUP_INSTANCE_ID(input);
+    UNITY_TRANSFER_INSTANCE_ID(input, output);
+    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+
+    &#x2F;&#x2F; 粗体
+    float bold &#x3D; step(input.texcoord0.w, 0);
+
+    &#x2F;&#x2F; 顶点偏移
+    float4 vert &#x3D; input.position;
+    float4 vPosition &#x3D; TransformObjectToHClip(vert.xyz);
+
+    float2 pixelSize &#x3D; vPosition.w;
+    pixelSize &#x2F;&#x3D; float2(_ScaleX, _ScaleY) * abs(mul((float2x2)UNITY_MATRIX_P, _ScreenParams.xy));
+    float scale &#x3D; rsqrt(dot(pixelSize, pixelSize));
+    scale *&#x3D; abs(input.texcoord0.w) * _GradientScale * (_Sharpness + 1);
+
+    if (UNITY_MATRIX_P[3][3] &#x3D;&#x3D; 0)
+        scale &#x3D; lerp(abs(scale) * (1 - _PerspectiveFilter), scale,
+                     abs(dot(TransformObjectToWorldNormal(input.normal.xyz),
+                             normalize(GetWorldSpaceViewDir(vert)))));
+
+    float weight &#x3D; lerp(_WeightNormal, _WeightBold, bold) &#x2F; 4.0;
+    weight &#x3D; (weight + _FaceDilate) * _ScaleRatioA * 0.5;
+
+    float bias &#x3D; (.5 - weight) + (.5 &#x2F; scale);
+
+    float alphaClip &#x3D; (1.0 - _OutlineWidth * _ScaleRatioA - _OutlineSoftness * _ScaleRatioA);
+
+
+    alphaClip &#x3D; alphaClip &#x2F; 2.0 - (.5 &#x2F; scale) - weight;
+
+    &#x2F;&#x2F; Support for texture tiling and offset
+    float2 textureUV &#x3D; input.texcoord1;
+    float2 faceUV &#x3D; TRANSFORM_TEX(textureUV, _FaceTex);
+
+
+    output.positionCS &#x3D; vPosition;
+    output.color &#x3D; input.color;
+    &#x2F;&#x2F; 字符图集上的UV
+    output.atlas &#x3D; input.texcoord0;
+
+    output.param &#x3D; float4(alphaClip, scale, bias, weight);
+
+    output.viewDir &#x3D; mul((float3x3)_EnvMatrix,
+                         _WorldSpaceCameraPos.xyz - mul(unity_ObjectToWorld, vert).xyz);
+
+    output.textures &#x3D; float4(faceUV, 0, 0);
+
+    output.positionWS &#x3D; TransformObjectToWorld(vert.xyz).xyz;
+
+    output.bltr &#x3D; float4(input.texcoord2.xy, input.texcoord4.xy);
+    output.bluv &#x3D; input.texcoord3;
+
+    return output;
+&#125;</code></pre></div></figure></p>
+<h2 id="光线步进">光线步进</h2>
+<p>然后就开始光线步进吧。<br />
+从片元的表面出发，沿视线方向，以步进到的位置采样SDF图。<br />
+如果超出了当前字符方块的范围，就Clip掉。否则就一直步进，直至进入字符SDF内部或者迭代次数耗尽。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float3 posWS &#x3D; input.positionWS.xyz;
+float3 posBLOS &#x3D; float3(input.bltr.xy, 0);
+float3 posTROS &#x3D; float3(input.bltr.zw, _width);
+
+float2 blUV &#x3D; input.bluv.xy;
+
+float3 normal;
+
+float3 currentPos &#x3D; posWS;
+float3 currentPosOS &#x3D; TransformWorldToObject(currentPos);;
+float3 viewDir &#x3D; -normalize(input.viewDir);
+
+float dis &#x3D; GetDisFromPos(currentPosOS, posBLOS, blUV);
+if (dis &lt; 0)
+&#123;
+    if (currentPosOS.z &lt; 0.01)
+        normal &#x3D; float3(0, 0, -1);
+    else
+        normal &#x3D; float3(0, 0, 1);
+&#125;
+else
+&#123;
+    for (int i &#x3D; 0; i &lt; 20; i++)
+    &#123;
+        if (!isIn(posBLOS, posTROS, currentPosOS))
+        &#123;
+            clip(-1);
+        &#125;
+
+        dis &#x3D; GetDisFromPos(currentPosOS, posBLOS, blUV);
+        if (dis &lt; 0)
+        &#123;
+            break;
+        &#125;
+        currentPos +&#x3D; viewDir * dis * 0.3;
+        currentPosOS &#x3D; TransformWorldToObject(currentPos);;
+    &#125;
+    normal &#x3D; float3(normalize(GetNormalFromUV(GetUVFromPos(currentPosOS, posBLOS, blUV))), 0);
+&#125;</code></pre></div></figure>
+<p>第一次迭代中如果是前后表面就不需要步进了。</p>
+<figure>
+<img src="VTMP_03.png" srcset="/img/loading.gif" lazyload alt="基础形状" />
+<figcaption aria-hidden="true">基础形状</figcaption>
+</figure>
+<h2 id="法线">法线</h2>
+<p>前后面法线很简单，侧面法线就用SDF图的梯度来计算<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">
+float2 GetNormalFromUV(float2 uv)
+&#123;
+    float2 normal &#x3D; float2(0, 0);
+    float2 uv1 &#x3D; uv + float2(0, 1) &#x2F; 512;
+    float2 uv2 &#x3D; uv + float2(0, -1) &#x2F; 512;
+
+    float2 uv3 &#x3D; uv + float2(1, 0) &#x2F; 512;
+    float2 uv4 &#x3D; uv + float2(-1, 0) &#x2F; 512;
+    float4 c1 &#x3D; tex2D(_MainTex, uv1);
+    float4 c2 &#x3D; tex2D(_MainTex, uv2);
+    float4 c3 &#x3D; tex2D(_MainTex, uv3);
+    float4 c4 &#x3D; tex2D(_MainTex, uv4);
+    normal.y &#x3D; c2.a - c1.a;
+    normal.x &#x3D; c4.a - c3.a;
+    return normal;
+&#125;</code></pre></div></figure></p>
+<figure>
+<img src="VTMP_04.png" srcset="/img/loading.gif" lazyload alt="法线" />
+<figcaption aria-hidden="true">法线</figcaption>
+</figure>
+<h2 id="深度偏移">深度偏移</h2>
+<p>要通过SV_Depth来设定偏移后的深度<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float4 PixShader(pixel_t input, out float outDepth : SV_Depth) : SV_Target
+
+
+    float deviceDepth &#x3D; ComputeNormalizedDeviceCoordinatesWithZ(currentPos, GetWorldToHClipMatrix()).z;
+    #ifndef  UNITY_UV_STARTS_AT_TOP
+    deviceDepth &#x3D; (deviceDepth +1 )&#x2F;2;
+    #endif
+    outDepth &#x3D; deviceDepth;
+</code></pre></div></figure><br />
+这里有个大坑，在OpenGL下，深度要从-1，1映射到0，1</p>
+<figure>
+<img src="VTMP_05.png" srcset="/img/loading.gif" lazyload alt="深度偏移" />
+<figcaption aria-hidden="true">深度偏移</figcaption>
+</figure>
+<h2 id="着色">着色</h2>
+<p>这里就用LIT的PBR来着色<br />
+UV先简单用物体空间的XY。</p>
+<figure>
+<img src="VTMP_06.png" srcset="/img/loading.gif" lazyload alt="PBR着色" />
+<figcaption aria-hidden="true">PBR着色</figcaption>
+</figure>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float2 uv &#x3D; currentPos.xy * 1;
+
+SurfaceData surfaceData;
+InitializeStandardLitSurfaceData(uv, surfaceData);
+
+InputData inputData;
+float3 normalWS &#x3D; TransformObjectToWorldNormal(normal);
+input.positionWS &#x3D; currentPos;
+InitializeInputData(input, normalWS, inputData);
+
+half4 color &#x3D; UniversalFragmentPBR(inputData, surfaceData);
+
+return color;</code></pre></div></figure>
+<h2 id="三向映射">三向映射</h2>
+<p>侧面也需要UV，所以用法线作为权重，每个轴的坐标作为UV采样三次后混合</p>
+<figure>
+<img src="VTMP_07.png" srcset="/img/loading.gif" lazyload alt="三向映射" />
+<figcaption aria-hidden="true">三向映射</figcaption>
+</figure>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">
+half3 blendWeights &#x3D; pow (abs(normal), 3);
+blendWeights &#x3D; blendWeights &#x2F; (blendWeights.x + blendWeights.y + blendWeights.z);
+
+half2 xUV &#x3D; pos.zy &#x2F; 1;
+half2 yUV &#x3D; pos.xz &#x2F; 1;
+half2 zUV &#x3D; pos.xy &#x2F; 1;
+
+half4 albedoAlphaX &#x3D; SampleAlbedoAlpha(xUV, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));
+half4 albedoAlphaY &#x3D; SampleAlbedoAlpha(yUV, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));
+half4 albedoAlphaZ &#x3D; SampleAlbedoAlpha(zUV, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));</code></pre></div></figure>
+<h2 id="阴影">阴影</h2>
+<p>增加一个ShadowCaster Pass来投射阴影。</p>
+<figure>
+<img src="VTMP_08.png" srcset="/img/loading.gif" lazyload alt="三向映射" />
+<figcaption aria-hidden="true">三向映射</figcaption>
+</figure>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">Pass
+&#123;
+    Name &quot;ShadowCaster&quot;
+    Tags
+    &#123;
+        &quot;LightMode&quot; &#x3D; &quot;ShadowCaster&quot;
+    &#125;
+
+    ZWrite On
+    ZTest LEqual
+    ColorMask 0
+
+
+    HLSLPROGRAM
+    #pragma target 3.0
+
+    #pragma vertex VertShader
+    #pragma fragment PixShadowCaster
+
+    #include &quot;Packages&#x2F;com.unity.render-pipelines.universal&#x2F;ShaderLibrary&#x2F;Core.hlsl&quot;
+    #include &quot;Packages&#x2F;com.unity.render-pipelines.universal&#x2F;Shaders&#x2F;LitInput.hlsl&quot;
+    #include &quot;Packages&#x2F;com.unity.render-pipelines.universal&#x2F;ShaderLibrary&#x2F;Lighting.hlsl&quot;
+    #include &quot;Packages&#x2F;com.unity.render-pipelines.universal&#x2F;ShaderLibrary&#x2F;Shadows.hlsl&quot;
+
+    #include &quot;TMPro_Properties.hlsl&quot;
+    #include &quot;SDF.hlsl&quot;
+    ENDHLSL
+&#125;</code></pre></div></figure>
+<p>这里的步进方向记得改为从主光源的方向来步进，同时不要忘记应用阴影偏移。<br />
+同样最后要用SV_Depth来偏移深度。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">
+float3 viewDir &#x3D; -normalize(_LightDirection);
+
+
+currentPos &#x3D; ApplyShadowBias(currentPos, normal, _LightDirection);</code></pre></div></figure>
+<p>也别忘记在前向Pass中增加接收阴影的宏</p>
+<figure><div class="code-wrapper"><pre class="language-none"><code class="language-none">        #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN</code></pre></div></figure>
+<h2 id="屏幕空间ao">屏幕空间AO</h2>
+<p>有了上面的代码，增加一个DepthNormals
+Pass就可以给SSAO提供法线和深度了。<br />
+这里参数调整的很大以看出区别。<br />
+<img src="VTMP_09.png" srcset="/img/loading.gif" lazyload alt="SSAO" /></p>
+<figure>
+<img src="VTMP_10.png" srcset="/img/loading.gif" lazyload alt="SSAO" />
+<figcaption aria-hidden="true">SSAO</figcaption>
+</figure>
+<h2 id="抗锯齿">抗锯齿</h2>
+<p>因为没有网格，所以MSAA肯定是不行。直接就用URP的TAA了，效果还可以。<br />
+或者就添加圆角。</p>
+<h2 id="倒角">倒角</h2>
+<p>有点麻烦<br />
+先从倒角开始，倒一个面。基本思路就是在计算SDF时，在需要倒角切除的部分，手动增加一个距离。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float GetDisFromPos(float3 posOS, float3 posBLWS, float2 blUV)
+&#123;
+    float2 UV &#x3D; GetUVFromPos(posOS, posBLWS, blUV);
+    float dis &#x3D; 1 - tex2D(_MainTex, UV).a * 2;
+    
+    if(dis &lt; -0.1 )
+    &#123;
+        return 0;
+    &#125;
+    
+    float v &#x3D;  abs(((posOS.z &#x2F; _width) - 0.5) * 2);
+    v &#x3D; (clamp( v, 0.9, 1) - 0.9)*10;
+    dis +&#x3D; v * 0.1;
+    return dis;
+&#125;</code></pre></div></figure>
+<p>然后是法线，这就简单了，lerp一下就行了<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float3 BlenderNormal(float3 normal,float3 posOS)
+&#123;
+    float v &#x3D;  abs(((posOS.z &#x2F; _width) - 0.5) * 2);
+    v &#x3D; step(0.9, v);
+    float vv &#x3D; sign(((posOS.z &#x2F; _width) - 0.5) );
+    float3 nn &#x3D; normalize(float3(0,0,vv));
+    float3 fN &#x3D; normalize(nn + normal);
+    return lerp(normal,fN,v);
+&#125;</code></pre></div></figure></p>
+<figure>
+<img src="VTMP_11.png" srcset="/img/loading.gif" lazyload alt="倒角" />
+<figcaption aria-hidden="true">倒角</figcaption>
+</figure>
+<h2 id="圆角">圆角</h2>
+<p>然后是圆角。<br />
+参考<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/42923421">这篇文章</a></p>
+<p>关键是其中这个圆角矩形的SDF</p>
+<figure>
+<img src="VTMP_12.png" srcset="/img/loading.gif" lazyload alt="圆角" />
+<figcaption aria-hidden="true">圆角</figcaption>
+</figure>
+<h2 id="改进">改进</h2>
+<ul>
+<li>可以仿照TMP，增加对应的外轮廓，下划线，斜体等等</li>
+<li>UV贴图也可以改进，分成侧面和正反面两种UV，适配两种不同的材质。</li>
+<li>法线的获取，目前是在Shader中采样四个点去计算，可以预先根据SDF图去生成对应的法线图，直接采样。</li>
+</ul>
+<h2 id="局限">局限</h2>
+<p>因为没有常规的UV，所以没有办法烘焙光照，也不能给其他静态物体提供静态的光照。<br />
+但既然要用体积字，应该都是有运行时更改且动态的需求，所以一般不会用来烘焙。<br />
+如果需要那种字体侧面发光的效果，可以在后面放一个TMP，做成透明渐变来模拟泛光。</p>
+<p>摄像机不能进入字符立方体内部，否则就要渲染反面且从近平面开始步进，得不偿失。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%B8%B2%E6%9F%93/" class="category-chain-item">渲染</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/SDF/" class="print-no-link">#SDF</a>
+      
+        <a href="/tags/%E5%85%89%E7%BA%BF%E6%AD%A5%E8%BF%9B/" class="print-no-link">#光线步进</a>
+      
+        <a href="/tags/%E4%BD%93%E7%A7%AF%E5%AD%97/" class="print-no-link">#体积字</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>基于TMP、SDF、光线步进的体积字渲染</div>
+      <div>https://www.kuanmi.top/2023/07/26/TMP/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年7月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/07/31/VolumeLight/" title="URP体积光">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">URP体积光</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/07/20/RThandle/" title="RThandle">
+                        <span class="hidden-mobile">RThandle</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

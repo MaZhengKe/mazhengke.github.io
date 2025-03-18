@@ -1,0 +1,926 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="概念 Entities package使用实体组件系统(ECS)架构来组织代码和数据。实体是唯一标识符，就像游戏对象的轻量级的非托管替代品。实体相当与一个ID，用来关联包含实体数据的各个组件。与游戏对象不同，实体不包含代码：它们是由您创建的系统来处理的数据单元。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ECS 概念">
+<meta property="og:url" content="https://www.kuanmi.top/2022/11/17/ECS-concepts-intro/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="概念 Entities package使用实体组件系统(ECS)架构来组织代码和数据。实体是唯一标识符，就像游戏对象的轻量级的非托管替代品。实体相当与一个ID，用来关联包含实体数据的各个组件。与游戏对象不同，实体不包含代码：它们是由您创建的系统来处理的数据单元。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/entities-splash-image.png">
+<meta property="article:published_time" content="2022-11-16T22:02:23.000Z">
+<meta property="article:modified_time" content="2025-03-18T01:12:02.898Z">
+<meta property="article:author" content="KuanMi">
+<meta property="article:tag" content="Entities">
+<meta property="article:tag" content="ECS">
+<meta property="article:tag" content="DOTS">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/entities-splash-image.png">
+  
+  
+  
+  <title>ECS 概念 - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/entities-splash-image.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ECS 概念"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-11-17 06:02" pubdate>
+          2022年11月17日 早上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          48 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">ECS 概念</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="概念">概念</h1>
+<p>Entities
+package使用<strong>实体组件系统</strong>(<strong>ECS</strong>)架构来组织代码和数据。实体是唯一标识符，就像游戏对象的轻量级的非托管替代品。实体相当与一个ID，用来关联包含实体数据的各个组件。与游戏对象不同，实体不包含代码：它们是由您创建的系统来处理的数据单元。<br />
+<span id="more"></span></p>
+<table>
+<thead>
+<tr class="header">
+<th>标题</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Entity</td>
+<td>实体是不包含代码的游戏对象的轻量级替代品。</td>
+</tr>
+<tr class="even">
+<td>Component</td>
+<td>组件包含有关单个实体的数据。</td>
+</tr>
+<tr class="odd">
+<td>System</td>
+<td>向系统添加代码以处理实体和组件。</td>
+</tr>
+<tr class="even">
+<td>World</td>
+<td>世界将实体组织成孤立的群体。</td>
+</tr>
+<tr class="odd">
+<td>Archetype</td>
+<td>原型是一个或多个实体可能具有的组件的独特组合。</td>
+</tr>
+<tr class="even">
+<td>Structural changes</td>
+<td>结构更改是会影响应用程序性能的资源密集型操作。</td>
+</tr>
+</tbody>
+</table>
+<h1 id="实体">实体</h1>
+<p>实体表示程序中具有自己数据集的离散事物，例如角色、视觉效果、UI
+元素，甚至是网络事务等抽象事物。实体类似于非托管(unmanaged)的轻量级游戏对象，代表程序的特定元素。但是，实体仅充当将各个唯一组件关联在一起的
+ID，而不包含任何代码或充当其关联组件的容器。</p>
+<p>实体的集合存储在一个世界中，世界的 <code>EntityManager</code>
+管理世界中的所有实体。 <code>EntityManager</code>
+包含可用于创建、销毁和修改该世界中的实体的方法。其中包括以下常用方法：</p>
+<table>
+<thead>
+<tr class="header">
+<th>方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CreateEntity</td>
+<td>创建一个新实体。</td>
+</tr>
+<tr class="even">
+<td>Instantiate</td>
+<td>复制现有实体并从该副本创建新实体。</td>
+</tr>
+<tr class="odd">
+<td>DestroyEntity</td>
+<td>销毁现有实体。</td>
+</tr>
+<tr class="even">
+<td>AddComponent</td>
+<td>将组件添加到现有实体。</td>
+</tr>
+<tr class="odd">
+<td>RemoveComponent</td>
+<td>从现有实体中删除组件。</td>
+</tr>
+<tr class="even">
+<td>GetComponent</td>
+<td>获取实体组件的值。</td>
+</tr>
+<tr class="odd">
+<td>SetComponent</td>
+<td>覆盖实体组件的值。</td>
+</tr>
+</tbody>
+</table>
+<div class="note note-info">
+            <p>当您创建或销毁实体时，这是一种结构更改，会影响应用程序的性能。有关详细信息，请参阅有关结构更改的文档</p>
+          </div>
+<p>实体没有类型，但您可以根据与其关联的组件类型对实体进行分类。
+<code>EntityManager</code>
+跟踪现有全部实体上组件的唯一组合。这些独特的组合称为原型（Archetype）。有关原型如何工作的更多信息，请参阅有关原型概念的文档。</p>
+<h2 id="编辑器中的实体">编辑器中的实体</h2>
+<p>在编辑器中，以下图标代表实体：<img src="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/editor-entity-icon.png" srcset="/img/loading.gif" lazyload style="display: inline;" />
+。当您使用特定的实体窗口和检查器时，您会看到这一点。</p>
+<h1 id="组件">组件</h1>
+<p>在实体组件系统 (ECS)
+体系结构中，组件包含系统可以读取或写入的实体数据。</p>
+<p>使用没有方法的<code>IComponentData</code>接口将一个结构体标记为组件类型。此组件类型只能包含非托管数据，并且它们可以包含方法，但最佳实践是它们只有纯数据。如果你想创建一个托管组件，你将它定义为一个类。有关详细信息，请参阅托管组件。</p>
+<p>对于不同的目的，有不同类型的组件。根据您希望如何管理项目中的数据，某些组件允许对应用程序的性能进行更精细的控制。有关详细信息，请参阅组件类型。</p>
+<p>一组独特的实体的组件称为原型。 ECS 架构按原型将组件数据存储在称为块的
+16KiB 内存块中。有关 ECS
+如何存储组件数据的更多信息，请参阅原型概念文档。</p>
+<h1 id="系统">系统</h1>
+<p>系统提供将组件数据从当前状态转换为下一个状态的逻辑。例如，系统可能会通过速度乘以自上次更新以来的时间间隔来更新所有移动实体的位置。</p>
+<p>系统每帧在主线程上运行一次。系统被组织成被称为系统组的层次结构，您可以使用这些系统组来组织系统更新的顺序。</p>
+<p>您可以创建非托管或托管系统。要定义托管系统，请创建一个继承自<code>SystemBase</code>的类。要定义非托管系统，请创建一个继承自<code>ISystem</code>的结构。</p>
+<p><code>ISystem</code>和<code>SystemBase</code>都有三种方法，您可以覆盖<code>OnUpdate</code>、<code>OnCreate</code>和<code>OnDestroy</code>。系统的<code>OnUpdate</code>方法每帧执行一次。</p>
+<p>一个系统只能处理一个世界中的实体，所以一个系统与一个特定的世界相关联。您可以使用<code>World</code>属性返回系统附加到的世界。</p>
+<p>默认情况下，一个自动引导过程会为每个系统和系统组创建一个实例。这个引导将创建一个默认世界，其中包含三个系统组：<code>InitializationSystemGroup</code>、<code>SimulationSystemGroup</code>和<code>PresentationSystemGroup</code>。默认情况下系统的一个实例将被添加到<code>SimulationSystemGroup</code>。您可以使用<code>[UpdateInGroup]</code>属性来覆盖此行为。</p>
+<p>要禁用自动引导过程，请使用脚本定义<code>#UNITY_DISABLE_AUTOMATIC_SYSTEM_BOOTSTRAP</code>。</p>
+<h2 id="系统类型">系统类型</h2>
+<p>您可以使用多种类型的系统：</p>
+<ul>
+<li><code>SystemBase</code>: 为托管系统提供基类。</li>
+<li><code>ISystem</code>: 为非托管系统提供接口。</li>
+<li><code>EntityCommandBufferSystem</code>:
+为其他系统提供实体命令缓冲区实例。这允许您将结构更改组合在一起以提高应用程序的性能。</li>
+<li><code>ComponentSystemGroup</code>:
+为系统提供嵌套组织和更新顺序。</li>
+</ul>
+<h2 id="系统组">系统组</h2>
+<p>一个系统组可以有系统和其他系统组作为它的子系统。系统组有一个可以覆盖的更新方法，基本的更新方法将按排序顺序更新组的子级。</p>
+<p>每次将组添加到系统组时，它都会重新排序系统更新顺序。要控制系统组的更新顺序，请将<code>UpdateBefore</code>或<code>UpdateAfter</code>属性添加到系统以指定它应该在之前或之后更新哪些系统。这些属性仅适用于同一系统组的子系统。例如：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; 如果 PeachSystem 和 DaisySystem 是同一组的子级，
+&#x2F;&#x2F; 则实体组件系统按排序顺序将 PeachSystem 放在 DaisySystem 之前的某处。
+[UpdateBefore(typeof(DaisySystem))]
+public partial class PeachSystem : SystemBase &#123; &#125;</code></pre></div></figure><br />
+要创建系统组，请创建一个继承自<code>ComponentSystemGroup</code>的类。因为系统属于一个世界，所以必须使用<code>World.GetOrCreateSystem</code>创建一个系统。要将系统添加到组，请使用<code>group.AddSystemToUpdateList</code>。您可以将其他系统组添加到现有系统组。</p>
+<p>有关详细信息，请参阅有关系统更新顺序的文档。</p>
+<h2 id="检查系统">检查系统</h2>
+<p>您可以使用“Systems
+window”窗口检查每个世界中系统的更新顺序，并查看系统组的完整层次结构。有关详细信息，请参阅有关系统窗口参考的文档。</p>
+<h3 id="编辑器中的系统">编辑器中的系统</h3>
+<p>在编辑器中，以下图标代表不同类型的系统。当您使用特定的实体窗口和检查器时，您会看到这一点。</p>
+<table>
+
+<thead>
+<tr class="header">
+<th>图标</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><img
+src="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/editor-system-group.png" srcset="/img/loading.gif" lazyload /></td>
+<td>一个系统组</td>
+</tr>
+<tr class="even">
+<td><img
+src="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/editor-system.png" srcset="/img/loading.gif" lazyload /></td>
+<td>一个系统</td>
+</tr>
+<tr class="odd">
+<td><img
+src="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/editor-system-start-step.png" srcset="/img/loading.gif" lazyload /></td>
+<td>一个带有<code>OrderFirst</code>参数的，设置为在开头执行的<code>实体命令缓冲区系统</code>。</td>
+</tr>
+<tr class="even">
+<td><img
+src="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/editor-system-end-step.png" srcset="/img/loading.gif" lazyload /></td>
+<td>一个带有<code>OrderLast</code>参数的，设置为在末尾执行的<code>实体命令缓冲区系统</code>。</td>
+</tr>
+</tbody>
+</table>
+<h1 id="世界">世界</h1>
+<p>世界是实体的集合。实体的 ID
+号仅在其自己的世界中是唯一的。一个世界有一个<code>EntityManager</code>结构体，你可以用它来创建、销毁和修改世界中的实体。</p>
+<p>一个世界拥有一组系统，这些系统通常只访问同一个世界中的实体。此外，世界中具有相同组件类型集的一组实体一起存储在原型中，原型决定了你程序中的组件在内存中的组织方式。</p>
+<h2 id="初始化">初始化</h2>
+<p>默认情况下，当您进入播放模式时，Unity
+会创建一个世界实例并将每个系统添加到这个默认世界。</p>
+<p>如果您更喜欢手动将系统添加到默认世界，请创建一个实现<code>ICustomBootstrap</code>接口的类。</p>
+<p>如果你想完全手动控制引导，使用这些定义来禁用默认的世界创建：</p>
+<p>-<code>#UNITY_DISABLE_AUTOMATIC_SYSTEM_BOOTSTRAP_RUNTIME_WORLD</code>：禁用默认运行时世界的生成。<br />
+-<code>#UNITY_DISABLE_AUTOMATIC_SYSTEM_BOOTSTRAP_EDITOR_WORLD</code>：禁用默认编辑器世界的生成。<br />
+-<code>#UNITY_DISABLE_AUTOMATIC_SYSTEM_BOOTSTRAP</code>：禁用两个默认世界的生成。</p>
+<p>然后，您的代码负责创建您的世界和系统，并将您的世界的更新插入到 Unity
+可编写脚本的 PlayerLoop 中。</p>
+<p>Unity 使用<code>WorldFlags</code>在编辑器中创建专门的世界。</p>
+<h2 id="时间考量">时间考量</h2>
+<p>世界控制其中系统的<code>Time</code>属性的值。系统的<code>Time</code>属性是当前世界时间的别名。</p>
+<p>默认情况下，Unity
+为每个世界创建一个<code>TimeData</code>实体，由<code>UpdateWorldTimeSystem</code>实例更新。这反映了自上一帧以来经过的时间。</p>
+<p><code>FixedStepSimulationSystemGroup</code>中的系统处理时间的方式与其他系统组不同。固定步长模拟组中的系统以固定间隔更新，而不是在当前增量时间更新一次，并且如果固定间隔是帧时间的足够小的一部分，则每帧可能更新不止一次。</p>
+<p>如果您需要对世界中的时间进行更多控制，可以使用<code>World.SetTime</code>直接指定一个时间值。您还可以使用<code>PushTime</code>临时更改世界时间，使用<code>PopTime</code>返回到之前的时间（在时间栈中）。</p>
+<h1 id="原型">原型</h1>
+<p>原型是世界中具有相同的唯一组件类型组合的所有实体的唯一标识符。例如，一个世界中具有组件类型
+A 和 B 的所有实体共享一个原型。所有具有组件类型 A、B 和 C
+的实体共享一个不同的原型，所有具有组件类型 A 和 Z
+的实体共享另一个原型。</p>
+<p>当您从实体中添加或删除组件类型时，世界的<code>EntityManager</code>会将实体移动到适当的原型。例如，如果实体具有组件类型
+A、B 和 C，并且您删除了它的
+B组件，<code>EntityManager</code>会将实体移动到具有组件类型 A 和 C
+的原型。如果不存在这样的原型，则<code>EntityManager</code>会创建它。</p>
+<div class="note note-danger">
+            <p>频繁移动实体会占用大量资源并降低应用程序的性能。有关详细信息，请参阅有关结构变更概念的文档。</p>
+          </div>
+<p>基于原型的实体架构意味着通过组件类型查询实体是高效的。例如，如果您想要查找具有组件类型
+A 和 B
+的所有实体，您可以找到具有这些组件类型的所有原型，这比扫描所有单个实体的性能更高。世界中的现有原型集往往会在程序生命周期的早期稳定下来，因此您可以缓存查询以获得更快的性能。</p>
+<p>原型只有在它的世界被销毁时才会被销毁。</p>
+<h2 id="原型块-archetype-chunks">原型块 Archetype chunks</h2>
+<p>所有具有相同原型的实体和组件都存储在称为块的统一内存块中。每个块由
+16KiB
+组成，它们可以存储的实体数量取决于块原型中组件的数量和大小。<code>EntityManager</code>根据需要创建和销毁块。</p>
+<p>块包含每个组件类型的数组，以及用于存储实体 ID
+的附加数组。例如，在具有组件类型 A 和 B
+的原型中，每个块都具有三个数组：一个数组用于 A 组件值，一个数组用于 B
+组件值，一个数组用于实体 ID。</p>
+<p>块的数组是紧密打包的：块的第一个实体存储在这些数组的索引 0
+处，块的第二个实体存储在索引 1
+处，后续实体存储在连续的索引中。当一个新的实体被添加到块中时，它被存储在第一个可用的索引中。当一个实体从块中移除时（因为它被破坏或被移动到另一个原型），块的最后一个实体被移动以填补空白。</p>
+<p>将实体添加到原型时，如果原型的现有块已满，则<code>EntityManager</code>会创建一个新块。当最后一个实体从块中移除时，<code>EntityManager</code>会销毁该块。</p>
+<h2 id="编辑器中的原型">编辑器中的原型</h2>
+<p>原型窗口列出了项目中所有世界的原型，并显示了每个原型的已分配和未使用内存量。</p>
+<p>在编辑器中，以下图标代表原型：<img src="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/editor-archetype-icon.png" srcset="/img/loading.gif" lazyload style="display: inline;" />。</p>
+<h1 id="结构更改">结构更改</h1>
+<p>导致 Unity
+重新组织内存块或内存中块的内容的操作称为结构更改。了解哪些操作是结构更改很重要，因为它们可能是资源密集型的，您只能在主线程上执行它们；不是来自jobs。</p>
+<p>以下操作被视为结构更改：</p>
+<ul>
+<li>创建或销毁实体。</li>
+<li>添加或删除组件。</li>
+<li>设置一个共享组件值。</li>
+</ul>
+<h2 id="创建一个实体">创建一个实体</h2>
+<p>当您创建一个实体时，Unity
+要么将实体添加到现有块中，要么如果没有块可用于实体的原型，则创建一个新块并将实体添加到其中。</p>
+<h2 id="销毁一个实体">销毁一个实体</h2>
+<p>当您销毁一个实体时，Unity
+会将该实体从其块中移除。如果移除实体在块中留下空隙，Unity
+会移动块中的最后一个实体来填补空隙。如果删除实体使块为空，Unity
+会释放块。</p>
+<h2 id="添加或删除组件">添加或删除组件</h2>
+<p>在实体中添加或删除组件时，您会更改实体的原型。 Unity
+将每个实体存储在与实体原型匹配的块中。这意味着如果您更改实体的原型，Unity
+必须将该实体移动到另一个块。如果不存在合适的块，Unity
+会创建一个新块。如果移动使前一个块有间隙或留空，Unity
+将移动块中的最后一个实体以分别填充间隙或释放块。</p>
+<h2 id="设置一个共享组件值">设置一个共享组件值</h2>
+<p>当您设置实体的共享组件的值时，Unity
+会将实体移动到与新共享组件值匹配的块中。如果不存在合适的块，Unity
+会创建一个新块。如果移动使前一个块有间隙或为空，Unity
+将移动块中的最后一个实体以填充间隙或分别释放块。</p>
+<div class="note note-info">
+            <p>设置常规组件值不是结构更改，因为它不需要 Unity 移动实体。</p>
+          </div>
+<h2 id="同步点">同步点</h2>
+<p>您不能直接在作业中进行结构更改，因为它可能会使其他已安排的作业无效，并创建一个同步点。</p>
+<p>一个同步点（sync
+point）是程序执行中的一个点，它等待到目前为止已经调度的所有作业完成。同步点会限制您在一段时间内使用作业系统中可用的所有工作线程的能力。因此，您的目标应该是避免同步点。
+ECS 中数据的结构变化是产生同步点的主要原因。</p>
+<p>结构更改不仅要求同步点，而且还会使对任何组件数据的所有直接引用无效。这包括<code>DynamicBuffer</code>的实例和提供对组件（例如<code>ComponentSystemBase.GetComponentDataFromEntity</code>）的直接访问的方法的结果。</p>
+<h3 id="避免同步点">避免同步点</h3>
+<p>您可以使用实体命令缓冲区来排队缓冲结构更改，而不是立即执行它们。您可以在帧的稍后时间执行存储在实体命令缓冲区中的命令。这将跨帧分布的多个同步点减少为单个同步点。</p>
+<p>每个标准<code>ComponentSystemGroup</code>实例都提供<code>EntityCommandBufferSystem</code>作为组中更新的第一个和最后一个系统。如果您从这些标准系统之一获取实体命令缓冲区对象，则所有结构更改都发生在帧中的同一点，从而产生一个同步点。您还可以使用实体命令缓冲区来记录作业中的结构更改，而不是仅在主线程上进行结构更改。</p>
+<p>如果您不能为任务使用实体命令缓冲区，请将所有进行结构更改的系统按系统执行顺序分组在一起。两个都进行结构更改的系统如果按顺序更新，则只会创建一个同步点。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%85%B6%E4%BB%96/" class="category-chain-item">其他</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Entities/" class="print-no-link">#Entities</a>
+      
+        <a href="/tags/ECS/" class="print-no-link">#ECS</a>
+      
+        <a href="/tags/DOTS/" class="print-no-link">#DOTS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>ECS 概念</div>
+      <div>https://www.kuanmi.top/2022/11/17/ECS-concepts-intro/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年11月17日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/11/17/ECS-systems-intro/" title="ECS 系统">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">ECS 系统</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/11/16/ECS/" title="Entities ECS DOTS 中文文档">
+                        <span class="hidden-mobile">Entities ECS DOTS 中文文档</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,855 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="绳索模拟 最近有这么一个需求，模拟绳子。 如果是那种铰链之类的，可以直接用unity物理。如果是软体并且要求物理碰撞，那就得考虑Obi之类的用质点弹簧模型的解算器去解算了。 考虑到webGL也要用，Obi需求的求解器依赖于Burst，所以webgl没法使用。而且Obi不可控因素太多，为了一个简单的，无需物理的绳索动画，也没有必要使用太复杂的Obi。 还一种方式就是让美术在Blender，m">
+<meta property="og:type" content="article">
+<meta property="og:title" content="悬链线与弹簧质点模拟绳索">
+<meta property="og:url" content="https://www.kuanmi.top/2023/06/15/Catenary/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="绳索模拟 最近有这么一个需求，模拟绳子。 如果是那种铰链之类的，可以直接用unity物理。如果是软体并且要求物理碰撞，那就得考虑Obi之类的用质点弹簧模型的解算器去解算了。 考虑到webGL也要用，Obi需求的求解器依赖于Burst，所以webgl没法使用。而且Obi不可控因素太多，为了一个简单的，无需物理的绳索动画，也没有必要使用太复杂的Obi。 还一种方式就是让美术在Blender，m">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.kuanmi.top/images/Catenary.gif">
+<meta property="article:published_time" content="2023-06-14T18:05:22.000Z">
+<meta property="article:modified_time" content="2025-03-18T01:12:03.125Z">
+<meta property="article:author" content="KuanMi">
+<meta property="article:tag" content="模拟">
+<meta property="article:tag" content="悬链线">
+<meta property="article:tag" content="弹簧质点">
+<meta property="article:tag" content="绳索">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/Catenary.gif">
+  
+  
+  
+  <title>悬链线与弹簧质点模拟绳索 - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/Catenary.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="悬链线与弹簧质点模拟绳索"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-15 02:05" pubdate>
+          2023年6月15日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          23 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">悬链线与弹簧质点模拟绳索</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="绳索模拟">绳索模拟</h1>
+<p>最近有这么一个需求，模拟绳子。<br />
+如果是那种铰链之类的，可以直接用unity物理。如果是软体并且要求物理碰撞，那就得考虑Obi之类的用质点弹簧模型的解算器去解算了。<br />
+考虑到webGL也要用，Obi需求的求解器依赖于Burst，所以webgl没法使用。而且Obi不可控因素太多，为了一个简单的，无需物理的绳索动画，也没有必要使用太复杂的Obi。<br />
+还一种方式就是让美术在Blender，maya里绑定骨骼，制作动画，但这就是固定死的，也不方便后期调整。<br />
+最后就是本文的主题了，悬链线。</p>
+<h1 id="悬链线">悬链线</h1>
+<p>首先贴出<a
+target="_blank" rel="noopener" href="https://www.alanzucconi.com/2020/12/13/catenary-2/">原文</a>。以下基本是翻译，但最后增加补充了在三维中绘制悬链线的方式和代码。</p>
+<p>悬链线就是指理想状态下的绳索在固定两端后自然下垂所形成的曲线，具体的公式推导就不赘述了。<br />
+曲线函数为：</p>
+<p><span class="math display">$$
+y=a\cosh(\frac{x-p}{a})+q
+$$</span></p>
+<p>这里a是一个常数，决定了悬链线的形态，其余的p和q一看就知道只是横向与纵向的偏移。</p>
+<p>但这种方程不符合我们的使用习惯，一般的逻辑应该是给出两点，长度。这里记为P1，P2，l。然后通过这些参数来给出曲线函数。<br />
+其中p和q可以通过以下方式来构造出：</p>
+<p><span class="math display">$$
+q=  \frac {y_ {1}+y_ {2}-l\coth (\frac {h}{2a})}{a}  
+$$</span></p>
+<p>这里</p>
+<p><span class="math display">$$
+\begin{equation}
+\begin{aligned}
+h &amp;= x_2-x_1 \\
+v &amp;= y_2-y_1
+\end{aligned}
+\end{equation}
+$$</span></p>
+<p>所以主要问题就是如何求解这个a。</p>
+<h1 id="求解a">求解a</h1>
+<p>首先，并没有可以简单的可以直接导出a的公式。<br />
+但上式可以转换成：</p>
+<p><span class="math display">$$
+\sqrt {l^ {2}-v^ {2}}  =2a  \sinh  (  \frac {h}{2a} )
+$$</span></p>
+<p>这里左边就是一个常数。<br />
+而右边可以证明是一个关于a的单调递减的函数。<br />
+所以可以用二分法快速求出一个近似解。<br />
+首先是确定一个二分的区间，确保其中有解。</p>
+<p>我们可以从0出发，每次增加一个固定值，比如1，如果新值a1小于左边，就说明解存在与（a1-1,a1）之间。</p>
+<p>然后从这个区间出发，用二分法求出一个相对精确的解。<br />
+下面贴上代码</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">private void GetARange()
+&#123;
+    a &#x3D; 0;
+    currentIteration &#x3D; 0;
+    do
+    &#123;
+        currentIteration++;
+        a +&#x3D; IntervalStep;
+    &#125; while (Math.Sqrt(Math.Pow(l, 2) - Math.Pow(v, 2)) &lt; 2 * a * Math.Sinh(h &#x2F; (2 * a)) &amp;&amp;
+             currentIteration &lt; maxIteration);
+&#125;
+
+
+private void GetA()
+&#123;
+    double a_prev &#x3D; a - IntervalStep;
+    double a_next &#x3D; a;
+
+    currentIteration &#x3D; 0;
+    do
+    &#123;
+        currentIteration++;
+        a &#x3D; (a_prev + a_next) &#x2F; 2f;
+
+        if (Math.Sqrt(Math.Pow(l, 2) - Math.Pow(v, 2)) &lt; 2 * a * Math.Sinh(h &#x2F; (2 * a)))
+            a_prev &#x3D; a;
+        else
+            a_next &#x3D; a;
+    &#125; while (a_next - a_prev &gt; Precision &amp;&amp; currentIteration &lt; maxIteration);
+&#125;</code></pre></div></figure>
+<h1 id="绘制">绘制</h1>
+<p>已经求出了全部参数，那悬链线函数就确定了，绘制可以采用lineRenderer。<br />
+也可以考虑使用unity新推出的专用来绘制曲线的Spline。前者简单快捷，后者稍显复杂但是提供了更多的扩展性，比如在两端再增加一些点，用来模拟绳子在两端的朝向。<br />
+或者也可以把悬链线参数传入shader中，用GPU来绘制。</p>
+<p>这里先以lineRenderer为例。</p>
+<h2 id="linerenderer">lineRenderer</h2>
+<p>悬链线方程是二维平面内的曲线，所以这里把其中一个点作为起点，以这个起点为原点，世界坐标的Y轴为悬链线的Y轴，以起点指向终点在世界坐标下的xz平面中的投影作为X轴。</p>
+<p>这样得出的曲线上每个点的坐标，只要先让起点在xz平面上朝向终点，然后用起点的Transform转换一下就可以了。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">private void DrawCatenary()
+&#123;
+    double segmentLength &#x3D; h &#x2F; resolution;
+
+
+    Vector3 dir &#x3D; endPoint.position - startPoint.position;
+
+    var originPos &#x3D; startPoint.position;
+    var originRot &#x3D; startPoint.rotation;
+
+
+    startPoint.right &#x3D; new Vector3(dir.x, 0, dir.z);
+    lineRenderer.positionCount &#x3D; resolution + 1;
+
+
+    for (int i &#x3D; 0; i &lt;&#x3D; resolution; i++)
+    &#123;
+        double x &#x3D; i * segmentLength;
+        double y &#x3D; CalculateCatenaryY(x);
+        Vector3 point &#x3D; new Vector3((float)x, (float)y, 0f);
+        point &#x3D; startPoint.TransformPoint(point);
+        lineRenderer.SetPosition(i, point);
+    &#125;
+
+    startPoint.SetPositionAndRotation(originPos, originRot);
+&#125;</code></pre></div></figure>
+<figure>
+<img src="Catenary.gif" srcset="/img/loading.gif" lazyload alt="悬链线" />
+<figcaption aria-hidden="true">悬链线</figcaption>
+</figure>
+<h1 id="动态">动态</h1>
+<p>todo<br />
+这样的模拟只是静态，没有动态惯性。静态看起来没有什么问题，但的一旦动起来，看起来还是比较僵硬。下面就设法为其增加一些动态效果。<br />
+先从简单的摇摆开始吧。</p>
+<h2 id="摇摆">摇摆</h2>
+<p>这里把摇摆简单建模成每个点绕沿着起点与终点的连线的垂直方向上的交点的旋转，所以只要在二维中时计算每个点的旋转幅度即可。<br />
+用于一些接触点不变的如电线等物体效果好一些。</p>
+<figure>
+<img src="Catenary-Shake.gif" srcset="/img/loading.gif" lazyload alt="悬链线摇摆" />
+<figcaption aria-hidden="true">悬链线摇摆</figcaption>
+</figure>
+<h2 id="惯性">惯性</h2>
+<p>写到这里就才发现，继续用悬链线来做已经不合适了，悬链线只能表示绳索的最终状态，要想完美实现符合基本物理规律的动态绳索，只能依靠质点弹簧了。那就再另起一篇实现个质点弹簧系统吧。</p>
+<h1 id="弹簧质点">弹簧质点</h1>
+<p>最终还是要手撸一个弹簧质点。参考自<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/361126215"></a>。<br />
+思路与代码就不贴了，原文很详细了。</p>
+<figure>
+<img src="SpringMass.gif" srcset="/img/loading.gif" lazyload alt="弹簧质点模拟" />
+<figcaption aria-hidden="true">弹簧质点模拟</figcaption>
+</figure>
+<p>既然都弹簧质点了，等有时间再来试试布料模拟吧。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%BC%96%E7%A0%81/" class="category-chain-item">编码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%A8%A1%E6%8B%9F/" class="print-no-link">#模拟</a>
+      
+        <a href="/tags/%E6%82%AC%E9%93%BE%E7%BA%BF/" class="print-no-link">#悬链线</a>
+      
+        <a href="/tags/%E5%BC%B9%E7%B0%A7%E8%B4%A8%E7%82%B9/" class="print-no-link">#弹簧质点</a>
+      
+        <a href="/tags/%E7%BB%B3%E7%B4%A2/" class="print-no-link">#绳索</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>悬链线与弹簧质点模拟绳索</div>
+      <div>https://www.kuanmi.top/2023/06/15/Catenary/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/06/15/InterfaceInEditor/" title="接口在编辑器中的拓展">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">接口在编辑器中的拓展</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/05/10/URP-thickness/" title="URP下厚度图的实现">
+                        <span class="hidden-mobile">URP下厚度图的实现</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.1/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

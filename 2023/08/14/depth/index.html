@@ -1,0 +1,742 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="简要记录一下shader中几种Depth的定义与转换规则，同时再记录下容易混淆的裁切空间，NDC，屏幕空间。 视角空间 那就一个一个看，先看UNITY_MATRIX_V，从世界坐标到视角坐标。 这个矩阵和之前类似，视角坐标系是右手，所以Z轴要翻转（UNITY_MATRIX_V这个矩阵就已经包含翻转了）。也就是Z轴朝向屏幕外。 这里的posVS.z 表示的是物体距离摄像机在摄像机forwa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="depth">
+<meta property="og:url" content="https://www.kuanmi.top/2023/08/14/depth/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="简要记录一下shader中几种Depth的定义与转换规则，同时再记录下容易混淆的裁切空间，NDC，屏幕空间。 视角空间 那就一个一个看，先看UNITY_MATRIX_V，从世界坐标到视角坐标。 这个矩阵和之前类似，视角坐标系是右手，所以Z轴要翻转（UNITY_MATRIX_V这个矩阵就已经包含翻转了）。也就是Z轴朝向屏幕外。 这里的posVS.z 表示的是物体距离摄像机在摄像机forwa">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-13T16:54:09.000Z">
+<meta property="article:modified_time" content="2025-03-18T01:12:03.970Z">
+<meta property="article:author" content="KuanMi">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>depth - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="depth"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-08-14 00:54" pubdate>
+          2023年8月14日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          30 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">depth</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>简要记录一下shader中几种Depth的定义与转换规则，同时再记录下容易混淆的裁切空间，NDC，屏幕空间。</p>
+<h1 id="视角空间">视角空间</h1>
+<p>那就一个一个看，先看UNITY_MATRIX_V，从世界坐标到视角坐标。<br />
+这个矩阵和之前类似，视角坐标系是右手，所以Z轴要翻转（UNITY_MATRIX_V这个矩阵就已经包含翻转了）。也就是Z轴朝向屏幕外。<br />
+这里的posVS.z
+表示的是物体距离摄像机在摄像机forward反方向的距离。所以如果要用记得取负。记得这里和裁切平面没有什么关系。</p>
+<h1 id="裁切空间">裁切空间</h1>
+<p>这里指在顶点着色器中输出的有<code>SV_POSITION</code>语义的裁切坐标。<br />
+一般直接由<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float4 TransformObjectToHClip(float3 positionOS)
+&#123;
+    &#x2F;&#x2F; More efficient than computing M*VP matrix product
+    return mul(GetWorldToHClipMatrix(), mul(GetObjectToWorldMatrix(), float4(positionOS, 1.0)));
+&#125;</code></pre></div></figure><br />
+这一函数直接得出。<br />
+后面的ObjectToWorldMatrix不用多说，看看前面的矩阵就是UNITY_MATRIX_VP。<br />
+来看看UNITY_MATRIX_P。即从视角空间至裁切空间的投影矩阵。<br />
+具体的推导就不写了，就记录一下结果的各个含义。<br />
+首先posCS.w = -posVS.z。<br />
+posCS.xyz 在未进行透视除法之前意义不大。</p>
+<p>但是这里在DX和GL上就有区别了。</p>
+<p>DX的Y轴是指向下方的，而GL的Y轴是指向上方的。<br />
+造成这一差异的原因是Untiy在DX环境中修改了投影矩阵，翻转了Y轴。</p>
+<p>而且DX的Z轴，近平面为0，但Gl的Z轴近平面为-1</p>
+<h3 id="y轴翻转">Y轴翻转</h3>
+<p>这是因为Untiy默认遵循OpenGL的约定，UV的原点（0，0）在左下角。<br />
+但是DX默认为左上角。所以unity在DX环境中时，将贴图传至GPU时，会翻转贴图（可以用RenderDOC来验证）。</p>
+<p>这里摘自<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/438828654">Unity坐标系变换那些事</a><br />
+任何引擎或者API的世界坐标都是Y轴朝上，但屏幕空间都是Y轴朝下的。所以一定历奇数次的翻转。<br />
+DX选择在视口变换时翻转。<br />
+GL则是在最后让操作系统去翻转。</p>
+<p>首先 untiy的世界空间，视角空间，屏幕空间以及NDC全都是Y轴朝上的。</p>
+<p>所以untiy为了统一，当环境为DX时，在投影矩阵上偷偷翻转y轴（通过RenderDoc看他的投影矩阵和用C#代码看的不一样）。<br />
+这样DX视口变换又翻转了一次
+，相当于没有翻转，所以让DX和GL保持了一致。而没有被翻转即意味着在RenderDoc中看到的就是倒立的图像。<br />
+最终Untiy会在写到Buffer中时翻转一次。<br />
+而如果是GL，因为GL会在最终让操作系统翻转一次，所以unity就无需再次翻转了。</p>
+<h1 id="ndc坐标">NDC坐标</h1>
+<p>可以手动做透视除法来将裁切空间坐标变成NDC。<br />
+做完透视除法后，w分量为1就没有存储的意义了。</p>
+<p>所以NDC.xy = posCS.xy/posCS.w范围即（-1，1），相当于屏幕UV了。<br />
+在GL中，左下角为（-1，-1）右上角为（1，1）<br />
+如果单纯的让DX也这样做<br />
+那在DX中，左上角为（-1，-1）右下角（1，1），为了兼容，这里也要Y轴翻转。<br />
+所以NDC.y = - posCS.y/posCS.w<br />
+但这仅仅在我们手动计算时才需要。</p>
+<p>而NDC.z =
+posCS.z/posCS.w即深度了，近平面1，远平面0。这里untiy自动做了深度翻转（通过修改UNITY_MATRIX_P矩阵）。为了提升远处的精度。<br />
+如果是Opengl，这里就是近平面的-1到远平面的1。</p>
+<h1 id="屏幕空间">屏幕空间</h1>
+<p>当参数传递至片元着色器时，这个语义的值是经历了透视除法和视口变换的。这里是由GPU完成的。<br />
+这时的posHCS.xy
+表示屏幕空间，范围是从左下角的（0，0），到右上角的_ScreenParams.xy。<br />
+如果要用作UV，uv = input.positionHCS.xy /
+_ScreenParams.xy;这样就映射回了（0-1）</p>
+<p>posHCS.z则是从posCS.z映射到（0，1）。<br />
+如果是DX，则完全等同，如果是gl则要从（-1，1）映射到（0，1）</p>
+<p>这也是最终写入深度图的值。如果直接采样深度图，得到的也是这个值。</p>
+<p>因为NDC.w =
+1没有存储的意义，所以posHCS.w与posCS.w一样，都是等于-posVS.z，表示物体距离摄像机在摄像机forward方向的距离</p>
+<h1 id="rawdepth">RawDepth</h1>
+<p>上面得到的值即原始深度，仅能用来比较大小，应该没什么物理含义。</p>
+<h1 id="linear01depth">Linear01Depth</h1>
+<p>0表示相机位置，1表示远平面。这里的深度就是线性的了，有实际物理意义了。<br />
+一般用<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float Linear01Depth(float depth, float4 zBufferParam)
+&#123;
+    return 1.0 &#x2F; (zBufferParam.x * depth + zBufferParam.y);
+&#125;</code></pre></div></figure><br />
+来取，简单乘以远平面，或者直接<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">&#x2F;&#x2F; zBufferParam &#x3D; &#123; (f-n)&#x2F;n, 1, (f-n)&#x2F;n*f, 1&#x2F;f &#125;
+float LinearEyeDepth(float depth, float4 zBufferParam)
+&#123;
+    return 1.0 &#x2F; (zBufferParam.z * depth + zBufferParam.w);
+&#125;</code></pre></div></figure><br />
+就能得到实际物体的在Z轴上的深度了。即posVS.z。</p>
+<h1 id="重建坐标">重建坐标</h1>
+<p>在很多全屏后处理中，依据深度图来重建坐标也是经常要用的。<br />
+首先是得到UV，即左下角（0，0）右上角（1，1）的坐标。<br />
+即 float2 UV = IN.positionHCS.xy / _ScaledScreenParams.xy;</p>
+<h2 id="重建裁切坐标">重建裁切坐标</h2>
+<p>这里的裁切坐标是进行透视除法之后的坐标<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">    float4 positionCS &#x3D; float4(positionNDC * 2.0 - 1.0, deviceDepth, 1.0);
+#if UNITY_UV_STARTS_AT_TOP
+    positionCS.y &#x3D; -positionCS.y;
+#endif</code></pre></div></figure></p>
+<h2 id="取消透视除法">取消透视除法</h2>
+<p>取消的第一步就是要计算posCS.w，即-posVS.z。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-none"><code class="language-none">float ZVS &#x3D; LinearEyeDepth(rawDepth, _ZBufferParams);
+float4 posCS &#x3D; ZVS * posHCS;</code></pre></div></figure></p>
+<h2 id="重建视角坐标">重建视角坐标</h2>
+<p>用逆矩阵相乘即可。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float4 positionVS &#x3D; mul(invProjMatrix, posCS);</code></pre></div></figure><br />
+这里Untiy的ComputeViewSpacePosition函数会主动再把Z轴取反，不知道出于什么考虑。<br />
+再往下的由视角坐标再重建世界坐标就不赘述了。<br />
+但这种一步一步慢慢倒推是没必要的，untiy的Common库中有效率更高的做法，这里有一个齐次世界坐标我是没搞明白，但最终的结果是一样的。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float3 ComputeWorldSpacePosition(float2 positionNDC, float deviceDepth, float4x4 invViewProjMatrix)
+&#123;
+    float4 positionCS  &#x3D; ComputeClipSpacePosition(positionNDC, deviceDepth);
+    float4 hpositionWS &#x3D; mul(invViewProjMatrix, positionCS);
+    return hpositionWS.xyz &#x2F; hpositionWS.w;
+&#125;</code></pre></div></figure></p>
+<h2 id="深度偏移">深度偏移</h2>
+<p>对于那些需要深度偏移的shader。最后输出的深度要转换成原始深度。<br />
+最简单的方式就是<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float deviceDepth &#x3D; ComputeNormalizedDeviceCoordinatesWithZ(currentPos, GetWorldToHClipMatrix()).z;
+#ifndef  UNITY_UV_STARTS_AT_TOP
+deviceDepth &#x3D; (deviceDepth +1 )&#x2F;2;
+#endif
+outDepth &#x3D; deviceDepth;</code></pre></div></figure></p>
+<h1 id="总结">总结</h1>
+<p>untiy为了统一两种API，整了一堆绕来绕去的骚操作，还全部隐藏起来不开源。<br />
+自带的FrameDebug还为不同的API自动翻转了图像，不用RenderDoc根本不知道到底图像是怎么翻转的。<br />
+总之就踩到坑再回来补充吧。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>depth</div>
+      <div>https://www.kuanmi.top/2023/08/14/depth/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年8月14日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/08/09/GTAO/" title="GTAO">
+                        <span class="hidden-mobile">GTAO</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

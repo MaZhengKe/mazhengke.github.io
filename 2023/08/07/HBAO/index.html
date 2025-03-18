@@ -1,0 +1,925 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="今天来玩玩HBAO，目前URP仅有SSAO，HDRP则用的是GTAO。先在URP实现个HBAO，如果还有余力的话就再实现GTAO吧。 原理啥的就不详细写了，各种文章一大堆，就先简单说个大概。   HBAO in URP  SSAO 先看URP自带的SSAO，别看Shader里定义了一堆pass，除了第一个SSAO_Occlusion，其他全是各种模糊。 详细看看第一个pass 大">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HBAO">
+<meta property="og:url" content="https://www.kuanmi.top/2023/08/07/HBAO/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="今天来玩玩HBAO，目前URP仅有SSAO，HDRP则用的是GTAO。先在URP实现个HBAO，如果还有余力的话就再实现GTAO吧。 原理啥的就不详细写了，各种文章一大堆，就先简单说个大概。   HBAO in URP  SSAO 先看URP自带的SSAO，别看Shader里定义了一堆pass，除了第一个SSAO_Occlusion，其他全是各种模糊。 详细看看第一个pass 大">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.kuanmi.top/images/HBAOS01.png">
+<meta property="article:published_time" content="2023-08-06T21:37:41.000Z">
+<meta property="article:modified_time" content="2025-03-18T01:12:03.966Z">
+<meta property="article:author" content="KuanMi">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/HBAOS01.png">
+  
+  
+  
+  <title>HBAO - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/HBAOS01.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="HBAO"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-08-07 05:37" pubdate>
+          2023年8月7日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          43 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">HBAO</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>今天来玩玩HBAO，目前URP仅有SSAO，HDRP则用的是GTAO。先在URP实现个HBAO，如果还有余力的话就再实现GTAO吧。<br />
+原理啥的就不详细写了，各种文章一大堆，就先简单说个大概。</p>
+<figure>
+<img src="HBAOS02.png" srcset="/img/loading.gif" lazyload alt="HBAO in URP" />
+<figcaption aria-hidden="true">HBAO in URP</figcaption>
+</figure>
+<h1 id="ssao">SSAO</h1>
+<p>先看URP自带的SSAO，别看Shader里定义了一堆pass，除了第一个SSAO_Occlusion，其他全是各种模糊。<br />
+详细看看第一个pass<br />
+大致流程就是</p>
+<ul>
+<li>先针对天空盒以0退出</li>
+<li>对于超出了用户设定的Falloff的值也提前退出</li>
+<li>获取法线（直接采样或者从深度推算）</li>
+<li>从深度重建视线坐标</li>
+<li>然后就是遍历每个采样点
+<ul>
+<li>采样蓝噪声随机在半球上取点</li>
+<li>然后转换成裁切坐标？</li>
+<li>计算Z（深度）同时得出uv坐标</li>
+<li>用UV再去采样深度</li>
+<li>确保再次用UV采样的点在半球内</li>
+<li>同样重建第二次用UV采样的点的坐标</li>
+<li>依据和法线的夹角与长度确定对AO的贡献。</li>
+</ul></li>
+</ul>
+<h1 id="hbao">HBAO</h1>
+<p>先看<a
+target="_blank" rel="noopener" href="https://www.researchgate.net/publication/215506032_Image-space_horizon-based_ambient_occlusion">原文</a>，很精简，只有一页。干脆全篇翻译一下吧。</p>
+<h2 id="介绍">介绍</h2>
+<p>环境光遮蔽是一种光照模型，对于漫反射表面上某点，通过其直接可见的遮挡，来近似计算出到达的光线数量。它让人可感知到物体的曲率和空间的接近关系。与<a
+href="">Mittring 2007</a>和<a href="">Shanmugam and Arikan
+2007</a>类似，我们提出了一种实时环境光遮蔽算法，作为后处理，主要基于眼睛角度的深度图像。该方法不需要场景相关的预计算，适用于动态场景。我们提出的方法不存在<a
+href="">Shanmugam and Arikan 2007</a>中的过度遮挡问题，并且与<a
+href="">Mittring 2007</a>不同，采样仅局限于影响半径内。</p>
+<p>我们给定下述形式表述一给定表面的点P处的环境光遮挡A。<br />
+<span class="math display">$$
+\begin{equation}
+A=1-\frac{1}{2π} \int_{ω}^{} V(\stackrel{→}{ω})W(\stackrel{→}{ω})dω
+\tag*{(1)}
+\end{equation}
+$$</span></p>
+<div class="note note-info">
+            <p>对每个角度都计算遮挡与否，0或者1，然后乘以影响系数后累加。<br />普通的SSAO就是这么计算的，随机取点，判断是否遮挡。</p>
+          </div>
+<p>这里<span class="math inline"><em>V</em></span>表示法向单位半球<span
+class="math inline"><em>ω</em></span>上的可见性，返回<span
+class="math inline">1</span>表示一束光线从<span
+class="math inline"><em>P</em></span>点开始沿着<span
+class="math inline">$\stackrel{→}{ω}$</span>方向与遮挡物相交，否则返回<span
+class="math inline">0</span>，<span
+class="math inline"><em>W</em></span>是一个线性衰减函数。</p>
+<h2 id="hbao-1">HBAO</h2>
+<p>我们使用一球面坐标系，有一与视线<span
+class="math inline">$\mathop{V}\limits^{\rightarrow}$</span>对齐的天顶轴，方位角<span
+class="math inline"><em>θ</em></span>与仰角<span
+class="math inline"><em>α</em></span>（见图2a）。<br />
+<img src="HBAO2a.png" srcset="/img/loading.gif" lazyload
+alt="2a 方位角θ绕着视线\mathop{V}\limits^{\rightarrow}。切线角t(θ)是表面切线的带符号仰角。" /></p>
+<p>与<a href="">Max 1986</a>的水平映射类似，我们通过有符号的水平角<span
+class="math inline"><em>h</em>(<em>θ</em>)</span>定义的水平线来分割单位球体（见图2b）。</p>
+<figure>
+<img src="HBAO2b.png" srcset="/img/loading.gif" lazyload
+alt="2b 水平角h(θ)是当α&gt;= t(θ)时的最大仰角，满足对于任意α&lt; h(θ)使得\stackrel{→}{ω}被遮蔽" />
+<figcaption aria-hidden="true">2b 水平角<span
+class="math inline"><em>h</em>(<em>θ</em>)</span>是当<span
+class="math inline"><em>α</em> &gt;  = <em>t</em>(<em>θ</em>)</span>时的最大仰角，满足对于任意<span
+class="math inline"><em>α</em> &lt; <em>h</em>(<em>θ</em>)</span>使得<span
+class="math inline">$\stackrel{→}{ω}$</span>被遮蔽</figcaption>
+</figure>
+<div class="note note-info">
+            <p>简单理解就是<spanclass="math inline"><em>h</em>(<em>θ</em>)</span>表示<spanclass="math inline"><em>θ</em></span>方向上斜率最大的那个仰角。</p>
+          </div>
+<p>假设<span
+class="math inline"><em>P</em></span>的邻域是连续的高度场，通常在地平线以下追踪的光线已知与遮挡物相交，因此可以省略这些光线的相交测试。在连续高度场的假设下，方程1可以重写为：<br />
+<span class="math display">$$
+\begin{equation}
+A=1-\frac{1}{2π} \int_{θ =-π}^{π}\int_{α = t(θ )}^{h(θ )}
+W(\stackrel{→}{ω})cos(α )dα dθ
+\tag*{(2)}
+\end{equation}
+$$</span><br />
+<div class="note note-info">
+            <p>所以最终是对仰角在<spanclass="math inline"><em>t</em>(<em>θ</em>)</span>与<spanclass="math inline"><em>h</em>(<em>θ</em>)</span>之间的射线求遮蔽值。<br />这里还隐含了一个定义就是只要求出了最大的仰角，那么其之下的仰角也都是必定遮蔽的，这就是作者提出要求连续高度场的意思。</p>
+          </div></p>
+<p>我们使用线性衰减函数<span
+class="math inline"><em>W</em>(<em>θ</em>) = <em>m</em><em>a</em><em>x</em>(0,1−<em>r</em>(<em>θ</em>)/<em>R</em>)</span>，其中<span
+class="math inline"><em>r</em>(<em>θ</em>)</span> 是 <span
+class="math inline"><em>P</em></span> 和 <span
+class="math inline">$\stackrel{→}{ω}$</span>
+方向上的地平点之间的距离，<span class="math inline"><em>R</em></span>
+是半径。在这种情况下，<br />
+<span class="math display">$$
+\begin{equation}
+A=1-\frac{1}{2π} \int_{θ =-π}^{π}(sin(h(θ)) -sin(t(θ))) W(θ)dθ
+\tag*{(3)}
+\end{equation}
+$$</span></p>
+<div class="note note-info">
+            <p>这里的<spanclass="math inline"><em>W</em>(<em>θ</em>)</span>指的不是之前的<spanclass="math inline">$W(\stackrel{→}{ω})$</span>，指的是整体上在<spanclass="math inline"><em>θ</em></span>这个方位角的切面上的衰减。</p>
+          </div>
+<h2 id="图像空间积分">图像空间积分</h2>
+<p>我们的算法将每像素的深度和眼空间法线作为输入。对于每个像素，我们计算其眼空间的位置<span
+class="math inline"><em>P</em></span>，并且我们通过使用图像空间的不同方向和步长，来对存储在深度图像中的高度场进行采样，使用蒙特卡洛方法，对等式3进行积分。</p>
+<p>我们在图像空间选取围绕着当前像素的<span
+class="math inline"><em>N</em><sub><em>d</em></sub></span>个方向<span
+class="math inline"><em>θ</em></span>，这些方向对应于眼空间中Z轴周围的方向（在图2a中表示为<span
+class="math inline"><em>V</em></span>）。</p>
+<p>对于每个角度<span
+class="math inline"><em>θ</em></span>，我们通过在图像空间中沿着线段来采样深度图像，并以此计算地平线角度<span
+class="math inline"><em>h</em>(<em>θ</em>)</span>。<br />
+受影响的眼空间的半径<span
+class="math inline"><em>R</em></span>被投影到图像平面，并分为等长度的<span
+class="math inline"><em>N</em><sub><em>s</em></sub></span>个步骤。</p>
+<p>为了找到方向<span
+class="math inline"><em>θ</em></span>上的地平线角度，我们首先计算切线角度<span
+class="math inline"><em>t</em>(<em>θ</em>)</span>，并将视线射线与由<span
+class="math inline"><em>P</em></span>和表面法线<span
+class="math inline">$\stackrel{→}{n}$</span>定义的切平面相交。<br />
+然后我们沿着方向<span
+class="math inline"><em>θ</em></span>在深度图像中前进，并计算<span
+class="math inline"><em>D</em> = <em>S</em><sub><em>i</em></sub> − <em>P</em></span>，其中<span
+class="math inline"><em>S</em><sub><em>i</em></sub></span>是给定样本<span
+class="math inline"><em>S</em><sub><em>i</em></sub></span>的重建眼空间位置。<br />
+基于仰角<span
+class="math inline"><em>α</em>(<em>S</em><em>i</em>) = <em>a</em><em>t</em><em>a</em><em>n</em>(−<em>D</em>.<em>z</em>/||<em>D</em>.<em>x</em><em>y</em>||)</span>，地平线角度<span
+class="math inline"><em>h</em>(<em>θ</em>)</span>是<span
+class="math inline"><em>m</em><em>a</em><em>x</em>(<em>t</em>(<em>θ</em>),<em>α</em>(<em>S</em><em>i</em>),<em>i</em>=1..<em>N</em><sub><em>s</em></sub>)</span>，其中<span
+class="math inline"><em>N</em><sub><em>s</em></sub></span>是每个方向的步骤数。我们忽略满足<span
+class="math inline">||<em>S</em><em>i</em> − <em>P</em>|| &gt; <em>R</em></span>的样本。因为<span
+class="math inline"><em>D</em>.<em>z</em></span>必须是与偏移<span
+class="math inline"><em>D</em>.<em>x</em><em>y</em></span>相关联的确切深度，所以我们始终确保在纹素中心进行采样。为此，我们将沿着每个方向的样本的纹理坐标捕捉到最近的纹素中心（见图2c）。</p>
+<figure>
+<img src="HBAO2c.png" srcset="/img/loading.gif" lazyload alt="2c 4个方向和2个纹素步长的样本位置示例" />
+<figcaption aria-hidden="true">2c
+4个方向和2个纹素步长的样本位置示例</figcaption>
+</figure>
+<p>为了将带状伪影换成噪声，我们会对每个像素随机抖动步长，并对每个像素随机旋转<span
+class="math inline"><em>N</em><sub><em>d</em></sub></span>个均匀方向。尽管通常使用单个深度层可以产生合理的结果，但也可以通过使用多个层次来扩展，例如前后两个面。</p>
+<h2 id="shader-实现">Shader 实现</h2>
+<p>直接贴代码吧，大部分取自<a
+target="_blank" rel="noopener" href="https://github.com/nvpro-samples/gl_ssao">Nvidia的示例仓库</a></p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">
+float Falloff(float DistanceSquare)
+&#123;
+    return DistanceSquare * _NegInvR2 + 1.0;
+&#125;
+
+float ComputeAO(float3 p, float3 n, float3 s)
+&#123;
+    float3 v &#x3D; s - p;
+    float VdotV &#x3D; dot(v, v);
+    float NdotV &#x3D; dot(n, v) * rsqrt(VdotV);
+
+    return clamp(NdotV - _NDotVBias, 0, 1) * clamp(Falloff(VdotV), 0, 1);
+&#125;
+
+float3 FetchViewPos(float2 uv)
+&#123;
+    float rawDepth &#x3D; SampleDepth(uv);
+    float3 viewPos &#x3D; ComputeViewSpacePosition(uv, rawDepth,UNITY_MATRIX_I_P);
+    return viewPos;
+&#125;
+
+float random(float v)
+&#123;
+    return frac(sin(v * 42.5) * 43758.5453123);
+&#125;
+
+float4 GetJitter(float2 uv)
+&#123;
+    &#x2F;&#x2F; (cos(Alpha),sin(Alpha),rand1,rand2)
+    &#x2F;&#x2F; return textureLod( texRandom, (gl_FragCoord.xy &#x2F; AO_RANDOMTEX_SIZE), 0);
+
+    float Alpha &#x3D; SAMPLE_BLUE_NOISE((uv + BlueNoiseOffset) * BlueNoiseScale);
+    Alpha *&#x3D; 2.0 * PI;
+    return float4(cos(Alpha), sin(Alpha), random(Alpha), random(Alpha + 57));
+&#125;
+
+
+float2 RotateDirection(float2 Dir, float2 CosSin)
+&#123;
+    return float2(Dir.x * CosSin.x - Dir.y * CosSin.y,
+                  Dir.x * CosSin.y + Dir.y * CosSin.x);
+&#125;
+
+&#x2F;&#x2F;----------------------------------------------------------------------------------
+float3 ComputeCoarseAO(float2 FullResUV, float RadiusPixels, float4 Rand, float3 ViewPosition, float3 ViewNormal)
+&#123;
+    &#x2F;&#x2F; Divide by NUM_STEPS+1 so that the farthest samples are not fully attenuated
+    float StepSizePixels &#x3D; RadiusPixels &#x2F; (_NUM_STEPS + 1);
+
+    const float Alpha &#x3D; 2.0 * PI &#x2F; _NUM_DIRECTIONS;
+    float AO &#x3D; 0;
+    for (float DirectionIndex &#x3D; 0; DirectionIndex &lt; _NUM_DIRECTIONS; ++DirectionIndex)
+    &#123;
+        float Angle &#x3D; Alpha * DirectionIndex;
+
+        &#x2F;&#x2F; Compute normalized 2D direction
+        float2 Direction &#x3D; RotateDirection(float2(cos(Angle), sin(Angle)), Rand.xy);
+
+        &#x2F;&#x2F; Jitter starting sample within the first step
+        float RayPixels &#x3D; (Rand.z * StepSizePixels + 1.0);
+
+        for (float StepIndex &#x3D; 0; StepIndex &lt; _NUM_STEPS; ++StepIndex)
+        &#123;
+            float2 SnappedUV &#x3D; round(RayPixels * Direction) &#x2F; _ScreenParams.xy + FullResUV;
+            float3 S &#x3D; FetchViewPos(SnappedUV);
+
+            &#x2F;&#x2F; return S;
+            RayPixels +&#x3D; StepSizePixels;
+            AO +&#x3D; ComputeAO(ViewPosition, ViewNormal, S);
+        &#125;
+    &#125;
+
+    AO &#x2F;&#x3D; _NUM_DIRECTIONS * _NUM_STEPS;
+    return clamp(1.0 - AO * 2, 0.0, 1.0);
+&#125;
+
+half4 HBAO(Varyings input) : SV_Target
+&#123;
+    UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+
+    float2 uv &#x3D; input.texcoord;
+    float3 ViewPosition &#x3D; FetchViewPos(uv);
+    float3 worldNormal &#x3D; SampleNormal(uv);
+    float3 ViewNormal &#x3D; TransformWorldToViewNormal(worldNormal);
+
+    ViewNormal.z &#x3D; -ViewNormal.z;
+
+    float RadiusPixels &#x3D; _RadiusToScreen &#x2F; ViewPosition.z;
+    float4 Rand &#x3D; GetJitter(uv);
+    float AO &#x3D; ComputeCoarseAO(uv, RadiusPixels, Rand, ViewPosition, ViewNormal);
+
+    AO &#x3D; pow(AO, 2);
+    &#x2F;&#x2F; AO &#x3D; 1 - AO;
+    return float4(AO, AO, AO, 1);
+&#125;</code></pre></div></figure>
+<h1 id="与lit整合">与Lit整合</h1>
+<p>最简单的方式就是直接修改原SSAO的shader然后仅替换计算部分，
+这样就无需修改原Lit。或者想完善一点就单独增加一个Feature，仿照SSAO的写法，单独写入一张RT，然后再修改Lit取采样这张AO。但是很多URP的函数没有暴露出来，比如RenderGraph，所以还得cloneURP的仓库去改URP源码。这就先放一放吧，等实现了GTAO再放一起来做吧。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>HBAO</div>
+      <div>https://www.kuanmi.top/2023/08/07/HBAO/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年8月7日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/08/09/GTAO/" title="GTAO">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">GTAO</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/08/04/Blur/" title="常见模糊后处理">
+                        <span class="hidden-mobile">常见模糊后处理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.1/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

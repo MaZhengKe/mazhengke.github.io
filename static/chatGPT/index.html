@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>打砖块游戏</title>
+</head>
+<body>
+  <canvas id="myCanvas"></canvas>
+  <script src="https://cdn.bootcss.com/three.js/r112/three.min.js"></script>
+  <script>
+    // 创建一个场景
+const scene = new THREE.Scene();
+
+// 创建一个正交相机，并设置它的位置
+const camera = new THREE.OrthographicCamera(
+  -10,  // left
+  10,   // right
+  10,   // top
+  -10,  // bottom
+  0.1,  // near
+  1000  // far
+);
+camera.position.set(0, 0, 10);
+
+// 创建一个渲染器
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// 创建一个球体几何体，并设置它的材质
+const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+const ballMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000 });
+const ball = new THREE.Mesh(ballGeometry, ballMaterial);
+scene.add(ball);
+
+// 创建一个空的容器，用于存储场景中的障碍物
+const obstacles = new THREE.Object3D();
+scene.add(obstacles);
+
+// 创建一些障碍物
+for (let i = 0; i < 10; i++) {
+  // 创建一个立方体几何体，并设置它的材质
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const material = new THREE.MeshBasicMaterial({ color: 0x0000FF });
+  const cube = new THREE.Mesh(geometry, material);
+
+  // 随机设置立方体的位置
+  cube.position.x = Math.random() * 20 - 10;
+  cube.position.y = Math.random() * 20 - 10;
+
+  // 将立方体添加到场景中
+  obstacles.add(cube);
+}
+
+
+// 定义弹球的速度和加速度
+let ballVelocity = new THREE.Vector3(0.3, 0.5, 0);
+let ballAcceleration = new THREE.Vector3(0, 0, 0);
+
+// 定义弹球与场景中的障碍物或边界的碰撞检测函数
+const checkCollision = () => {
+  // 如果弹球碰到了左边界，则将它的速度反向
+  if (ball.position.x <= -10) {
+    ballVelocity.x = -ballVelocity.x;
+  }
+  // 如果弹球碰到了右边界，则将它的速度反向
+  if (ball.position.x >= 10) {
+    ballVelocity.x = -ballVelocity.x;
+  }
+  // 如果弹球碰到了上边界，则将它的速度反向
+  if (ball.position.y >= 10) {
+    ballVelocity.y = -ballVelocity.y;
+  }
+  // 如果弹球碰到了下边界，则将它的速度反向
+  if (ball.position.y <= -10) {
+    ballVelocity.y = -ballVelocity.y;
+  }
+
+  // 检查弹球是否与障碍物发生了碰撞
+  obstacles.children.forEach((obstacle) => {
+    // 计算弹球与障碍物之间的距离
+    const distance = ball.position.distanceTo(obstacle.position);
+
+    // 如果距离小于弹球半径，则表示发生了碰撞
+    if (distance < ballGeometry.parameters.radius) {
+      // 将障碍物从场景中移除
+      obstacles.remove(obstacle);
+
+      // 将弹球的速度反向
+      ballVelocity.x = -ballVelocity.x;
+      ballVelocity.y = -ballVelocity.y;
+    }
+  });
+
+  
+}
+// 定义一个变量，表示弹球的加速度大小
+const ACCELERATION = 0.1;
+
+// 监听键盘按键事件
+document.addEventListener("keydown", (event) => {
+  // 如果按下了 A 键，则将弹球向左加速
+  if (event.key === "a") {
+    ballAcceleration.x -= ACCELERATION;
+  }
+  // 如果按下了 D 键，则将弹球向右加速
+  if (event.key === "d") {
+    ballAcceleration.x += ACCELERATION;
+  }
+  // 如果按下了 W 键，则将弹球向上加速
+  if (event.key === "w") {
+    ballAcceleration.y += ACCELERATION;
+  }
+  // 如果按下了 S 键，则将弹球向下加速
+  if (event.key === "s") {
+    ballAcceleration.y -= ACCELERATION;
+  }
+});
+
+
+    // 定义更新弹球位置和速度的函数
+const update = () => {
+  // 更新弹球的速度，使用牛顿运动定律
+  ballVelocity.add(ballAcceleration);
+  ball.position.add(ballVelocity);
+
+  // 检查碰撞
+  checkCollision();
+
+  // 重置弹球的加速度
+  ballAcceleration.set(0, 0, 0);
+};
+
+// 定义渲染循环函数
+const animate = () => {
+  // 更新弹球的位置和速度
+  update();
+
+  // 渲染场景
+  renderer.render(scene, camera);
+
+  // 继续渲染下一帧
+  requestAnimationFrame(animate);
+};
+
+// 开始渲染循环
+animate();
+
+
+ 
+
+</script>
+</body>
+</html>

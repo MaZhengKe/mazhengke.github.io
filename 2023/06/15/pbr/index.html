@@ -1,0 +1,1084 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="复刻URPLit">
+<meta property="og:type" content="article">
+<meta property="og:title" content="URP下定制PBRShader">
+<meta property="og:url" content="https://www.kuanmi.top/2023/06/15/pbr/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="复刻URPLit">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.kuanmi.top/images/PBR-lit-slim.png">
+<meta property="article:published_time" content="2023-06-14T18:40:21.000Z">
+<meta property="article:modified_time" content="2025-03-18T01:12:03.938Z">
+<meta property="article:author" content="KuanMi">
+<meta property="article:tag" content="URP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/PBR-lit-slim.png">
+  
+  
+  
+  <title>URP下定制PBRShader - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/PBR-lit.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="URP下定制PBRShader"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-15 02:40" pubdate>
+          2023年6月15日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          97 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">URP下定制PBRShader</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="复刻urplit">复刻URPLit</h1>
+<span id="more"></span>
+<p>考虑到项目移植各个平台的顺利，URP还是目前最实用的管线了，但自带的lit还是缺少很多功能，比如对VR很重要的几何高光抗锯齿，混合SSR也不是很方便，各向异性，环境法线，高光遮蔽，视差映射等等功能都是缺少的。<br />
+为了功能的收缩与扩张方便，还是有必要手撸一个PBR的。<br />
+而且Lit的代码为了兼容各种环境，比如Dot，VR，LODCross，做了大量的判断，代码很杂乱，很难修改。整理一遍也是为了更好的理解URP的Lit着色器。<br />
+以上存粹是为了说服自己造这个轮子。。。</p>
+<h1 id="需求">需求</h1>
+<p>先从简单的搞起，大致输入就先仿照URP最精简的Lit</p>
+<ul>
+<li>按金属粗糙的工作流</li>
+<li>不透明</li>
+<li>仅正面</li>
+<li>alpha不裁切</li>
+<li>接收阴影</li>
+<li>阴影不级联</li>
+<li>BaseMap(RGBA)</li>
+<li>BaseColor(RGBA)</li>
+<li>Metallic</li>
+<li>MetallicMap（R金属 A光滑）</li>
+<li>Smoothness</li>
+<li>NormalMap</li>
+<li>先不考虑高度图</li>
+<li>OcclusionMap</li>
+<li>OcclusionStrength</li>
+<li>EmissionColor</li>
+<li>EmissionMap</li>
+<li>先不考虑细节贴图</li>
+<li>先不考虑清漆</li>
+<li>实时光仅平行光</li>
+<li>有环境反射</li>
+<li>先不考虑烘焙</li>
+</ul>
+<h1 id="开搞">开搞</h1>
+<p>这里就没什么好说的了，公式就翻翻URP的lit的实现，先尽量汇总到一个文件里，方便之后比对。</p>
+<h2 id="properties">Properties</h2>
+<p>就参照上面的需求，大致列一下属性，不够之后再加。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">Properties
+&#123;
+    [MainTexture] _BaseMap(&quot;Albedo&quot;, 2D) &#x3D; &quot;white&quot; &#123;&#125;
+    [MainColor] _Color(&quot;Color&quot;, Color) &#x3D; (1,1,1,1)
+    
+    _Metallic(&quot;Metallic&quot;, Range(0.0, 1.0)) &#x3D; 0.0
+    _MetallicGlossMap(&quot;Metallic&quot;, 2D) &#x3D; &quot;white&quot; &#123;&#125;
+    _Smoothness(&quot;Smoothness&quot;, Range(0.0, 1.0)) &#x3D; 0.5
+    
+    _BumpMap(&quot;Normal Map&quot;, 2D) &#x3D; &quot;bump&quot; &#123;&#125;
+    
+    _OcclusionStrength(&quot;Strength&quot;, Range(0.0, 1.0)) &#x3D; 1.0
+    _OcclusionMap(&quot;Occlusion&quot;, 2D) &#x3D; &quot;white&quot; &#123;&#125;
+
+    [HDR] _EmissionColor(&quot;Color&quot;, Color) &#x3D; (0,0,0)
+    _EmissionMap(&quot;Emission&quot;, 2D) &#x3D; &quot;white&quot; &#123;&#125;
+&#125;</code></pre></div></figure></p>
+<h2 id="tags">Tags</h2>
+<p>按照URP文档的要求，要配置一些通用的Tag<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">Tags
+&#123;
+    &quot;RenderType&quot; &#x3D; &quot;Opaque&quot; 
+    &quot;RenderPipeline&quot; &#x3D; &quot;UniversalPipeline&quot;
+    &quot;UniversalMaterialType&quot; &#x3D; &quot;Lit&quot;
+&#125;</code></pre></div></figure></p>
+<h2 id="pass">Pass</h2>
+<p>URP要求一个Shader中要实现多个Pass，分别包含了</p>
+<ul>
+<li>UniversalForward</li>
+<li>ShadowCaster</li>
+<li>UniversalGBuffer</li>
+<li>DepthOnly</li>
+<li>DepthNormals</li>
+<li>Meta</li>
+<li>Universal2D</li>
+</ul>
+<p>顾名思义，不一一介绍了，最为最简单的仅前向的shader，这里就挑出以下五个实现</p>
+<ul>
+<li>UniversalForward</li>
+<li>ShadowCaster</li>
+<li>DepthOnly</li>
+<li>DepthNormals</li>
+<li>Meta</li>
+</ul>
+<h1 id="关键字">关键字</h1>
+<p>参照urp的lit，分为材质的关键字、管线的关键字、unity的关键字和GPUInstancing。<br />
+材质的关键字主要用来定义一些局部的属性，如是否启用法线贴图，是否启用高度图，光滑的从哪里采样等等<br />
+这部分就先省略，之后优化时再加。<br />
+然后是管线的关键字，主要定义一些是否启用了主光源阴影，屏幕阴影，附加光阴影，软阴影等等。<br />
+这里就也先省略了，需要对应的功能再加。<br />
+然后是untiy的关键字。包含了光照贴图，阴影的shadowMask，雾气等等。</p>
+<h1 id="存储结构">存储结构</h1>
+<p>参考lit，把输入以及一些常用的采样分到一个文件中，具体的着色器函数在另一个文件，方便引用，那这里也依葫芦画瓢。<br />
+值得一提的是URP中还把常见的一些贴图又分到了一个SurfaceInpute中，这里就没有必要了，合并到一起。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#ifndef MK_LIT_INPUT_INCLUDED
+#define MK_LIT_INPUT_INCLUDED
+
+#include &quot;Packages&#x2F;com.unity.render-pipelines.universal&#x2F;ShaderLibrary&#x2F;Core.hlsl&quot;
+
+CBUFFER_START(UnityPerMaterial)
+float4 _BaseMap_ST;
+
+half4 _BaseColor;
+half4 _EmissionColor;
+
+half _Smoothness;
+half _Metallic;
+half _OcclusionStrength;
+CBUFFER_END
+
+TEXTURE2D(_BaseMap);            SAMPLER(sampler_BaseMap);
+TEXTURE2D(_BumpMap);            SAMPLER(sampler_BumpMap);
+TEXTURE2D(_EmissionMap);        SAMPLER(sampler_EmissionMap);
+TEXTURE2D(_OcclusionMap);       SAMPLER(sampler_OcclusionMap);
+TEXTURE2D(_MetallicGlossMap);   SAMPLER(sampler_MetallicGlossMap);
+
+
+#endif &#x2F;&#x2F; MK_LIT_INPUT_INCLUDED</code></pre></div></figure><br />
+都是很常见的属性。</p>
+<h1 id="顶点着色器">顶点着色器</h1>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">Varyings LitPassVertex(Attributes input)
+&#123;
+    &#x2F;&#x2F; 初始化赋值
+    Varyings output &#x3D; (Varyings)0;
+
+    &#x2F;&#x2F; GPUInstance和VR单pass的套路
+    UNITY_SETUP_INSTANCE_ID(input);
+    UNITY_TRANSFER_INSTANCE_ID(input, output);
+    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+
+    &#x2F;&#x2F; 一个方便的小函数，包含了各种位置的计算
+    VertexPositionInputs vertexInput &#x3D; GetVertexPositionInputs(input.positionOS.xyz);
+
+    &#x2F;&#x2F;  求BTN
+    &#x2F;&#x2F; normalWS and tangentWS already normalize.
+    &#x2F;&#x2F; this is required to avoid skewing the direction during interpolation
+    &#x2F;&#x2F; also required for per-vertex lighting and SH evaluation
+    VertexNormalInputs normalInput &#x3D; GetVertexNormalInputs(input.normalOS, input.tangentOS);
+
+    &#x2F;&#x2F; 顶点光照颜色 这里就不用顶点光照了
+    half3 vertexLight &#x3D; VertexLighting(vertexInput.positionWS, normalInput.normalWS);
+
+    &#x2F;&#x2F; 也省略雾气
+    half fogFactor &#x3D; 0;
+    #if !defined(_FOG_FRAGMENT)
+        fogFactor &#x3D; ComputeFogFactor(vertexInput.positionCS.z);
+    #endif
+
+    &#x2F;&#x2F; UV缩放
+    output.uv &#x3D; TRANSFORM_TEX(input.texcoord, _BaseMap);
+
+    &#x2F;&#x2F; 输出法线
+    &#x2F;&#x2F; already normalized from normal transform to WS.
+    output.normalWS &#x3D; normalInput.normalWS;
+
+    &#x2F;&#x2F; 输出切线
+#if defined(REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR) || defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
+    real sign &#x3D; input.tangentOS.w * GetOddNegativeScale();
+    half4 tangentWS &#x3D; half4(normalInput.tangentWS.xyz, sign);
+#endif
+#if defined(REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR)
+    output.tangentWS &#x3D; tangentWS;
+#endif
+
+    &#x2F;&#x2F; 切线空间的视角向量
+#if defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
+    half3 viewDirWS &#x3D; GetWorldSpaceNormalizeViewDir(vertexInput.positionWS);
+    half3 viewDirTS &#x3D; GetViewDirectionTangentSpace(tangentWS, output.normalWS, viewDirWS);
+    output.viewDirTS &#x3D; viewDirTS;
+#endif
+
+    &#x2F;&#x2F; 输出光照贴图UV
+    OUTPUT_LIGHTMAP_UV(input.staticLightmapUV, unity_LightmapST, output.staticLightmapUV);
+#ifdef DYNAMICLIGHTMAP_ON
+    output.dynamicLightmapUV &#x3D; input.dynamicLightmapUV.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
+#endif
+    &#x2F;&#x2F; 如果没有光照贴图，就用光照探针的SH
+    OUTPUT_SH(output.normalWS.xyz, output.vertexSH);
+
+    &#x2F;&#x2F; 雾气赋值
+#ifdef _ADDITIONAL_LIGHTS_VERTEX
+    output.fogFactorAndVertexLight &#x3D; half4(fogFactor, vertexLight);
+#else
+    output.fogFactor &#x3D; fogFactor;
+#endif
+
+    &#x2F;&#x2F; 输出世界位置
+#if defined(REQUIRES_WORLD_SPACE_POS_INTERPOLATOR)
+    output.positionWS &#x3D; vertexInput.positionWS;
+#endif
+
+    &#x2F;&#x2F; 输出阴影贴图UV
+#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
+    output.shadowCoord &#x3D; GetShadowCoord(vertexInput);
+#endif
+
+    output.positionCS &#x3D; vertexInput.positionCS;
+
+    return output;
+&#125;</code></pre></div></figure>
+<p>那精简之后得到<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">Varyings LitPassVertex(Attributes input)
+&#123;
+    Varyings output &#x3D; (Varyings)0;
+
+    &#x2F;&#x2F; todo instance VR
+
+    VertexPositionInputs vertexInput &#x3D; GetVertexPositionInputs(input.positionOS.xyz);
+    VertexNormalInputs normalInput &#x3D; GetVertexNormalInputs(input.normalOS, input.tangentOS);
+    output.uv &#x3D; TRANSFORM_TEX(input.texcoord, _BaseMap);
+
+    output.normalWS &#x3D; normalInput.normalWS;
+
+    real sign &#x3D; input.tangentOS.w * GetOddNegativeScale();
+    half4 tangentWS &#x3D; half4(normalInput.tangentWS.xyz, sign);
+    output.tangentWS &#x3D; tangentWS;
+
+    OUTPUT_LIGHTMAP_UV(input.staticLightmapUV, unity_LightmapST, output.staticLightmapUV);
+
+    output.positionWS &#x3D; vertexInput.positionWS;
+
+
+    output.shadowCoord &#x3D; GetShadowCoord(vertexInput);
+
+    output.positionCS &#x3D; vertexInput.positionCS;
+
+    return output;
+&#125;</code></pre></div></figure></p>
+<h1 id="片元">片元</h1>
+<p>然后就是最复杂的片元了<br />
+URP的SurfaceData略显复杂，精简一下<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">struct SurfaceData
+&#123;
+    half3 albedo;
+    half  metallic;
+    half  smoothness;
+    half3 normalTS;
+    half3 emission;
+    half  occlusion;
+&#125;;</code></pre></div></figure><br />
+然后是初始化SurfaceData，就是采样一堆贴图，然后根据系数得出最终的每个片元的属性。简化一下如下</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">inline void InitializeStandardLitSurfaceData(float2 uv, out SurfaceData outSurfaceData)
+&#123;
+    half4 albedoAlpha &#x3D; SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uv);
+    outSurfaceData.albedo &#x3D; albedoAlpha.rgb * _BaseColor.rgb;
+
+    half4 metallicSmoothness &#x3D; SAMPLE_TEXTURE2D(_MetallicGlossMap, sampler_MetallicGlossMap, uv);
+    outSurfaceData.metallic &#x3D; metallicSmoothness.r * _Metallic;
+    outSurfaceData.smoothness &#x3D; metallicSmoothness.a * _Smoothness;
+    
+    half4 n &#x3D; SAMPLE_TEXTURE2D(_BumpMap, sampler_BumpMap, uv);
+    outSurfaceData.normalTS &#x3D; UnpackNormal(n);
+
+    outSurfaceData.emission &#x3D; SAMPLE_TEXTURE2D(_EmissionMap, sampler_EmissionMap, uv).rgb * _EmissionColor.rgb;
+
+    half occ &#x3D; SAMPLE_TEXTURE2D(_OcclusionMap, sampler_OcclusionMap, uv).g;
+    
+    outSurfaceData.occlusion &#x3D; LerpWhiteTo(occ, _OcclusionStrength);
+&#125;</code></pre></div></figure>
+<p>接着是初始化顶点的输入，主要涉及各种空间下的坐标以及GI、阴影、雾气等。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">void InitializeInputData(Varyings input, half3 normalTS, out InputData inputData)
+&#123;
+    inputData &#x3D; (InputData)0;
+
+    &#x2F;&#x2F; 世界坐标
+#if defined(REQUIRES_WORLD_SPACE_POS_INTERPOLATOR)
+    inputData.positionWS &#x3D; input.positionWS;
+#endif
+
+    &#x2F;&#x2F; 视角方向
+    half3 viewDirWS &#x3D; GetWorldSpaceNormalizeViewDir(input.positionWS);
+    &#x2F;&#x2F; 法线相关
+#if defined(_NORMALMAP) || defined(_DETAIL)
+    &#x2F;&#x2F; 如果有法线贴图就要用TBN重新计算
+    float sgn &#x3D; input.tangentWS.w;      &#x2F;&#x2F; should be either +1 or -1
+    float3 bitangent &#x3D; sgn * cross(input.normalWS.xyz, input.tangentWS.xyz);
+    half3x3 tangentToWorld &#x3D; half3x3(input.tangentWS.xyz, bitangent.xyz, input.normalWS.xyz);
+
+    #if defined(_NORMALMAP)
+    inputData.tangentToWorld &#x3D; tangentToWorld;
+    #endif
+    inputData.normalWS &#x3D; TransformTangentToWorld(normalTS, tangentToWorld);
+#else
+    inputData.normalWS &#x3D; input.normalWS;
+#endif
+
+    &#x2F;&#x2F; 归一化，还要考虑向量为0
+    inputData.normalWS &#x3D; NormalizeNormalPerPixel(inputData.normalWS);
+    inputData.viewDirectionWS &#x3D; viewDirWS;
+
+    &#x2F;&#x2F; 阴影
+#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
+    inputData.shadowCoord &#x3D; input.shadowCoord;
+#elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
+    inputData.shadowCoord &#x3D; TransformWorldToShadowCoord(inputData.positionWS);
+#else
+    inputData.shadowCoord &#x3D; float4(0, 0, 0, 0);
+#endif
+    &#x2F;&#x2F; 雾
+#ifdef _ADDITIONAL_LIGHTS_VERTEX
+    inputData.fogCoord &#x3D; InitializeInputDataFog(float4(input.positionWS, 1.0), input.fogFactorAndVertexLight.x);
+    inputData.vertexLighting &#x3D; input.fogFactorAndVertexLight.yzw;
+#else
+    inputData.fogCoord &#x3D; InitializeInputDataFog(float4(input.positionWS, 1.0), input.fogFactor);
+#endif
+
+    &#x2F;&#x2F; GI
+#if defined(DYNAMICLIGHTMAP_ON)
+    inputData.bakedGI &#x3D; SAMPLE_GI(input.staticLightmapUV, input.dynamicLightmapUV, input.vertexSH, inputData.normalWS);
+#else
+    inputData.bakedGI &#x3D; SAMPLE_GI(input.staticLightmapUV, input.vertexSH, inputData.normalWS);
+#endif
+
+    &#x2F;&#x2F; 屏幕空间UV
+    inputData.normalizedScreenSpaceUV &#x3D; GetNormalizedScreenSpaceUV(input.positionCS);
+    &#x2F;&#x2F; 阴影遮罩
+    inputData.shadowMask &#x3D; SAMPLE_SHADOWMASK(input.staticLightmapUV);
+
+    #if defined(DEBUG_DISPLAY)
+    #if defined(DYNAMICLIGHTMAP_ON)
+    inputData.dynamicLightmapUV &#x3D; input.dynamicLightmapUV;
+    #endif
+    #if defined(LIGHTMAP_ON)
+    inputData.staticLightmapUV &#x3D; input.staticLightmapUV;
+    #else
+    inputData.vertexSH &#x3D; input.vertexSH;
+    #endif
+    #endif
+&#125;</code></pre></div></figure></p>
+<h2 id="gi">GI</h2>
+<p>依据不同的光照贴图的编码，有不同的解码方式，这里先取巧用FULL_HDR，就可以不用解码了。<br />
+大致流程就是采样贴图，得出方向与强度，用halfLambert得出最终的GI。</p>
+<h2 id="阴影">阴影</h2>
+<p>这里仅算主光源阴影，Untiy还会采样烘焙的阴影贴图，去混合实时光阴影与烘焙阴影。</p>
+<h2 id="pbr">PBR</h2>
+<p>整个计算流程就是分为算AO，实际的URP会在这里取看有没有SSAO，我们先省略。<br />
+然后得出主光源的信息，这里就包含了阴影。<br />
+然后就是计算GI，主光源，附加光，顶点光。<br />
+最后两项先省略。<br />
+代码如下：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">half4 PBR(InputData inputData, SurfaceData surfaceData)
+&#123;
+    BRDFData brdfData;
+    
+    InitializeBRDFData(surfaceData, brdfData);
+    AmbientOcclusionFactor aoFactor &#x3D; CreateAmbientOcclusionFactor(inputData, surfaceData);
+    
+    Light mainLight &#x3D; GetMainLight(inputData, 1, aoFactor);
+    
+    LightingData lightingData &#x3D; CreateLightingData(inputData, surfaceData);
+
+    lightingData.giColor &#x3D; GlobalIllumination(brdfData,
+                                              inputData.bakedGI, aoFactor.indirectAmbientOcclusion, inputData.positionWS,
+                                              inputData.normalWS, inputData.viewDirectionWS, inputData.normalizedScreenSpaceUV);
+    
+    lightingData.mainLightColor &#x3D; LightingPhysicallyBased(brdfData,
+                                                             mainLight,
+                                                             inputData.normalWS, inputData.viewDirectionWS);
+    return CalculateFinalColor(lightingData, 1);
+&#125;</code></pre></div></figure><br />
+详细的计算GI与实时光的代码就不贴了，总之这样就算有了一个改动方便的PBR。后续再想增加一些SSR、环境法线之类的功能就方便很多了。<br />
+当然这个还很不完善，比如级联阴影，透明，等等都没有考虑。<br />
+很多分支都被删减了，先看看好不好用吧，如果可行那就以后再慢慢补充。</p>
+<h1 id="分文件">分文件</h1>
+<p>还是有必要按照原来逻辑把hlsl代码分开，不然后期不太好维护。<br />
+大致分为以下几个文件</p>
+<ul>
+<li>AmbientOcclusion
+AO计算，包括直接光与间接光，SSAO得出的结果在前向渲染里也是在这里采样的。</li>
+<li>BRDF 这里就是PBR那一套公式了</li>
+<li>EntityLighting 涉及球谐函数以及光照贴图的采样（包括解码）</li>
+<li>GlobalIllumination
+在对EntityLighting封装的基础上，添加了诸如BoxProjected，混合，根据光照贴图编码方式选择具体的解码，采样反射探针等</li>
+<li>ImageBasedLighting 包含了一些基于图像的光照工具函数</li>
+<li>Lighting
+主要的光照计算，除了调用上面的BRDF，其实还包含了Unlit，BlinnPhong，BakedLit等多种光照模型。</li>
+<li>LitForwardPass 包含顶点与片元。</li>
+<li>LitInput 包含从材质传递过来的全部输入</li>
+<li>RealtimeLights 实时光的获取，并调用阴影</li>
+<li>Shadows
+阴影相关，阴影贴图的采样，级联，也包含了采样光照贴图里的阴影贴图并混合</li>
+<li>SurfaceData
+一个结构体，包含了一个要进入光照计算的片元的表面数据，如漫反射，金属，粗糙，遮蔽等。</li>
+<li>InputData
+一个结构体，包含了一个要进入光照计算的片元的几何数据，如位置坐标，世界法线，阴影坐标，BakedGI等。</li>
+</ul>
+<p>根据这些文件的调用关系，再梳理一下就是<br />
+LitForwardPass是总入口，汇总并梳理了全部的输入，整合成两个输入即InputData与SurfaceData。<br />
+当然，出于性能的考虑，这里的阴影坐标也提前在顶点着色器中获取了。<br />
+然后选择Lighting中的一个光照模型。类似与Lighting实现了一个通用的光照模型的接口。<br />
+这里就选用PBR的模型。<br />
+然后就开始采用PBR的公式，分以下几步，</p>
+<ul>
+<li>首先是从InputData与SurfaceData构造BRDFData。
+<ul>
+<li>BRDFData与SurfaceData很类似，主要是增加了一些诸如roughness2MinusOne等方便计算的属性。</li>
+</ul></li>
+<li>取AO，从AmbientOcclusion取出AO，如果有SSAO，也会在这里处理。</li>
+<li>取主光照数据（数据结构Light），从RealtimeLights获取实时光的数据。
+<ul>
+<li>这里又会调用Shadows来包含对应的阴影</li>
+<li>Light包含 方向，颜色，阴影。</li>
+</ul></li>
+<li>然后是构造LightingData，包含了GI，主光源，附加光，顶点光，自发光。
+<ul>
+<li>GI是调用BRDF的工具函数由公式计算得出，主要的输入如下
+<ul>
+<li>间接漫反射就是直接取的光照贴图，或者球谐函数。</li>
+<li>间接高光就是采用的反射贴图了</li>
+</ul></li>
+<li>主光源就单纯的用BRDF公式，也是分为直接漫反射和直接高光。</li>
+<li>出于简化的目的，其余的先不看了。</li>
+</ul></li>
+<li>最后就是将这些来自各种光源的光叠加，得出最终的输出。</li>
+</ul>
+<p>这应该就是URP下的最简单的PBR实现了</p>
+<h1 id="阴影投射pass">阴影投射Pass</h1>
+<p>只需在顶点着色器中应用一下法线和深度偏移，其余没有什么特殊的。</p>
+<h1 id="球谐函数">球谐函数</h1>
+<p>根据LIGHTMAP_ON这个关键字，来判断GI是用贴图还是球谐函数。</p>
+<h1 id="级联阴影">级联阴影</h1>
+<p>通过_MAIN_LIGHT_SHADOWS_CASCADE来判断是否级联，然后根据距离各个级联球的中心的距离与设定距离的差值，来判断应该取哪一个级联。</p>
+<h1 id="总结">总结</h1>
+<p>说不上是从零开始手撸PBR造轮子，只能算是精简了URP的原本的lit的着色器，主要目的还是理清其各个文件的逻辑关系，方便之后实现各种效果。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%B8%B2%E6%9F%93/" class="category-chain-item">渲染</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/URP/" class="print-no-link">#URP</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>URP下定制PBRShader</div>
+      <div>https://www.kuanmi.top/2023/06/15/pbr/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/06/15/ParallaxMapping/" title="URP下的视差遮蔽映射（带像素偏移）">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">URP下的视差遮蔽映射（带像素偏移）</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/06/15/InterfaceInEditor/" title="接口在编辑器中的拓展">
+                        <span class="hidden-mobile">接口在编辑器中的拓展</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

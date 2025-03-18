@@ -1,0 +1,986 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="模糊 最近做的很多效果最终都需要模糊，如镜面反射要模糊模拟粗糙度反射，体积光要降采样然后模糊来降低性能消耗同时柔化效果 更不要说UI上需要模糊背景，透明物体要毛玻璃等等效果，还是很有必要好好整理一下相关的方案同时打包成库方便以后调用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常见模糊后处理">
+<meta property="og:url" content="https://www.kuanmi.top/2023/08/04/Blur/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="模糊 最近做的很多效果最终都需要模糊，如镜面反射要模糊模拟粗糙度反射，体积光要降采样然后模糊来降低性能消耗同时柔化效果 更不要说UI上需要模糊背景，透明物体要毛玻璃等等效果，还是很有必要好好整理一下相关的方案同时打包成库方便以后调用。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.kuanmi.top/images/Blur01.jpg">
+<meta property="article:published_time" content="2023-08-03T16:43:12.000Z">
+<meta property="article:modified_time" content="2025-03-18T01:12:03.960Z">
+<meta property="article:author" content="KuanMi">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/Blur01.jpg">
+  
+  
+  
+  <title>常见模糊后处理 - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/Blur01.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="常见模糊后处理"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-08-04 00:43" pubdate>
+          2023年8月4日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          79 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">常见模糊后处理</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="模糊">模糊</h1>
+<p>最近做的很多效果最终都需要模糊，如镜面反射要模糊模拟粗糙度反射，体积光要降采样然后模糊来降低性能消耗同时柔化效果<br />
+更不要说UI上需要模糊背景，透明物体要毛玻璃等等效果，还是很有必要好好整理一下相关的方案同时打包成库方便以后调用。<br />
+<span id="more"></span><br />
+这就不得不提及毛星云大佬的<a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/125744132">高品质后处理：十种图像模糊算法的总结与实现</a>。<br />
+其中的全部方案都包含在他的开源项目<a
+target="_blank" rel="noopener" href="https://github.com/QianMo/X-PostProcessing-Library">X-PostProcessing-Library</a>中。<br />
+当中提及<code>后续也将提供对Unity引擎URP/LWRP/HDRP的兼容支持。</code>但如今也只能惋惜了。</p>
+<p>本着学习以及方便自己日后使用的目的，暂将其中模糊相关实用的部分整理成URP支持的RendererFeature、VolumeComponent等形式。</p>
+<p>当然本仓库也不是单纯的翻译，除了可以用作全屏后处理，也抽象成工具类库，方便其他非相机的效果调用模糊处理。<br />
+同时提供了一些特定的RenderFeature，比如3D场景中的磨砂玻璃等。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/MaZhengKe/Blur">项目地址</a><br />
+这里只记录和URP相关的部分，具体模糊的算法就不赘述了。</p>
+<figure>
+<img src="Blur01.jpg" srcset="/img/loading.gif" lazyload alt="模糊" />
+<figcaption aria-hidden="true">模糊</figcaption>
+</figure>
+<figure>
+<img src="Blur02.png" srcset="/img/loading.gif" lazyload alt="VolumeComponent" />
+<figcaption aria-hidden="true">VolumeComponent</figcaption>
+</figure>
+<h1 id="script">Script</h1>
+<p>先把这里的各个模糊后处理Pass中通用的部分提出来，抽象成一个基类</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public abstract class BaseBlurRendererPass : ScriptableRenderPass
+&#123;
+    protected abstract BlurRendererFeature.ProfileId ProfileId &#123; get; &#125;
+    
+    protected abstract string ShaderName &#123; get; &#125;
+    protected string MaskBlendShaderName &#x3D; &quot;KuanMi&#x2F;MaskBlend&quot;;
+
+    protected Shader m_Shader;
+
+    protected ScriptableRenderer m_Renderer;
+    protected Material m_Material;
+    protected Material m_BlendMaterial;
+
+    protected RenderTextureDescriptor descriptor;
+    protected static readonly int BlurRadius &#x3D; Shader.PropertyToID(&quot;_Offset&quot;);
+    protected static readonly int BlitTexture &#x3D; Shader.PropertyToID(&quot;_BlitTexture&quot;);
+    protected static readonly int BlurOffset &#x3D; Shader.PropertyToID(&quot;_BlurOffset&quot;);
+    protected static readonly int BlitTextureSt &#x3D; Shader.PropertyToID(&quot;_BlitTexture_ST&quot;);
+    internal static readonly int GoldenRot &#x3D; Shader.PropertyToID(&quot;_GoldenRot&quot;);
+    internal static readonly int Params &#x3D; Shader.PropertyToID(&quot;_Params&quot;);
+
+
+    public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
+    &#123;
+        base.OnCameraSetup(cmd, ref renderingData);
+
+        var cameraTargetDescriptor &#x3D; renderingData.cameraData.cameraTargetDescriptor;
+
+        descriptor &#x3D; cameraTargetDescriptor;
+        descriptor.depthBufferBits &#x3D; 0;
+        descriptor.msaaSamples &#x3D; 1;
+    &#125;
+
+    public abstract void ExecuteWithCmd(CommandBuffer cmd, ref RenderingData renderingData);
+
+    public virtual bool Setup(ScriptableRenderer renderer)
+    &#123;
+        if(!GetMaterial())
+            return false;
+        m_Renderer &#x3D; renderer;
+        return true;
+    &#125;
+    
+    private bool GetMaterial()
+    &#123;
+        if (m_Material !&#x3D; null)
+        &#123;
+            return true;
+        &#125;
+
+        if (m_Shader &#x3D;&#x3D; null)
+        &#123;
+            m_Shader &#x3D; Shader.Find(ShaderName);
+            if (m_Shader &#x3D;&#x3D; null)
+            &#123;
+                return false;
+            &#125;
+        &#125;
+
+        m_Material &#x3D; CoreUtils.CreateEngineMaterial(m_Shader);
+        m_BlendMaterial &#x3D; CoreUtils.CreateEngineMaterial(Shader.Find(MaskBlendShaderName));
+
+        return m_Material !&#x3D; null;
+    &#125;
+
+    public virtual void Dispose()
+    &#123;
+        CoreUtils.Destroy(m_Material);
+    &#125;
+&#125;</code></pre></div></figure>
+<p>为了便于在Pass中获取Volume的属性，再提一个泛型抽象类出来</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public abstract class BaseBlurRendererPassWithVolume&lt;K&gt; : BaseBlurRendererPass where K : BaseBlur
+&#123;
+    protected K blurVolume;
+
+    protected MaskBlur maskBlur;
+
+    protected bool isMask &#x3D;&gt; maskBlur.isMask.value;
+
+
+    protected RTHandle m_MaskTexture;
+
+    public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
+    &#123;
+        base.OnCameraSetup(cmd, ref renderingData);
+
+        var stack &#x3D; VolumeManager.instance.stack;
+        blurVolume &#x3D; stack.GetComponent&lt;K&gt;();
+        maskBlur &#x3D; stack.GetComponent&lt;MaskBlur&gt;();
+
+        descriptor.width &#x2F;&#x3D; blurVolume.DownSample.value;
+        descriptor.height &#x2F;&#x3D; blurVolume.DownSample.value;
+
+        if (isMask)
+        &#123;
+            RenderingUtils.ReAllocateIfNeeded(ref m_MaskTexture, descriptor, FilterMode.Bilinear,
+                TextureWrapMode.Clamp, name: &quot;_MaskTex&quot;);
+        &#125;
+    &#125;
+
+    public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+    &#123;
+        if (m_Material &#x3D;&#x3D; null)
+        &#123;
+            Debug.LogError(&quot;Material is null&quot;);
+            return;
+        &#125;
+
+        var stack &#x3D; VolumeManager.instance.stack;
+        blurVolume &#x3D; stack.GetComponent&lt;K&gt;();
+
+        maskBlur &#x3D; stack.GetComponent&lt;MaskBlur&gt;();
+
+        var cmd &#x3D; CommandBufferPool.Get();
+
+        using (new ProfilingScope(cmd, ProfilingSampler.Get(ProfileId)))
+        &#123;
+            &#x2F;&#x2F; Debug.Log(&quot;ad&quot; + Time.frameCount);
+            ExecuteWithCmd(cmd, ref renderingData);
+
+
+            if (isMask)
+            &#123;
+                m_BlendMaterial.SetFloat(&quot;_Spread&quot;, maskBlur.areaSmooth.value);
+                m_BlendMaterial.SetColor(&quot;_MaskColor&quot;,maskBlur.maskColor.value);
+                if (maskBlur.maskType.value &#x3D;&#x3D; MaskBlur.MaskType.Circle)
+                &#123;
+                    m_BlendMaterial.EnableKeyword(&quot;_CIRCLE&quot;);
+                    m_BlendMaterial.SetVector(&quot;_Center&quot;, maskBlur.center.value);
+                    m_BlendMaterial.SetFloat(&quot;_Area&quot;, maskBlur.radius.value);
+                &#125;
+                else
+                &#123;
+                    m_BlendMaterial.DisableKeyword(&quot;_CIRCLE&quot;);
+                    m_BlendMaterial.SetFloat(&quot;_Area&quot;, maskBlur.areaSize.value);
+                    m_BlendMaterial.SetFloat(&quot;_Offset&quot;, maskBlur.offset.value);
+                &#125;
+
+                Blit(cmd, m_MaskTexture, m_Renderer.cameraColorTargetHandle, m_BlendMaterial);
+            &#125;
+        &#125;
+
+        context.ExecuteCommandBuffer(cmd);
+        CommandBufferPool.Release(cmd);
+    &#125;
+
+    public override bool Setup(ScriptableRenderer renderer)
+    &#123;
+        if (!base.Setup(renderer))
+            return false;
+
+        blurVolume &#x3D; VolumeManager.instance.stack.GetComponent&lt;K&gt;();
+        return blurVolume.IsActive();
+    &#125;
+
+    public override void Dispose()
+    &#123;
+        base.Dispose();
+        m_MaskTexture?.Release();
+    &#125;
+&#125;</code></pre></div></figure>
+<p>这里为了方便复用，把模糊的遮罩单独提出来，单独用一个Pass来混合，但这其实是浪费性能的做法。</p>
+<p>然后留给具体的模糊后处理的事情就只剩申请RT与绘制调用了。<br />
+以DualBlurRenderPass为例子<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class DualBlurRenderPass : BaseBlurRendererPassWithVolume&lt;DualBlur&gt;
+&#123;
+    protected override BlurRendererFeature.ProfileId ProfileId &#x3D;&gt; BlurRendererFeature.ProfileId.DualBlur;
+    
+    protected override string ShaderName &#x3D;&gt; &quot;KuanMi&#x2F;DualBlur&quot;;
+
+    RTHandle[] m_Down;
+    RTHandle[] m_Up;
+
+    const int k_MaxPyramidSize &#x3D; 16;
+
+    public DualBlurRenderPass()
+    &#123;
+        m_Down &#x3D; new RTHandle[k_MaxPyramidSize];
+        m_Up &#x3D; new RTHandle[k_MaxPyramidSize];
+    &#125;
+
+    public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
+    &#123;
+        base.OnCameraSetup(cmd, ref renderingData);
+        for (int i &#x3D; 0; i &lt; blurVolume.Iteration.value; i++)
+        &#123;
+            RenderingUtils.ReAllocateIfNeeded(ref m_Down[i], descriptor, FilterMode.Bilinear, TextureWrapMode.Clamp,
+                name: &quot;_Down&quot; + i);
+            RenderingUtils.ReAllocateIfNeeded(ref m_Up[i], descriptor, FilterMode.Bilinear, TextureWrapMode.Clamp,
+                name: &quot;_Up&quot; + i);
+
+            descriptor.width &#x2F;&#x3D; 2;
+            descriptor.height &#x2F;&#x3D; 2;
+        &#125;
+    &#125;
+
+    public override void ExecuteWithCmd(CommandBuffer cmd, ref RenderingData renderingData)
+    &#123;
+        var blurRadius &#x3D; blurVolume.BlurRadius.value;
+        var iteration &#x3D; blurVolume.Iteration.value;
+
+        m_Material.SetVector(BlitTextureSt, new Vector4(1, 1, 0, 0));
+        m_Material.SetFloat(BlurRadius, blurRadius);
+
+        Blitter.BlitCameraTexture(cmd, m_Renderer.cameraColorTargetHandle, m_Down[0],
+            RenderBufferLoadAction.DontCare, RenderBufferStoreAction.Store, m_Material, 1);
+
+        var lastDown &#x3D; m_Down[0];
+
+        for (int i &#x3D; 1; i &lt; iteration; i++)
+        &#123;
+            Blitter.BlitCameraTexture(cmd, lastDown, m_Down[i], RenderBufferLoadAction.DontCare,
+                RenderBufferStoreAction.Store, m_Material, 1);
+            lastDown &#x3D; m_Down[i];
+        &#125;
+
+        var lastUp &#x3D; lastDown;
+        for (int i &#x3D; iteration - 2; i &gt;&#x3D; 0; i--)
+        &#123;
+            Blitter.BlitCameraTexture(cmd, lastUp, m_Up[i], RenderBufferLoadAction.DontCare,
+                RenderBufferStoreAction.Store, m_Material, 0);
+            lastUp &#x3D; m_Up[i];
+        &#125;
+
+        &#x2F;&#x2F; Blit(cmd, lastUp, m_Renderer.cameraColorTargetHandle);
+        Blitter.BlitCameraTexture(cmd, lastUp, isMask ? m_MaskTexture : m_Renderer.cameraColorTargetHandle, RenderBufferLoadAction.DontCare,
+            RenderBufferStoreAction.Store, m_Material, 0);
+    &#125;
+
+    public override void Dispose()
+    &#123;
+        base.Dispose();
+        foreach (var rtHandle in m_Down)
+        &#123;
+            rtHandle?.Release();
+        &#125;
+
+        foreach (var rtHandle in m_Up)
+        &#123;
+            rtHandle?.Release();
+        &#125;
+    &#125;
+&#125;</code></pre></div></figure></p>
+<p>申请需要的两组上下采样的RT，先降采样，然后升采样，最后依据是否需要和遮罩混合决定是直接绘制到相机上还是遮罩上。</p>
+<h2 id="volumecomponenteditor">VolumeComponentEditor</h2>
+<p>这是控制在Volume组件里显示属性的类。<br />
+写法很套路化<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[CustomEditor(typeof(MaskBlur))]
+public class MaskBlurEditor : VolumeComponentEditor
+&#123;
+    SerializedDataParameter m_isMask;
+    SerializedDataParameter m_areaSmooth;
+    SerializedDataParameter m_maskColor;
+    ......
+    public override void OnEnable()
+    &#123;
+        var o &#x3D; new PropertyFetcher&lt;MaskBlur&gt;(serializedObject);
+        m_isMask &#x3D; Unpack(o.Find(x &#x3D;&gt; x.isMask));
+        m_maskType &#x3D; Unpack(o.Find(x &#x3D;&gt; x.maskType));
+        m_maskColor &#x3D; Unpack(o.Find(x &#x3D;&gt; x.maskColor))
+        ......
+    &#125;
+    public override void OnInspectorGUI()
+    &#123;
+        PropertyField(m_isMask);
+        PropertyField(m_maskType);
+        
+        if(m_maskType.value.intValue &#x3D;&#x3D; (int)MaskBlur.MaskType.Rectangle)
+        &#123;
+            PropertyField(m_offset);
+            
+        &#125;
+        else if(m_maskType.value.intValue &#x3D;&#x3D; (int)MaskBlur.MaskType.Circle)
+        &#123;
+            PropertyField(m_center);
+        &#125;
+    &#125;
+&#125;</code></pre></div></figure></p>
+<h1 id="shader">Shader</h1>
+<p>因为原仓库也是用hlsl，所以基本没什么变换，<br />
+顶点着色器仿照URP其他后处理，采用VERTEXID_SEMANTIC来计算裁切坐标。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">DefaultVaryings defaultVert(DefaultAttributes IN)
+&#123;
+    DefaultVaryings output;
+    output.positionCS &#x3D; GetFullScreenTriangleVertexPosition(IN.vertexID);
+    output.uv &#x3D; output.positionCS.xy * 0.5 + 0.5;
+
+    #if UNITY_UV_STARTS_AT_TOP
+    output.uv.y &#x3D; 1 - output.uv.y;
+    #endif
+    return output;
+&#125;</code></pre></div></figure></p>
+<h1 id="工具库">工具库</h1>
+<p>然后就是要考虑怎么让其他效果能方便的调用。<br />
+大致思路有两个，一个就通过RTID来在RendererFeature之间传递。<br />
+或者把全部Pass都提成工具类，在其他需要模糊效果的Pass中实例化然后调用。<br />
+最后还是觉得后者更靠谱一点。</p>
+<p>所以把具体的模糊算法再抽象一层<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public abstract class BaseTool
+&#123;
+    public abstract string ShaderName &#123; get; &#125;
+    public Material Material &#123; get; protected set; &#125;
+    
+    internal static readonly int GoldenRot &#x3D; Shader.PropertyToID(&quot;_GoldenRot&quot;);
+    internal static readonly int Params &#x3D; Shader.PropertyToID(&quot;_Params&quot;);
+    
+    protected ScriptableRenderPass _renderPass;
+    
+    public BaseTool(ScriptableRenderPass renderPass)
+    &#123;
+        _renderPass &#x3D; renderPass;
+        
+        Material &#x3D; CoreUtils.CreateEngineMaterial(Shader.Find(ShaderName));
+    &#125;
+    public abstract void OnCameraSetup(RenderTextureDescriptor descriptor);
+    public abstract void Execute(CommandBuffer cmd, RTHandle source, RTHandle target);
+    
+    public virtual void Dispose()
+    &#123;
+        CoreUtils.Destroy(Material);
+    &#125;
+&#125;</code></pre></div></figure><br />
+把具体的参数的配置剥离开，相机视口的属性也剥离开。<br />
+这样就方便了在其他Pass中直接引用模糊的功能。<br />
+比如在之前写的体积光中</p>
+<p>不直接绘制到视窗中，而是先绘制到一张RT上，把这张RT传给模糊工具，让其模糊后绘制到另一张RT上，然后再与视窗加法混合。<br />
+当然如果考虑性能，应该是能合并很多操作到一个Shader中的。但为了开发测试方便，这里先分开，真的有需要再汇总全部后处理。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>常见模糊后处理</div>
+      <div>https://www.kuanmi.top/2023/08/04/Blur/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年8月4日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/08/07/HBAO/" title="HBAO">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">HBAO</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/07/31/GitPackage/" title="GitPackage">
+                        <span class="hidden-mobile">GitPackage</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

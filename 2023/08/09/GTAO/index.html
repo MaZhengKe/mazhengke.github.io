@@ -1,0 +1,1049 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="既然HBAO实现了，那就再进一步，看看GTAO到底有多GT。 主要参考了原始论文与作者发布的PPT，以及Github上一开源的GameTechDev&#x2F;XeGTAO，外加HDRP自带的GTAO的实现。  先大致翻译一下原始论文吧 摘要 环境光遮蔽是游戏和其他实时应用中用来近似全局光照效果的一种普遍方法。然而，对于任意场景的环境光遮蔽积分并不存在解析解，使用一般的数值积分算法太慢，因此实际中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GTAO">
+<meta property="og:url" content="https://www.kuanmi.top/2023/08/09/GTAO/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="既然HBAO实现了，那就再进一步，看看GTAO到底有多GT。 主要参考了原始论文与作者发布的PPT，以及Github上一开源的GameTechDev&#x2F;XeGTAO，外加HDRP自带的GTAO的实现。  先大致翻译一下原始论文吧 摘要 环境光遮蔽是游戏和其他实时应用中用来近似全局光照效果的一种普遍方法。然而，对于任意场景的环境光遮蔽积分并不存在解析解，使用一般的数值积分算法太慢，因此实际中">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.kuanmi.top/2023/08/09/GTAO/GTAO01.png">
+<meta property="article:published_time" content="2023-08-08T21:36:20.000Z">
+<meta property="article:modified_time" content="2025-03-18T01:12:03.962Z">
+<meta property="article:author" content="KuanMi">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.kuanmi.top/2023/08/09/GTAO/GTAO01.png">
+  
+  
+  
+  <title>GTAO - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="GTAO"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-08-09 05:36" pubdate>
+          2023年8月9日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          11k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          92 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">GTAO</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>既然HBAO实现了，那就再进一步，看看GTAO到底有多GT。<br />
+主要参考了原始论文与作者发布的PPT，以及Github上一开源的<a
+target="_blank" rel="noopener" href="https://github.com/GameTechDev/XeGTAO">GameTechDev/XeGTAO</a>，外加HDRP自带的GTAO的实现。<br />
+<img src="GTAO01.png" srcset="/img/loading.gif" lazyload alt="GTAO in URP" /></p>
+<p>先大致翻译一下原始论文吧</p>
+<h1 id="摘要">摘要</h1>
+<p>环境光遮蔽是游戏和其他实时应用中用来近似全局光照效果的一种普遍方法。然而，对于任意场景的环境光遮蔽积分并不存在解析解，使用一般的数值积分算法太慢，因此实际中常常对这种近似进行经验性的调整，以使其在外观上看起来令人满意，即使它们并没有准确地计算环境光遮蔽积分。在这项工作中，我们引入了一种新的环境光遮蔽表达方式，即GTAO，在当前主机硬件上能够在半毫秒内匹配基准真实值。这是通过使用环境光遮蔽方程的另一种表达方式以及一种有效的实现来实现的，该实现使用时空滤波来分布计算。然后，我们通过一种新颖的技术扩展了GTAO，该技术考虑了近场全局光照，而在仅使用环境光遮蔽时会丢失这种效果。最后，我们引入了一种用于镜面遮蔽的技术，即GTSO，与环境光遮蔽相称，允许从基于探针的光照中计算逼真的镜面反射。我们的技术高效，结果接近光线追踪的基准真实值，并已集成到最近的AAA主机游戏中。</p>
+<h1 id="介绍">1 介绍</h1>
+<p>全局光照是一项重要的视觉特性，在逼真渲染中具有决定性作用，因为感知场景照明的很大一部分来自间接反射。然而，通常情况下，计算全局光照非常昂贵，目前无法包含在实时应用中，除非进行严重的简化。</p>
+<p>在这些近似模拟中，<em>环境光遮蔽（AO）</em>是最受欢迎的近似模拟之一，因为它改善了对物体形状（对比度）的感知，并捕捉了全局光照中一些最重要的效果，特别是由于附近遮挡物引起的软阴影效果。环境光遮蔽还可以与其他全局光照算法一起使用，甚至在使用预计算（烘焙）辐照度时也很有用，因为这些效果通常需要以相对较低的空间分辨率计算（或存储），因此逐像素计算环境光遮蔽可以增强间接照明的整体外观。不幸的是，在某些情况下（例如在1080p分辨率下以60帧每秒渲染），计算环境光遮蔽积分仍然很昂贵，因此过去已经开发了近似方法以实现足够快的性能。</p>
+<p>我们引入了一种名为<em>基准真实环境光遮蔽（GTAO）</em>的新型屏幕空间技术，旨在在速度足够快的情况下匹配真实环境光遮蔽，并适用于高要求的应用，例如现代主机游戏。我们的技术基于<code>基于地平线(horizon-based)</code>的方法，但使用问题的另一种表达方式。这种表达方式使我们能够显著降低效果的成本，并且在假设我们的场景被表示为高度场（深度缓冲）的情况下，仍然可以用来精确解决环境光遮蔽积分问题。我们通过使用时序投影和空间滤波来高效地实现我们的技术，每帧仅需0.5毫秒即可计算出无噪声的环境光遮蔽解决方案（在索尼Playstation
+4上，适用于以1080p分辨率运行的游戏）。</p>
+<p>基于这种表达方式，我们扩展了我们的环境光遮蔽解决方案，以模拟在仅使用环境光遮蔽时通常被忽视的一组照明效果。一方面，我们引入了一种近似技术，可以计算出一个非常快速的校正因子，以考虑近场全局光照效果。这种技术基于以下观察结果：局部表面反照率与环境光遮蔽项之间存在关系，以及多次反射的近场照明。根据这个观察结果，我们开发了一种高效、简单和局部的技术，以考虑在仅计算环境光遮蔽时丢失的局部照明效果。</p>
+<p>最后，我们介绍一种新的技术，与环境光遮蔽对称，但适用于任意镜面材料，我们称之为<em>基准真实镜面遮蔽”（GTSO）</em>。我们开发了它的表达形式，并提出了一种基于近似的技术来计算它，该技术将可见性近似为弯曲法线和点处环境光遮蔽的函数。GTSO能够有效地计算基于探针的光照下的镜面反射，同时考虑了表面的遮蔽情况。</p>
+<div class="note note-info">
+            <p>即分成三个部分</p><ul><li>GTAO 用来做环境光遮蔽</li><li>近场全局光照</li><li>GTSO镜面反射遮蔽，减少反射漏光。有点类似与HDRP使用BentNormal来减少漏光，这里直接从深度法线中生成全局的BentNormal</li></ul>
+          </div>
+<h1 id="背景与相关工作">2 背景与相关工作</h1>
+<p>从一个有着法线<span
+class="math inline"><em>n</em><sub><em>x</em></sub></span>的点<span
+class="math inline"><em>x</em></span>沿朝向方向<span
+class="math inline"><em>ω</em><sub><em>o</em></sub></span>反射的辐射<span
+class="math inline"><em>L</em><sub><em>r</em></sub>(<em>x</em>,<em>ω</em><sub><em>o</em></sub>)</span>可以建模为：</p>
+<p><span class="math display">$$
+\begin{equation}
+\begin{aligned}
+L_r(x, \omega_o) = \int_{\mathcal{H} ^2} L_i(x, \omega_i) f_r(x,
+\omega_i, \omega_o) \langle n_x, \omega_i \rangle ^+ d\omega_i
+\end{aligned} \tag{1}
+\end{equation}
+$$</span></p>
+<p>其中<span class="math inline">ℋ<sup>2</sup></span>是以<span
+class="math inline"><em>x</em></span>为中心，<span
+class="math inline"><em>n</em><sub><em>x</em></sub></span>为其轴的半球体，<span
+class="math inline"><em>L</em><sub><em>i</em></sub>(<em>x</em>,<em>ω</em><sub><em>i</em></sub>)</span>是从方向<span
+class="math inline"><em>ω</em><sub><em>i</em></sub></span>到<span
+class="math inline"><em>x</em></span>的入射辐照度，<span
+class="math inline"><em>f</em><sub><em>r</em></sub>(<em>x</em>,<em>ω</em><sub><em>i</em></sub>,<em>ω</em><sub><em>o</em></sub>)</span>是<span
+class="math inline"><em>x</em></span>处的双向反射分布函数（BRDF），<span
+class="math inline">〈<em>n</em><em>x</em>, <em>ω</em><em>i</em>〉<sup>+</sup></span>是一个递归运算符，依赖于整个场景中的反射（和发射）辐射。虽然许多研究都集中在解决这个问题上，但在像游戏等高要求的场景中，它仍然过于昂贵。在这里，我们关注<em>环境光遮蔽</em>技术，并参考Ritschel等人的调查报告[RDGK12]中关于该领域的更广泛的概述。</p>
+<p>环境光遮蔽[ZIK98]通过引入一系列假设来近似方程(1)：</p>
+<ul>
+<li>所有光来自于一个无限均匀的环境光源，可能会被<span
+class="math inline"><em>x</em></span>周围的几何物体遮蔽</li>
+<li><span
+class="math inline"><em>x</em></span>周围的所有表面都是纯吸收的（即不反射任何光）</li>
+<li><span
+class="math inline"><em>x</em></span>处的表面是漫反射的。这将方程(1)转化为：</li>
+</ul>
+<p><span class="math display">$$
+\begin{equation}
+\begin{aligned}
+L_r(x, \omega_o) &amp;= L_i\frac{ \rho(x)}{\pi} \int_{\mathcal{H}^2}
+V(x, \omega_i) \langle n_x, \omega_i \rangle ^+ d\omega_i \\
+&amp;=L_i \frac{ \rho(x)}{\pi} \mathcal{A}(x)
+\end{aligned} \tag{2}
+\end{equation}
+$$</span></p>
+<p>其中 <span class="math inline">𝒜(<em>x</em>)</span> 表示点 <span
+class="math inline"><em>x</em></span> 处的环境遮蔽项，<span
+class="math inline">$\frac{ρ(x)}π$</span> 为反射率为 <span
+class="math inline"><em>ρ</em>(<em>x</em>)</span>
+的漫反射双向反射分布函数（BRDF），而 <span
+class="math inline"><em>V</em>(<em>x</em>,<em>ω</em><sub><em>i</em></sub>)</span>
+是点 <span class="math inline"><em>x</em></span> 处在方向 <span
+class="math inline"><em>ω</em><sub><em>i</em></sub></span>
+上的可见性项，如果在方向 <span
+class="math inline"><em>ω</em><sub><em>i</em></sub></span>
+上存在比给定距离 <span class="math inline"><em>r</em></span>
+更近的遮挡物，则返回 <span class="math inline">0</span>，否则返回 <span
+class="math inline">1</span>。</p>
+<p>请注意，之前的研究[ZIK98，Mit07，BSD08]将可见性项 <span
+class="math inline"><em>V</em>(<em>x</em>,<em>ω</em><sub><em>i</em></sub>)</span>
+建模为相对于遮挡物距离的衰减函数，将 <span
+class="math inline">𝒜(<em>x</em>)</span>
+称为<em>遮蔽度</em>。这种衰减函数是一个临时解决方案，以避免忽略近场互反射产生的典型环境光遮蔽过度变暗的问题；</p>
+<p>与之相反，我们引入了一种新的公式来添加这部分丢失的光线（第5节），同时保持辐射度上正确的环境遮蔽项。<br />
+<div class="note note-info">
+            <p>那看这意思还需要引入近场全局照明才能补充这部分？</p>
+          </div><br />
+值得注意的是，还有一种环境遮蔽的替代定义，其中忽略了视角变形：尽管在本文的其余部分中，我们遵循辐射度正确的余弦加权公式，但在附录
+A 中，我们描述了我们在这种替代形式下的技术。</p>
+<h2 id="ssao">SSAO</h2>
+<p>环境遮蔽项 <span class="math inline">𝒜(<em>x</em>)</span>
+受到场景中所有几何体的影响，通常通过射线追踪来计算[ZIK98]，尽管也存在适用于交互式渲染的基于点的方法[Bun05，REG+09]。然而，这对于实时应用来说仍然过于昂贵。为了避免昂贵的三维全场景可见性计算，Mittring
+[Mit07]
+提出将所有计算移动到屏幕空间，假设只有相机可见的几何体才起到遮挡物的作用。这是通过在点
+<span class="math inline"><em>x</em></span> 周围的球形区域内采样场景的
+GPU
+深度图，并评估点在深度图中是否被遮蔽（在后面）。从那以后，对屏幕空间采样方法进行了几次改进，改进了采样策略[LS10，SKUT+10，HSEE15]并通过滤波来减少噪声[MML12]。</p>
+<h2 id="hbao">HBAO</h2>
+<p>Bavoil 等人在文献 [BSD08]
+中提出，根据光线可以到达的最大地平线角来计算非遮蔽区域。他们将积分域转化为一组由表面切线<span
+class="math inline"><em>ϕ</em></span>参数化的方向，然后在每个方向上计算总的非遮蔽立体角，将方程（2）转化为：<br />
+<span class="math display">$$
+\mathcal{A}(x) \approx \hat{A}(x) = \frac{1}{\pi} \int_{0}^{\pi}
+\int_{-\frac{\pi}{2}}^{\frac{\pi}{2}} V(\phi, \theta) \left|
+\sin(\theta) \right| d\theta d\phi \tag{3}
+$$</span><br />
+在这里，<span class="math inline">1/<em>π</em></span> 项用于归一化至
+<span class="math inline">1</span>（即 <span
+class="math inline">𝒜(<em>x</em>) ∈ [0,1]</span>）。请注意，在这里我们区分实际的环境遮蔽
+<span class="math inline">𝒜(<em>x</em>)</span> 和近似的屏幕空间项 <span
+class="math inline"><em>Â</em>(<em>x</em>)</span>。</p>
+<p>Alchemy Ambient Obscurance [MOBH11, MML12]
+后来改进了屏幕空间方法的鲁棒性，并增加了所使用的采样过程的效率。虽然
+HBAO
+的效率相对较高，但仍然昂贵，因为在查找最大地平线时，需要针对每个像素从深度图中收集许多样本。Timonen
+[Tim13a]
+通过在整个图像上执行线性扫描来改进这一点，从而使他能够通过将采样分摊到图像中的多个像素上，在常数时间内找到给定方向的最大地平线角。与我们的工作相似，同一作者
+[Tim13b]
+提出了一种新的环境遮蔽估计方法，通过线性扫描和过滤深度图，能够以很小的代价匹配真实解，从而可以计算非常大的聚集半径下的环境遮蔽，覆盖整个屏幕。</p>
+<p>我们的工作通过提出一种高效的环境遮蔽公式来改进这些工作，无需临时的衰减函数，通过允许非常高效的分析积分来节省计算时间。避免使用临时衰减函数的关键是我们对于包括近场遮蔽体的间接照明的高效近似。此外，所有这些工作都假设是漫反射表面：相反，我们将环境遮蔽的概念推广到非兰伯特表面，引入了一种处理镜面遮蔽的技术。</p>
+<h1 id="总览">3 总览</h1>
+<p>在这项工作中，我们有两个主要目标：</p>
+<p>一方面，我们的目标是拥有一种能够与真实结果匹配的环境遮蔽技术，同时又足够高效，可以在要求严格的实时应用中使用。</p>
+<p>另一方面，我们希望扩展可以被有效近似的全局光照效果的范围。</p>
+<p>第一个目标在输入数据、通道数量和指令数量方面施加了严格限制。受到这些限制，我们开发了一种在屏幕空间中工作的技术，仅以深度缓冲和表面法线作为输入（这些法线可以通过微分从深度缓冲中导出，或者可以单独提供），并且可以与其他全局光照源（特别是烘焙的辐照度）共存并增强。</p>
+<p>为了实现第二个目标，我们放松了传统环境遮蔽的一些假设。特别地，虽然我们保持白色（或单色）圆顶照明的假设，但我们放宽了纯朗伯表面的假设，包括了近场遮蔽体的漫反射互反射效应。</p>
+<p>消除先前的限制，我们可以将方程（2）转换为<br />
+<span class="math display">$$
+L_r (x, \omega_o) = (1 - F (\omega_o)) L_i \frac{ \rho(x)} { \pi}
+\mathcal{G}(\mathcal{A}(x)) + F(\omega_o) \mathcal{L}(x, \omega_o)
+\mathcal{S}(x), \tag{4}
+$$</span></p>
+<p>其中，<span class="math inline"><em>F</em></span>
+表示菲涅尔反射项，<span class="math inline">𝒜(<em>x</em>)</span>
+是我们的环境光遮蔽项（第4节），它与基准真实结果相匹配，我们称之为基准真实环境光遮蔽（GTAO）。<span
+class="math inline">𝒢(<em>x</em>)</span>
+是一个函数，基于环境光遮蔽项，引入了漫反射近场间接光照（第5节），而
+<span class="math inline">𝒮(<em>x</em>)</span>
+则是镜面遮蔽项（第6节），它与预卷积的 <strong>BRDF</strong> <span
+class="math inline">ℒ</span>
+相乘。接下来，我们将对这些项逐一进行阐述。</p>
+<h1 id="gtao">4 GTAO</h1>
+<p>我们对环境光遮蔽的构建遵循了 Bavoil 等人的基于地平线的方法
+[BSD08]，但是我们做出了一些关键的差异，使得在不牺牲质量的前提下能够进行高效的计算。</p>
+<p>首先，我们重新构建了地平线计算所依据的参考坐标系，从而重新定义了积分域：我们遵循
+Timonen [Tim13a] 的方法，相对于视角向量 <span
+class="math inline"><em>ω</em><sub><em>o</em></sub></span>
+计算地平线角（见图2）。这意味着地平线在围绕点 <span
+class="math inline"><em>x</em></span>
+的整个球面范围内进行搜索，并且球面积分轴被设置为 <span
+class="math inline"><em>ω</em><sub><em>o</em></sub></span>。实际上，这使我们能够简化表述，正如我们稍后将看到的，还可以减少所需的超越函数数量。</p>
+<p>第二个主要的差异是，与 Bavoil 的工作不同，我们的可见性项 <span
+class="math inline"><em>V</em>(<em>ϕ</em>,<em>θ</em>)</span>
+仅是一个二元函数，而不是关于遮蔽距离的连续衰减函数（环境光遮蔽）。以这种方式构建环境光遮蔽允许我们将方程（3）的内部积分简单地计算为方向
+<span class="math inline"><em>ϕ</em></span> 的两个最大地平线角度 <span
+class="math inline"><em>θ</em>1(<em>ϕ</em>)</span> 和 <span
+class="math inline"><em>θ</em>2(<em>ϕ</em>)</span>
+之间弧线的积分。在围绕 <span
+class="math inline"><em>ω</em><sub><em>o</em></sub></span>
+进行积分，并使用二元可见性项，将方程（3）转化为：</p>
+<p><span class="math display">$$
+\mathcal{A}(x) = \frac{1}{\pi} \int_{0}^{\pi}
+\underbrace{\int_{\theta_1(\phi)}^{\theta_2(\phi)} \cos(\theta - \gamma)
+^+ \lvert \sin(\theta) \rvert d\theta }_{a} d\phi \tag{5}
+$$</span></p>
+<p>其中，<span class="math inline"><em>γ</em></span> 是法线 <span
+class="math inline"><em>n</em><sub><em>x</em></sub></span> 和视角向量
+<span class="math inline"><em>ω</em><sub><em>o</em></sub></span>
+之间的角度，而 <span
+class="math inline"><em>c</em><em>o</em><em>s</em>(<em>θ</em>)<sup>+</sup> = max (cos(<em>θ</em>),0)</span>。事实上，这个公式的构造非常重要，因为它允许解析地计算内部积分
+<span
+class="math inline"><em>â</em></span>，同时与基准真实环境光遮蔽匹配。这意味着只需要通过随机的
+<span class="math inline"><em>ϕ</em></span>
+进行蒙特卡洛积分，来数值地计算最外层的积分。在接下来的部分，我们将详细说明如何计算地平线角和内部积分
+<span class="math inline"><em>â</em></span>。</p>
+<h2 id="计算最大地平线角度">计算最大地平线角度</h2>
+<p>在解方程（5）中，关键是要找到图像平面上由旋转角度 <span
+class="math inline"><em>ϕ</em></span> 参数化的方向 <span
+class="math inline"><em>t̂</em>(<em>ϕ</em>)</span> 的最大地平线角度 <span
+class="math inline"><em>θ</em><sub>1</sub>(<em>ϕ</em>)</span> 和 <span
+class="math inline"><em>θ</em><sub>2</sub>(<em>ϕ</em>)</span>。为了做到这一点，我们在像素<span
+class="math inline"><em>x̂</em></span>（点 <span
+class="math inline"><em>x</em></span> 的投影像素）的 <span
+class="math inline"><em>n</em> × <em>n</em></span>
+邻域中，分别在屏幕空间方向 <span
+class="math inline"><em>t̂</em>(<em>ϕ</em>)</span> 和 <span
+class="math inline"> − <em>t̂</em>(<em>ϕ</em>)</span>
+上进行搜索，以获取每个角度，并相对于视角向量 <span
+class="math inline"><em>ω</em><sub><em>o</em></sub></span>
+获得最大地平线角度，如下所示：<br />
+<span class="math display">$$
+\begin{equation}
+\begin{aligned}
+\theta_1(\phi) = \arccos\left( \max_{s&lt;n/2}  \left \langle  \omega_s,
+\omega_o \right \rangle  ^+ \right)
+\end{aligned} \tag{6}
+\end{equation}
+$$</span></p>
+<p>其中，<span class="math inline">$ω_s = \frac{s - x}{\lVert s - x
+\rVert}$</span>，而 <span class="math inline"><em>s</em></span>
+是图像平面上像素的世界空间投影，定义为 <span
+class="math inline"><em>ŝ</em> = <em>x̂</em> + <em>t̂</em>(<em>ϕ</em>) ⋅ <em>s</em></span>。角度
+<span class="math inline"><em>θ</em><sub>2</sub></span>
+的计算类似，只是使用 <span
+class="math inline"><em>ŝ</em> = <em>x̂</em> − <em>t̂</em>(<em>ϕ</em>) ⋅ <em>s</em></span>。请注意，邻域
+<span class="math inline"><em>n</em></span>
+的大小根据相机距离进行缩放：这是为了使 <span
+class="math inline"><em>Â</em>(<em>x</em>)</span>
+与视角无关，并且将其限制为像素的最大半径，以避免在靠近近裁剪平面的非常近的物体上产生过大的聚集半径，这会不必要地破坏
+GPU 缓存。</p>
+<p>鉴于我们只关心辐射度立体角，我们只需要跟踪最大角度，而不需要像以前的工作中那样跟踪其他量（例如最大距离）。这允许在
+AMD GCN 硬件
+[AMD12]（我们的目标平台）上只使用一个四分之一速度指令（rsqrt）来计算搜索循环。使用这个公式，着色器完全受内存限制。</p>
+<h2 id="计算内部积分">计算内部积分</h2>
+<p>Timonen [Tim13a]
+通过在运行时访问预计算结果的查找表来计算这个积分（包括衰减函数）。然而，我们公式的一个关键特性是，在给定我们计算的地平线角度
+<span class="math inline"><em>θ</em><sub>1</sub></span> 和 <span
+class="math inline"><em>θ</em><sub>2</sub></span>
+的情况下，我们可以解析地求解方程（5）中的内部积分 <span
+class="math inline"><em>â</em></span>，如下所示：</p>
+<p><span class="math display">$$
+\begin{equation}
+\begin{aligned}
+a &amp;= \frac{1}{4} \left( -\cos(2\theta_1 - \gamma) + \cos(\gamma) +
+2\theta_1 \sin(\gamma) \right) \\
+  &amp;+ \frac{1}{4} \left( -\cos(2\theta_2 - \gamma) + \cos(\gamma) +
+2\theta_2 \sin(\gamma) \right)
+\end{aligned} \tag{7}
+\end{equation}
+$$</span></p>
+<p>需要注意的是，这个公式要求法线 <span
+class="math inline"><em>n</em><sub><em>x</em></sub></span> 位于由 <span
+class="math inline"><em>t̂</em>(<em>ϕ</em>)</span> 和 <span
+class="math inline"><em>ω</em><sub><em>o</em></sub></span> 定义的平面
+<span class="math inline"><em>P</em></span>
+上，但通常不满足这个条件。按照 Timonen [Tim13a] 的方法，我们将角度 <span
+class="math inline"><em>γ</em></span> 定义为规范化投影法线 <span
+class="math inline">$\frac{\overrightarrow{n_x}}{||n_x||} \in P$</span>
+与 <span class="math inline"><em>ω</em><sub><em>o</em></sub></span>
+之间的角度，即 <span class="math inline">$γ = \arccos\left(\langle
+\frac{\overrightarrow{n_x}}{\lVert n_x \rVert}, \omega_o
+\rangle\right)$</span>。然后，我们通过法线 <span
+class="math inline"><em>n</em><sub><em>x</em></sub></span>
+的范数对点积进行修正，这使得方程（5）变成如下形式：</p>
+<p><span class="math display">$$
+\hat{A}(x) = \frac{1}{\pi} \int_{0}^{\pi} \lVert \overrightarrow{n_x}
+\rVert \hat{a}(\phi) d\phi \tag{8}
+$$</span></p>
+<p>我们发现我们的解析解非常快，特别是在使用快速的<code>acos</code>和<code>sqrt</code>指令[Dro14]的情况下。在超越函数方面，经过优化，我们的代码只包含2个<code>cos</code>和1个<code>sin</code>，再加上另外三个<code>acos</code>函数用于设置积分域。这使得我们的着色器在内存方面受限，所需的ALU操作在性能方面几乎没有什么差异。</p>
+<h3 id="实现细节">4.1 实现细节</h3>
+<p>我们的技术受内存限制，因此内存访问次数决定了目标平台的最终性能。鉴于我们的性能目标是将技术集成到以每秒60帧运行的游戏中，我们只有大约半毫秒的时间来进行计算，这使得实现优化变得必要。一方面，我们在半分辨率上计算环境光遮蔽，然后将其上采样到全分辨率。此外，为了在不损害性能的情况下计算尽可能多的样本，我们将遮蔽积分分布在空间和时间上：我们在每个像素中仅采样一个方向的地平线，但使用双边滤波器对4×4的邻域内的信息进行重建。此外，我们通过在6个不同的旋转之间交替，并使用指数累积缓冲重新投影结果，积极利用时间相干性。所有这些使每个像素有总共
+4 × 4 × 6 = 96
+个有效采样方向。图3展示了空间和时间聚集对最终重建的影响。</p>
+<p>与环境光遮蔽技术不同，我们的表述中不考虑任何衰减函数，这可能导致计算出的遮蔽出现突然的不连续性，尤其是当我们的聚集半径未覆盖整个屏幕时。为了最小化伪影，我们采用了一种保守的衰减策略。思路是确保基准真实近场遮蔽，而对于远场遮蔽将其衰减为零，因为通常情况下，远场遮蔽与间接光照在我们的用例中是一起处理的。我们的衰减函数是从给定的足够大的距离开始，线性混合从1到0，直到最大的搜索半径。</p>
+<p>最后，由于我们无法从深度缓冲区推断出物体的厚度，薄的特征往往会产生过多的遮蔽，从而不太真实。虽然可以通过深度剥离等方法来解决这个问题，但在我们的情况下不切实际。相反，我们引入了一种保守的启发式方法，该方法基于这样的假设：物体的厚度与其屏幕空间大小相似。这种启发式方法对地平线搜索（方程（6））进行了修改，因此对于搜索的每次迭代
+s ∈ [1, n/2]，我们更新地平线角 θ 如下：<br />
+<span class="math display">$$
+\theta = \begin{cases}
+\max(\theta_s, \theta) &amp; \text{if } \cos(\theta_s) \geq
+\cos(\theta_{s-1}) \\
+\text{blend}(\theta_{s-1}, \theta_s) &amp; \text{if } \cos(\theta_s)
+&lt; \cos(\theta_{s-1})
+\end{cases} \tag{9}
+$$</span></p>
+<p>其中，<span
+class="math inline"><em>b</em><em>l</em><em>e</em><em>n</em><em>d</em></span>
+是基于指数移动平均的混合运算符，而 <span
+class="math inline"><em>θ</em><sub>0</sub> = 0</span>。这种启发式方法还具有不会对简单角落（例如墙壁）的遮蔽结果产生偏见的特性，而这在我们的应用中是常见的情况。图4展示了这个启发式方法的效果。</p>
+<div class="note note-info">
+            <p>GTAO的部分到此为止了，再下面就是光照和GTSO的部分了，有精力再说吧。</p>
+          </div>
+<h1 id="hdrp实现">HDRP实现</h1>
+<p>然后再看看HDRP是怎么实现的</p>
+<h1 id="gtao.compute">GTAO.compute</h1>
+<p>用的是计算着色器<br />
+从最关键的GTAOMain函数入手</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float currDepth &#x3D; GetDepthForCentral(dispatchThreadId.xy);
+float3 positionVS &#x3D; GetPositionVS(dispatchThreadId.xy, currDepth);</code></pre></div></figure>
+<p>取深度，重建计算视角空间坐标</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float4 normalBufferData &#x3D; LOAD_TEXTURE2D_X(_NormalBufferTexture, dispatchThreadId.xy);</code></pre></div></figure>
+<p>取法线</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float offset &#x3D; GetOffset(dispatchThreadId.xy);
+float2 rayStart &#x3D; dispatchThreadId.xy;
+float integral &#x3D; 0;</code></pre></div></figure>
+<p>偏移包含了空间偏移与时序偏移。<br />
+射线起点用的是屏幕空间。<br />
+integral是用来累加计算的。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#ifdef TEMPORAL
+    const int dirCount &#x3D; 1;
+#else
+    const int dirCount &#x3D; _AODirectionCount;
+#endif</code></pre></div></figure>
+<p>依据是否启用时序来决定切面的数量。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float3 V &#x3D; normalize(-positionVS);
+float fovCorrectedradiusSS &#x3D; clamp(_AORadius * _AOFOVCorrection * rcp(positionVS.z), _AOStepCount, _AOMaxRadiusInPixels);
+float step &#x3D; max(1, fovCorrectedradiusSS * _AOInvStepCountPlusOne);</code></pre></div></figure>
+<p>因为是视线空间，取反即视线向量。<br />
+依据fov和位置远近，确定采样半径和步长。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float2 dir &#x3D; GetDirection(dispatchThreadId.xy, i);
+float2 negDir &#x3D; -dir + 1e-30;
+
+&#x2F;&#x2F; Find horizons
+float2 maxHorizons;
+maxHorizons.x &#x3D; HorizonLoop(positionVS, V, rayStart, dir, offset, step, 0);
+maxHorizons.y &#x3D; HorizonLoop(positionVS, V, rayStart, negDir, offset, step, 0);</code></pre></div></figure>
+<p>然后就开始遍历方向。<br />
+确定方向，正反两个方向取找到最大水平角度。<br />
+这里的<code>GetDirection</code>和<code>HorizonLoop</code>之后再说。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float3 normalVS &#x3D; GetNormalVS(normalBufferData);</code></pre></div></figure>
+<p>取法线</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float3 sliceN &#x3D; normalize(cross(float3(dir.xy, 0.0f), V.xyz));
+float3 projN &#x3D; normalVS - sliceN * dot(normalVS, sliceN);
+float projNLen &#x3D; length(projN);
+float cosN &#x3D; dot(projN &#x2F; projNLen, V);</code></pre></div></figure>
+<p>sliceN是切面的法线<br />
+projN表面法线在切面上的投影，简称投影法线<br />
+cosN即表面法线与视线的投影</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float3 T &#x3D; cross(V, sliceN);
+float N &#x3D; -sign(dot(projN, T)) * GTAOFastAcos(cosN);</code></pre></div></figure>
+<p>T：表面的切线<br />
+N：投影法线与视线的角度</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">maxHorizons.x &#x3D; -GTAOFastAcos(maxHorizons.x);
+maxHorizons.y &#x3D; GTAOFastAcos(maxHorizons.y);</code></pre></div></figure>
+<p>反三角，求出对应水平角度</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">maxHorizons.x &#x3D; N + max(maxHorizons.x - N, -HALF_PI);
+maxHorizons.y &#x3D; N + min(maxHorizons.y - N, HALF_PI);</code></pre></div></figure>
+<p>限制一下范围</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">integral +&#x3D; AnyIsNaN(maxHorizons) ? 1 : IntegrateArcCosWeighted(maxHorizons.x, maxHorizons.y, N, cosN);</code></pre></div></figure>
+<p>计算AO</p>
+<p>然后来看看<code>HorizonLoop</code></p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float HorizonLoop(float3 positionVS, float3 V, float2 rayStart, float2 rayDir, float rayOffset, float rayStep, int mipModifier)</code></pre></div></figure>
+<ul>
+<li>positionVS:起始点位置</li>
+<li>V：视线</li>
+<li>rayStart：步进起点，屏幕空间</li>
+<li>rayDir：步进方向，屏幕空间</li>
+<li>rayOffset：随机偏移，0-1</li>
+<li>rayStep：每次步进长度</li>
+<li>mipModifier：没有用到</li>
+</ul>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float maxHorizon &#x3D; -1.0f;  &#x2F;&#x2F; cos(pi)
+float t &#x3D; rayOffset * rayStep + rayStep;</code></pre></div></figure>
+<p>最大水平角是用cos的形式记录的<br />
+t表示步进的长度，初始长度要偏移一个rayOffset</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float2 samplePos &#x3D; max(2, min(rayStart + t * rayDir, _AOBufferSize.xy - 2));</code></pre></div></figure>
+<p>确保采样位置不超出屏幕</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float sampleDepth &#x3D; GetDepthSample(samplePos, i &gt; startWithLowerRes);
+float3 samplePosVS &#x3D; GetPositionVS(samplePos.xy, sampleDepth);</code></pre></div></figure>
+<p>采样深度和计算视线空间坐标</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float3 deltaPos &#x3D; samplePosVS - positionVS;
+float deltaLenSq &#x3D; dot(deltaPos, deltaPos);
+
+float currHorizon &#x3D; dot(deltaPos, V) * rsqrt(deltaLenSq);
+maxHorizon &#x3D; UpdateHorizon(maxHorizon, currHorizon, deltaLenSq);</code></pre></div></figure>
+<p>计算并更新最大水平角度</p>
+<p>最后看看这个<code>UpdateHorizon</code><br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float UpdateHorizon(float maxH, float candidateH, float distSq)
+&#123;
+    float falloff &#x3D; saturate((1.0 - (distSq * _AOInvRadiusSq)));
+
+    return (candidateH &gt; maxH) ? lerp(maxH, candidateH, falloff) : lerp(maxH, candidateH, 0.03f);        &#x2F;&#x2F; TODO: Thickness heuristic here.
+&#125;</code></pre></div></figure><br />
+依据AO半径裁切，不是直接替换最大角度，而是Lerp，对应了论文中提及的blend操作。</p>
+<h1 id="urp实现">URP实现</h1>
+<p>其实从屏幕空间用深度重建视角空间坐标没必要用完整的<code>UNITY_MATRIX_I_P</code>矩阵的，像Untiy的做法都是传入矩阵的一部分，如下<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float3 GetPositionVS(float2 positionSS, float depth)
+&#123;
+    float linearDepth &#x3D; LinearEyeDepth(depth, _ZBufferParams);
+    return float3((positionSS * _AODepthToViewParams.xy - _AODepthToViewParams.zw) * linearDepth, linearDepth);
+&#125;</code></pre></div></figure><br />
+这里只是图方便，省的再传入一组参数了，先暂且记下，以后要是需要优化就回过头再改。<br />
+Shader都大同小异，没啥好说的了。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>GTAO</div>
+      <div>https://www.kuanmi.top/2023/08/09/GTAO/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年8月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/08/14/depth/" title="depth">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">depth</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/08/07/HBAO/" title="HBAO">
+                        <span class="hidden-mobile">HBAO</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.1/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

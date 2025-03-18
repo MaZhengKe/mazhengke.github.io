@@ -1,0 +1,847 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 前几日去HDRP下试验了各种效果在VR下的可用性，结果是一塌糊涂。像屏幕空间反射、或者Planar probe这种效果官方压根就没打算支持VR，只能自力更生了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="平面反射效果 VR (URP)">
+<meta property="og:url" content="https://www.kuanmi.top/2022/07/01/Plane-reflection-in-VR-URP/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="前言 前几日去HDRP下试验了各种效果在VR下的可用性，结果是一塌糊涂。像屏幕空间反射、或者Planar probe这种效果官方压根就没打算支持VR，只能自力更生了。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.kuanmi.top/images/mirror05-slim.jpg">
+<meta property="article:published_time" content="2022-07-01T06:12:25.000Z">
+<meta property="article:modified_time" content="2025-03-18T01:12:02.891Z">
+<meta property="article:author" content="KuanMi">
+<meta property="article:tag" content="URP">
+<meta property="article:tag" content="VR">
+<meta property="article:tag" content="反射">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/mirror05-slim.jpg">
+  
+  
+  
+  <title>平面反射效果 VR (URP) - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/water.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="平面反射效果 VR (URP)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-07-01 14:12" pubdate>
+          2022年7月1日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          47 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">平面反射效果 VR (URP)</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前言">前言</h1>
+<p>前几日去HDRP下试验了各种效果在VR下的可用性，结果是一塌糊涂。像屏幕空间反射、或者Planar
+probe这种效果官方压根就<a
+target="_blank" rel="noopener" href="https://issuetracker.unity3d.com/issues/xr-hdrp-planar-reflection-probes-reflection-is-misaligned-for-both-eyes-when-vr-is-enabled">没打算支持VR</a>，只能自力更生了。<br />
+<span id="more"></span><br />
+本着柿子捡软的捏的原则，先从复刻平面探针入手吧。<br />
+如果不考虑VR这个实现其实不难，但Unity的单通道渲染实在是太不成熟了，坑一个接一个，这次记录一下踩坑教训。<br />
+<a
+target="_blank" rel="noopener" href="https://github.com/MaZhengKe/Plane-reflection-urp-vr">仓库Demo地址</a></p>
+<p><img src="water.jpg" srcset="/img/loading.gif" lazyload alt="水面效果" /><br />
+<img src="mirror05.jpg" srcset="/img/loading.gif" lazyload alt="镜面效果" /></p>
+<h1 id="分析">分析</h1>
+<p>去HDRP的管线下看了半天，平面反射探针的实现和HDRP耦合的太高了，很难分离开直接移植到URP下，但大体思路就是用一个独立的相机去渲染到一张贴图上。然后基于这张贴图去玩各种花活。<br />
+出于性能考虑，就不单独去生成一个相机再去渲染了，还是直接在RenderFeature的层面，重写相机的位置和视锥体以及剔除，直接绘制，能节省很多开销。</p>
+<h1 id="填坑">填坑</h1>
+<h2 id="非vr实现">非VR实现</h2>
+<p>思路很简单，先看非VR下的实现。<br />
+在ScriptableRenderPass中<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">CoreUtils.SetRenderTarget(cmd, m_MirrorTexture, ClearFlag.All, Color.clear);
+
+var mirrorPos &#x3D; MirrorPlanar.mirrorPos(MirrorPlanar.Plane,camTransform.position);
+var viewM &#x3D; MirrorPlanar.GetViewMat(camTransform.position, rotation);
+var projectionMatrix &#x3D; camera.projectionMatrix;
+projectionMatrix &#x3D; GL.GetGPUProjectionMatrix(projectionMatrix, cameraData.IsCameraProjectionMatrixFlipped());
+
+cmd.SetGlobalVector(worldSpaceCameraPos,new Vector4(mirrorPos.x,mirrorPos.y,mirrorPos.z,0));
+RenderingUtils.SetViewAndProjectionMatrices(cmd, viewM, projectionMatrix, false);</code></pre></div></figure><br />
+这里通过原Camera的坐标和旋转，以及要镜像的平面，生成了虚拟相机的坐标以及View矩阵和投影矩阵。然后写入shader中，覆盖了原相机的相机矩阵和投影矩阵。<br />
+这里不要忘记连带worldSpaceCameraPos一起写进去。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">context.ExecuteCommandBuffer(cmd);
+cmd.Clear();
+
+context.DrawRenderers(cullingResults, ref drawingSettings, ref m_FilteringSettings);
+context.DrawSkybox(cameraData.camera);
+
+cmd.SetGlobalTexture(s_MirrorTextureID, m_MirrorTexture.nameID);
+var viewMatrix &#x3D; camera.worldToCameraMatrix;
+RenderingUtils.SetViewAndProjectionMatrices(cmd, viewMatrix, cameraData.GetGPUProjectionMatrix(),false);</code></pre></div></figure>
+<p>然后就是绘制，这里可以在之前通过设置layerMask等来控制要绘制的物体，防止地板遮挡等问题的出现。<br />
+绘制结束别忘记把之前重载的属性恢复回来。<br />
+这样就相当于从镜子的另一面用相同的相机绘制到了一张RT上。</p>
+<p>然后是Shader部分，这里就很简单了<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">TEXTURE2D_X(_MirrorTex);
+SAMPLER(sampler_MirrorTex);
+
+half4 frag(Varyings input):SV_Target
+&#123;
+    UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+    float2 screenUV &#x3D; input.positionHCS &#x2F; _ScreenParams;
+    screenUV.x &#x3D; 1 - screenUV.x;
+    return SAMPLE_TEXTURE2D_X(_MirrorTex, sampler_MirrorTex, screenUV) * 0.8;
+    return 1;
+&#125;</code></pre></div></figure><br />
+拿到屏幕坐标，反转一下X轴，去采样之前渲染的那张RT就好了。<br />
+<img src="mirror01.jpg" srcset="/img/loading.gif" lazyload alt="普通镜面" /></p>
+<h2 id="vr单通道模式下实现">VR单通道模式下实现</h2>
+<p>然后天坑就来了<br />
+第一个问题就是如何获取左右眼的世界坐标。<br />
+本来使用的是unity
+XR中的函数来获取，但这个支持的并不好，比如unity自带的mock
+hmd就获取不到。简单列一下代码吧。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public static Vector3 GetEyePosition(Side eye)
+&#123;
+    if (XRSettings.enabled)
+    &#123;
+        Vector3 pos;
+        InputDevice device &#x3D; InputDevices.GetDeviceAtXRNode(XRNode.Head);
+
+        if (device.isValid)
+        &#123;
+            Debug.Log($&quot;&#123;device&#125; isValid&quot;);
+            if (device.TryGetFeatureValue(eye &#x3D;&#x3D; Side.Left ? CommonUsages.leftEyePosition : CommonUsages.rightEyePosition,out pos))
+                return pos;
+        &#125;
+
+        Debug.LogError(&quot;can not find eyePos&quot;);
+        return default(Vector3);
+    &#125;
+    else
+    &#123;
+        return Camera.main.transform.position;
+    &#125;
+&#125;</code></pre></div></figure><br />
+最后还是通过Camera的View矩阵来获取比较准确。可能是我孤陋寡闻了，真不知道为什么这种常用的属性Unity竟然不提供一个简便的方式来获取。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">var leftEyePos &#x3D; camera.GetStereoViewMatrix(Camera.StereoscopicEye.Left).inverse.GetColumn(3);</code></pre></div></figure><br />
+本以为就那么简单，可最终的结果确怎么也对不上。折腾了半天打印了VR下的投影矩阵一看，才发现VR下左右眼的视锥体竟然不是个对称的视锥体。<br />
+之前一直使用<code>public static Matrix4x4 Perspective(float fov, float aspect, float zNear, float zFar)</code>这个函数来生成投影矩阵，导致我忘记了视锥体还有不对称这种情况。<br />
+于是改用<code>camera.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left);</code>来获取，但结果还是有误差。<br />
+<img src="mirror02.png" srcset="/img/loading.gif" lazyload alt="没有对齐" /><br />
+这里猜一下就猜到还是因为视锥体左右不对称引起的，直觉告诉我，只要反转投影矩阵的第一行（也就是对最终X轴有影响的）的第三个参数（这个数值会和观察空间的深度相乘，最终会影响像素的左右偏移程度）就可以了，<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">leftPMat[8] *&#x3D; -1;
+rightPMat[8] *&#x3D; -1;</code></pre></div></figure><br />
+OK，搞定。<br />
+<img src="mirror03.png" srcset="/img/loading.gif" lazyload alt="正确情况" /></p>
+<figure>
+<img src="mirror04.jpg" srcset="/img/loading.gif" lazyload alt="地面反射" />
+<figcaption aria-hidden="true">地面反射</figcaption>
+</figure>
+<h2 id="渲染镜子背面问题">渲染镜子背面问题</h2>
+<p>当镜子背后有物体时，也会被一同渲染到镜子上。<br />
+能想到的办法要不就通过layerMask来过滤，要不就完全重构上面的代码。<br />
+以镜子作为镜像后的相机的近平面，利用投影矩阵刚好剔除了这部分物体。</p>
+<p>最终通过这篇文章<a
+target="_blank" rel="noopener" href="https://blog.csdn.net/puppet_master/article/details/80808486">Unity
+Shader-反射效果（CubeMap，Reflection Probe，Planar Reflection，Screen
+Space Reflection）</a>才知道已经有前人总结出了<a
+target="_blank" rel="noopener" href="http://www.terathon.com/lengyel/Lengyel-Oblique.pdf">斜视锥体裁剪</a>。<br />
+所以最棘手的问题也解决了。只要在求出视角矩阵和投影矩阵后，再依据平面变换一次投影矩阵即可。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">var planeTr &#x3D; MirrorPlanar.Plane;
+var normal &#x3D; planeTr.forward;
+var d &#x3D; -Vector3.Dot(normal, planeTr.position);
+var plane &#x3D; new Vector4(normal.x, normal.y, normal.z, d);
+projectionMatrix &#x3D; CalculateObliqueMatrix(plane,viewM,projectionMatrix);
+......
+&#x2F;&#x2F;如果是VR下要分别对左右眼都变换一次
+leftPMat &#x3D; CalculateObliqueMatrix(plane,leftViewM,leftPMat);
+rightPMat &#x3D; CalculateObliqueMatrix(plane,rightViewM,rightPMat);</code></pre></div></figure><br />
+<code>CalculateObliqueMatrix</code>函数请去原文查阅。<br />
+<img src="ObliqueMatrix.jpg" srcset="/img/loading.gif" lazyload alt="剪裁掉镜子的背面" /></p>
+<h2 id="镜像坐标旋转和矩阵">镜像坐标、旋转和矩阵</h2>
+<p>虽然直觉告诉我肯定有个简便和优雅的方法来求一个相机相对于空间任意平面的对称相机的方法，但实在是懒的想了，用了最笨的办法来求。<br />
+如果有哪位大神知道，还烦请留言告诉我。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public static Quaternion mirrorRot(Transform plane, Quaternion cam)
+&#123;
+    var forward &#x3D; plane.forward;
+    var reflect &#x3D; Vector3.Reflect(cam * Vector3.forward, forward);
+    var reflectup &#x3D; Vector3.Reflect(cam * Vector3.up, forward);
+
+    return Quaternion.LookRotation(reflect, reflectup);
+&#125;
+
+public static Vector3 mirrorPos(Transform plane, Vector3 oldPos)
+&#123;
+    var forward &#x3D; plane.forward;
+    var planPos &#x3D; plane.position;
+    var dis &#x3D; planPos - oldPos;
+    var cros &#x3D; Vector3.Cross(dis, forward).normalized;
+    var ccos &#x3D; Vector3.Cross(cros, forward);
+    var refDis &#x3D; Vector3.Reflect(dis, ccos);
+    return refDis + planPos;
+&#125;
+
+public static Matrix4x4 GetViewMat(Vector3 oldPos, Quaternion oldRot)
+&#123;
+    var newPos &#x3D; mirrorPos(Plane, oldPos);
+    var newRot &#x3D; mirrorRot(Plane, oldRot);
+    return Matrix4x4.TRS(newPos, newRot, new Vector3(1, 1, -1)).inverse;
+&#125;</code></pre></div></figure></p>
+<h3 id="更新">2022/07/05 更新</h3>
+<p>一个更简便的取对称点位置的函数，同样来自<a
+target="_blank" rel="noopener" href="https://blog.csdn.net/puppet_master/article/details/80808486">Unity
+Shader-反射效果（CubeMap，Reflection Probe，Planar Reflection，Screen
+Space Reflection）</a><br />
+但这篇文章里构建的反射矩阵最终的结果并不正确，这会导致模型用反面渲染。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-CS" data-language="CS"><code class="language-CS">public static Vector3 mirrorPos(Transform plane, Vector3 oldPos)
+&#123;
+    var normal &#x3D; plane.forward;
+    var d &#x3D; -Vector3.Dot(normal, plane.position);
+
+    return oldPos - 2 * (Vector3.Dot(oldPos, normal) + d) * normal;
+&#125;</code></pre></div></figure></p>
+<h1 id="问题">问题</h1>
+<h2 id="视锥体裁剪">视锥体裁剪</h2>
+<p>这里视锥体裁剪使用的还是之前的裁剪矩阵，要想正确构建一个适用于左右眼的裁剪矩阵太复杂了，干脆弄个超大的视锥体，等同于不要裁剪。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">CullingResults cullingResults;
+var cullMat &#x3D; Matrix4x4.Frustum(-1, 1, -1, 1, 0.0000001f, 10000000f);
+
+camera.cullingMatrix &#x3D; cullMat * viewM;
+camera.TryGetCullingParameters(out var cullingParameters);
+cullingResults &#x3D; context.Cull(ref cullingParameters);</code></pre></div></figure></p>
+<h2 id="阴影剔除和附加光源裁剪的问题">阴影剔除和附加光源裁剪的问题</h2>
+<p>这里暂时没有太好的解决方案，不清楚URP绘制阴影的过程能否被干预，如果镜子中的物体没有在正常相机内有阴影的话，镜子中也不会有阴影。<br />
+这里去看HDRP的平面反射探针时也发现了，HDRP是真的虚拟了一个相机，重新绘制了阴影，包括后处理等一应俱全，这会增加不少性能消耗。<br />
+而这里这种方法，在URP官方示例场景下，开关效果GPU时间增加了1.7ms。</p>
+<h2 id="天空盒问题">天空盒问题</h2>
+<p>这是<a
+target="_blank" rel="noopener" href="https://forum.unity.com/threads/hlsl-or-shadergraph-skybox-shader-with-single-pass-instancing.1234660/">官方已知的BUG</a>，SPR管线下绘制天空盒到RT上需要手动将ZClip关闭。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%B8%B2%E6%9F%93/" class="category-chain-item">渲染</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/URP/" class="print-no-link">#URP</a>
+      
+        <a href="/tags/VR/" class="print-no-link">#VR</a>
+      
+        <a href="/tags/%E5%8F%8D%E5%B0%84/" class="print-no-link">#反射</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>平面反射效果 VR (URP)</div>
+      <div>https://www.kuanmi.top/2022/07/01/Plane-reflection-in-VR-URP/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年7月1日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/07/02/HelloShaderToy/" title="Hello ShaderToy">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Hello ShaderToy</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/06/27/LensFlare-SRP-in-VR/" title="LensFlare(SRP) in VR">
+                        <span class="hidden-mobile">LensFlare(SRP) in VR</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

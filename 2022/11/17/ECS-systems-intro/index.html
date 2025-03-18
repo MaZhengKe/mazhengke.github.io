@@ -1,0 +1,3558 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="系统 使用 SystemBase 创建系统  回调方法顺序  迭代数据  额外资源 使用 Entities.ForEach 迭代数据 使用 IJobEntity 迭代数据 使用 IJobEntityBatch 遍历成批数据 手动迭代数据  系统更新顺序  组件系统组 系统排序属性 默认系统组 多个世界  使用作业在多个线程上调度数据  工作扩">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ECS 系统">
+<meta property="og:url" content="https://www.kuanmi.top/2022/11/17/ECS-systems-intro/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="系统 使用 SystemBase 创建系统  回调方法顺序  迭代数据  额外资源 使用 Entities.ForEach 迭代数据 使用 IJobEntity 迭代数据 使用 IJobEntityBatch 遍历成批数据 手动迭代数据  系统更新顺序  组件系统组 系统排序属性 默认系统组 多个世界  使用作业在多个线程上调度数据  工作扩">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/entities-splash-image.png">
+<meta property="article:published_time" content="2022-11-16T22:07:25.000Z">
+<meta property="article:modified_time" content="2025-03-18T01:12:02.899Z">
+<meta property="article:author" content="KuanMi">
+<meta property="article:tag" content="Entities">
+<meta property="article:tag" content="ECS">
+<meta property="article:tag" content="DOTS">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/entities-splash-image.png">
+  
+  
+  
+  <title>ECS 系统 - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/entities-splash-image.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ECS 系统"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-11-17 06:07" pubdate>
+          2022年11月17日 早上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          74k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          617 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">ECS 系统</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <ul>
+<li><a href="#系统">系统</a></li>
+<li><a href="#使用-SystemBase-创建系统">使用 <code>SystemBase</code>
+创建系统</a>
+<ul>
+<li><a href="#回调方法顺序">回调方法顺序</a></li>
+</ul></li>
+<li><a href="#迭代数据">迭代数据</a>
+<ul>
+<li><a href="#额外资源">额外资源</a></li>
+<li><a href="#使用-Entities-ForEach-迭代数据">使用
+<code>Entities.ForEach</code> 迭代数据</a></li>
+<li><a href="#使用-IJobEntity-迭代数据">使用 <code>IJobEntity</code>
+迭代数据</a></li>
+<li><a href="#使用-IJobEntityBatch-遍历成批数据">使用
+<code>IJobEntityBatch</code> 遍历成批数据</a></li>
+<li><a href="#手动迭代数据">手动迭代数据</a></li>
+</ul></li>
+<li><a href="#系统更新顺序">系统更新顺序</a>
+<ul>
+<li><a href="#组件系统组">组件系统组</a></li>
+<li><a href="#系统排序属性">系统排序属性</a></li>
+<li><a href="#默认系统组">默认系统组</a></li>
+<li><a href="#多个世界">多个世界</a></li>
+</ul></li>
+<li><a
+href="#使用作业在多个线程上调度数据">使用作业在多个线程上调度数据</a>
+<ul>
+<li><a href="#工作扩展">工作扩展</a></li>
+<li><a href="#通用职位">通用职位</a></li>
+<li><a href="#使用-Job-WithCode-安排后台作业">使用 Job.WithCode
+安排后台作业</a></li>
+<li><a href="#作业依赖">作业依赖</a></li>
+</ul></li>
+<li><a href="#使用-EntityQuery-查询数据">使用 EntityQuery 查询数据</a>
+<ul>
+<li><a href="#创建实体查询">创建实体查询</a></li>
+<li><a href="#定义过滤器">定义过滤器</a></li>
+<li><a href="#按启用组件过滤">按启用组件过滤</a></li>
+<li><a href="#合并查询">合并查询</a></li>
+<li><a href="#执行查询">执行查询</a></li>
+<li><a href="#编辑器中的查询">编辑器中的查询</a></li>
+</ul></li>
+<li><a href="#使用-EntityCommandBuffer-安排数据更改">使用
+EntityCommandBuffer 安排数据更改</a>
+<ul>
+<li><a href="#EntityCommandBuffer-方法">EntityCommandBuffer
+方法</a></li>
+<li><a href="#在单线程作业中使用-EntityCommandBuffer">在单线程作业中使用
+EntityCommandBuffer</a></li>
+<li><a href="#在并行作业中使用-EntityCommandBuffer">在并行作业中使用
+EntityCommandBuffer</a></li>
+<li><a href="#重用-EntityCommandBuffer-实例">重用 EntityCommandBuffer
+实例</a></li>
+<li><a href="#多重回放">多重回放</a></li>
+<li><a href="#在主线程上使用-EntityCommandBuffer">在主线程上使用
+EntityCommandBuffer</a></li>
+<li><a
+href="#使用-EntityCommandBufferSystem-自动播放和处理命令缓冲区">使用
+EntityCommandBufferSystem 自动播放和处理命令缓冲区</a></li>
+<li><a href="#延迟实体">延迟实体</a></li>
+<li><a href="#在-Entities-ForEach-方法中使用命令缓冲区">在
+<code>Entities.ForEach</code> 方法中使用命令缓冲区</a></li>
+</ul></li>
+<li><a href="#查找任意数据">查找任意数据</a>
+<ul>
+<li><a href="#在系统中查找实体数据">在系统中查找实体数据</a></li>
+<li><a href="#在作业中查找实体数据">在作业中查找实体数据</a></li>
+<li><a href="#数据访问错误">数据访问错误</a></li>
+</ul></li>
+<li><a href="#写入组">写入组</a>
+<ul>
+<li><a href="#使用写组">使用写组</a></li>
+<li><a href="#编写组示例">编写组示例</a></li>
+<li><a href="#创建写入组">创建写入组</a></li>
+<li><a href="#启用写组过滤">启用写组过滤</a></li>
+<li><a
+href="#覆盖另一个使用写入组的系统">覆盖另一个使用写入组的系统</a></li>
+<li><a
+href="#扩展另一个使用写组的系统">扩展另一个使用写组的系统</a></li>
+</ul></li>
+<li><a href="#版本号">版本号</a>
+<ul>
+<li><a href="#版本号结构">版本号结构</a></li>
+<li><a href="#实体版本号">实体版本号</a></li>
+<li><a href="#世界版本号">世界版本号</a></li>
+<li><a href="#作业组件系统版本号">作业组件系统版本号</a></li>
+<li><a href="#非共享组件版本号">非共享组件版本号</a></li>
+<li><a href="#共享组件版本号">共享组件版本号</a></li>
+</ul></li>
+</ul>
+<h1 id="系统">系统</h1>
+<p>系统是每帧在主线程上运行一次的代码单元。系统被组织成系统组的层次结构，您可以使用这些系统组来组织系统更新的顺序。有关
+ECS 中系统基础知识的更多信息，请参阅系统概念。<br />
+<span id="more"></span><br />
+| 标题 | 描述 |<br />
+| ————————————- | —————————————————— |<br />
+| 使用<code>SystemBase</code>创建系统 |
+有关如何使用<code>SystemBase</code>创建系统的信息。 |<br />
+| 迭代数据 | 描述了可以迭代系统中数据的各种方法。 |<br />
+| 系统更新顺序 | 有关系统更新顺序以及如何使用系统组控制更新顺序的信息。
+|<br />
+| 使用作业在多个线程上调度数据 | 有关如何在系统中使用作业的信息。
+|<br />
+| 使用<code>EntityQuery</code>查询实体数据 |
+有关使用<code>EntityQuery</code>查询实体数据的信息。 |<br />
+| 使用<code>EntityCommandBuffer</code>调度数据更改 |
+使用命令缓冲区来延迟对数据的更改。 |<br />
+| 查找任意数据 | 有关如何查找任意实体数据的信息。 |<br />
+| 写入组 | 使用写入组覆盖系统的数据。 |<br />
+| 版本号 | 使用版本号来检测潜在的变化。 |</p>
+<h1 id="使用-systembase-创建系统">使用 <code>SystemBase</code>
+创建系统</h1>
+<p>要创建托管系统，请实现抽象类 <code>SystemBase</code>。</p>
+<p>您必须使用 <code>OnUpdate</code>
+系统事件回调，来添加您的系统必须在每一帧执行的工作。<code>ComponentSystemBase</code>
+命名空间中的所有其他回调方法都是可选的。</p>
+<p>所有系统事件都在主线程上运行。最佳做法是使用 <code>OnUpdate</code>
+方法来安排作业来执行大部分工作。要从系统安排作业，您可以使用以下机制之一：</p>
+<ul>
+<li><code>Entities.ForEach</code>：遍历组件数据。</li>
+<li><code>Job.WithCode</code>：将 lambda
+表达式作为单个后台作业执行。</li>
+<li><code>IJobEntity</code>：迭代多个系统中的组件数据。</li>
+<li><code>IJobEntityBatch</code>：按原型块迭代数据。</li>
+</ul>
+<p>以下示例说明了使用 <code>Entities.ForEach</code>
+来实现一个系统，该系统根据一个组件的值更新另一个组件：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public struct Position : IComponentData
+&#123;
+    public float3 Value;
+&#125;
+
+public struct Velocity : IComponentData
+&#123;
+    public float3 Value;
+&#125;
+
+[RequireMatchingQueriesForUpdate]
+public partial class ECSSystem : SystemBase
+&#123;
+    protected override void OnUpdate()
+    &#123;
+        &#x2F;&#x2F; &#96;ForEach&#96; 中捕获的局部变量
+        float dT &#x3D; SystemAPI.Time.DeltaTime;
+
+        Entities
+            .WithName(&quot;Update_Displacement&quot;)
+            .ForEach(
+                (ref Position position, in Velocity velocity) &#x3D;&gt;
+                &#123;
+                    position &#x3D; new Position()
+                    &#123;
+                        Value &#x3D; position.Value + velocity.Value * dT
+                    &#125;;
+                &#125;
+            )
+            .ScheduleParallel();
+    &#125;
+&#125;</code></pre></div></figure></p>
+<h2 id="回调方法顺序">回调方法顺序</h2>
+<p><code>SystemBase</code> 中有几个回调方法，Unity
+在系统创建过程中的不同点调用，您可以使用它们来安排系统必须在每一帧执行的工作：</p>
+<ul>
+<li><code>OnCreate</code>：创建系统时调用。</li>
+<li><code>OnStartRunning</code>：在第一次调用 <code>OnUpdate</code>
+之前以及系统恢复运行时调用。</li>
+<li><code>OnUpdate</code>：只要系统有工作要做，就会在每一帧调用。有关确定系统何时有工作要做的因素的更多信息，请参阅
+<code>ShouldRunSystem</code>。</li>
+<li><code>OnStopRunning</code>：在 <code>OnDestroy</code>
+之前调用。每当系统停止运行时也会调用，如果没有实体与系统的
+<code>EntityQuery</code> 匹配，或者如果系统的 <code>Enabled</code>
+属性设置为 <code>false</code>，就会发生这种情况。</li>
+<li><code>OnDestroy</code>：系统被销毁时调用。</li>
+</ul>
+<p>下图说明了系统的事件顺序：<br />
+<img
+src="https://docs.unity3d.com/Packages/com.unity.entities@1.0/manual/images/SystemEventOrder.png" srcset="/img/loading.gif" lazyload
+alt="回调方法顺序" /><br />
+父系统组的 <code>OnUpdate</code> 方法触发其组中所有系统的
+<code>OnUpdate</code>
+方法。有关系统如何更新的更多信息，请参阅系统的更新顺序。</p>
+<h1 id="迭代数据">迭代数据</h1>
+<p>迭代数据是创建系统时需要执行的最常见任务之一。系统通常处理一组实体，从一个或多个组件读取数据，执行计算，然后将结果写入另一个组件。</p>
+<p>迭代实体和组件的最有效方法是在按顺序处理组件的作业中。这利用了所有可用内核和数据局部性的处理能力来避免
+CPU 缓存未命中。</p>
+<p>本节介绍如何通过以下方式迭代实体数据：</p>
+<table>
+
+<thead>
+<tr class="header">
+<th>标题</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>使用 <code>Entities.ForEach</code> 迭代数据</td>
+<td>如何使用 <code>SystemBase.Entities.ForEach</code>
+逐个实体地处理组件数据。</td>
+</tr>
+<tr class="even">
+<td>使用 <code>IJobEntity</code> 迭代数据</td>
+<td>如何使用 <code>IJobEntity</code> 编写一次并创建多个计划。</td>
+</tr>
+<tr class="odd">
+<td>遍历成批数据</td>
+<td>如何使用 <code>IJobEntityBatch</code>
+遍历包含匹配实体的原型块。</td>
+</tr>
+<tr class="even">
+<td>手动迭代数据</td>
+<td>如何手动迭代实体或原型块。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="额外资源">额外资源</h2>
+<p>您还可以使用 <code>EntityQuery</code>
+类来构建数据视图，其中仅包含给定算法或过程所需的特定数据。上面列表中的许多迭代方法显式或内部使用
+<code>EntityQuery</code>。有关详细信息，请参阅使用<code>EntityQuery</code>查询实体数据。</p>
+<h2 id="使用-entities.foreach-迭代数据">使用
+<code>Entities.ForEach</code> 迭代数据</h2>
+<p>如果您使用 <code>SystemBase</code> 类来创建您的系统，则可以使用
+<code>Entities.ForEach</code>
+构造来定义和执行针对实体及其组件的算法。在编译时，Unity 将每个
+<code>ForEach()</code> 调用转换为生成的作业。</p>
+<p>您向 <code>Entities.ForEach</code> 传递一个 lambda 表达式，Unity
+会根据 lambda 参数类型生成一个实体查询。当生成的作业运行时，Unity
+会为每个与查询匹配的实体调用一次 lambda。
+<code>ForEachLambdaJobDescription</code> 表示此生成的作业。</p>
+<h3 id="定义一个-lambda-表达式">定义一个 lambda 表达式</h3>
+<p>当您定义 <code>Entities.ForEach</code> lambda 表达式时，您可以声明
+<code>SystemBase</code>
+类在执行该方法时用于传递有关当前实体的信息的参数。</p>
+<p>典型的 lambda 表达式如下所示：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">Entities.ForEach(
+    (
+        Entity entity,
+        int entityInQueryIndex,
+        &#96;ref&#96; ObjectPosition translation,
+        in Movement move
+    ) &#x3D;&gt; &#123; &#x2F;* .. *&#x2F;&#125;
+)</code></pre></div></figure><br />
+您最多可以将八个参数传递给 <code>Entities.ForEach</code> lambda
+表达式。如果需要传递更多参数，可以定义自定义委托。有关详细信息，请参阅本文档中有关自定义委托的部分。</p>
+<p>使用标准委托时，必须按以下顺序对参数进行分组：</p>
+<ol type="1">
+<li>按值传递的参数（无参数修饰符）</li>
+<li>可写参数（<code>ref</code>参数修饰符）</li>
+<li>只读参数（<code>in</code>参数修饰符）</li>
+</ol>
+<p>您必须在所有组件上使用 <code>ref</code> 或 <code>in</code>
+参数修改关键字。如果你不这样做，Unity
+传递给你的方法的组件结构是一个副本而不是引用。这意味着它会为只读参数占用额外的内存，并且当函数返回后复制的结构超出范围时，您对组件所做的任何更改都会被静默抛出。</p>
+<p>如果 lambda
+表达式不遵循此顺序，并且您还没有创建合适的委托，则编译器会提供类似于以下内容的错误：</p>
+<div class="note note-danger">
+            <p>error CS1593: Delegate‘Invalid_ForEach_Signature_See_ForEach_Documentation_For_Rules_And_Restrictions’does not take N arguments</p>
+          </div>
+<p>此错误消息将参数数量作为问题，即使问题是参数顺序也是如此。</p>
+<h4 id="自定义代理">自定义代理</h4>
+<p>如果要在 <code>ForEach</code> lambda
+表达式中使用八个以上的参数，则必须声明自己的委托类型和
+<code>ForEach</code>
+重载。这允许您使用无限数量的参数，并以您想要的任何顺序放置
+<code>ref</code>、<code>in</code> 和 <code>value</code> 参数。</p>
+<p>您还可以在参数列表中的任意位置声明三个命名参数
+<code>entity</code>、<code>entityInQueryIndex</code> 和
+<code>nativeThreadIndex</code>。不要对这些参数使用 <code>ref</code> 或
+<code>in</code> 修饰符。</p>
+<p>以下示例显示 12 个参数，并在 lambda
+表达式中使用<code>entity</code>参数：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">static class BringYourOwnDelegate
+&#123;
+    &#x2F;&#x2F; 声明采用 12 个参数的委托。 T0 用于 Entity 参数
+    public delegate void CustomForEachDelegate&lt;T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11&gt;
+        (T0 t0, in T1 t1, in T2 t2, in T3 t3, in T4 t4, in T5 t5,
+         in T6 t6, in T7 t7, in T8 t8, in T9 t9, in T10 t10, in T11 t11);
+
+    &#x2F;&#x2F; 声明函数重载
+    public static TDescription ForEach&lt;TDescription, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11&gt;
+        (this TDescription description, CustomForEachDelegate&lt;T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11&gt; codeToRun)
+        where TDescription : struct, Unity.Entities.CodeGeneratedJobForEach.ISupportForEachWithUniversalDelegate &#x3D;&gt;
+        LambdaForEachDescriptionConstructionMethods.ThrowCodeGenException&lt;TDescription&gt;();
+&#125;
+
+&#x2F;&#x2F; 使用自定义委托和重载的系统
+[RequireMatchingQueriesForUpdate]
+public partial class MayParamsSystem : SystemBase
+&#123;
+    protected override void OnUpdate()
+    &#123;
+        Entities.ForEach(
+                (Entity entity0,
+                    in Data1 d1,
+                    in Data2 d2,
+                    in Data3 d3,
+                    in Data4 d4,
+                    in Data5 d5,
+                    in Data6 d6,
+                    in Data7 d7,
+                    in Data8 d8,
+                    in Data9 d9,
+                    in Data10 d10,
+                    in Data11 d11
+                    ) &#x3D;&gt; &#123;&#x2F;* .. *&#x2F;&#125;)
+            .Run();
+    &#125;
+&#125;</code></pre></div></figure></p>
+<h4 id="组件参数">组件参数</h4>
+<p>要访问与实体关联的组件，您必须将该组件类型的参数传递给 lambda
+表达式。编译器会自动将传递给 lambda
+表达式的所有组件作为必需组件添加到实体查询中。</p>
+<p>要更新组件值，您必须使用参数列表中的 <code>ref</code>
+关键字将其传递给 lambda 表达式。如果没有 <code>ref</code> 关键字，Unity
+将对组件的临时副本进行任何修改。</p>
+<p>要声明传递给 lambda 表达式的只读组件，请使用参数列表中的
+<code>in</code> 关键字。</p>
+<p>当您使用 <code>ref</code> 时，Unity
+会将当前块中的组件标记为已更改，即使 lambda
+表达式实际上并未修改它们。为了提高效率，您应该始终使用 <code>in</code>
+关键字将您的 lambda 表达式未修改的组件声明为只读。</p>
+<p>以下示例将 <code>Source</code> 组件参数作为只读传递给作业，并将
+<code>Destination</code> 组件参数作为可写传递：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">
+Entities.ForEach(
+    (ref Destination outputData,
+        in Source inputData) &#x3D;&gt;
+    &#123;
+        outputData.Value &#x3D; inputData.Value;
+    &#125;)
+    .ScheduleParallel();</code></pre></div></figure></p>
+<div class="note note-danger">
+            <p>您不能将块组件传递给 <code>Entities.ForEach</code> lambda表达式。</p>
+          </div>
+<p>对于动态缓冲区，使用 <code>DynamicBuffer&lt;T&gt;</code>
+而不是缓冲区中存储的组件类型：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[RequireMatchingQueriesForUpdate]
+public partial class BufferSum : SystemBase
+&#123;
+    private EntityQuery query;
+
+    &#x2F;&#x2F; 安排两个作业之间的依赖关系
+    protected override void OnUpdate()
+    &#123;
+        &#x2F;&#x2F; 这里可以访问query变量，
+        &#x2F;&#x2F; 因为我们在下面的entities.ForEach中使用了WithStoreEntityQueryInField(query)
+        int entitiesInQuery &#x3D; query.CalculateEntityCount();
+
+        &#x2F;&#x2F; 创建一个原生数组来保存中间和
+        &#x2F;&#x2F; (每个实体一个元素)
+        NativeArray&lt;int&gt; intermediateSums
+            &#x3D; new NativeArray&lt;int&gt;(entitiesInQuery, Allocator.TempJob);
+
+        &#x2F;&#x2F; 安排第一个作业以添加所有缓冲区元素
+        Entities
+            .ForEach((int entityInQueryIndex, in DynamicBuffer&lt;IntBufferData&gt; buffer) &#x3D;&gt;
+        &#123;
+            for (int i &#x3D; 0; i &lt; buffer.Length; i++)
+            &#123;
+                intermediateSums[entityInQueryIndex] +&#x3D; buffer[i].Value;
+            &#125;
+        &#125;)
+            .WithStoreEntityQueryInField(ref query)
+            .WithName(&quot;IntermediateSums&quot;)
+            .ScheduleParallel(); &#x2F;&#x2F; 为每个实体块并行执行
+
+        &#x2F;&#x2F; 安排第二个工作，依赖于第一个
+        Job.WithCode(() &#x3D;&gt;
+        &#123;
+            int result &#x3D; 0;
+            for (int i &#x3D; 0; i &lt; intermediateSums.Length; i++)
+            &#123;
+                result +&#x3D; intermediateSums[i];
+            &#125;
+            &#x2F;&#x2F;不兼容burst:
+            Debug.Log(&quot;Final sum is &quot; + result);
+        &#125;)
+            .WithDisposeOnCompletion(intermediateSums)
+            .WithoutBurst()
+            .WithName(&quot;FinalSum&quot;)
+            .Schedule(); &#x2F;&#x2F; 在单个后台线程上执行
+    &#125;
+&#125;
+</code></pre></div></figure></p>
+<h4 id="命名参数">命名参数</h4>
+<p>您还可以将以下命名的参数传递给 <code>Entities.ForEach</code> lambda
+表达式，Unity 根据作业正在处理的实体为其分配值。<br />
+| 参数 | 函数 |<br />
+| ———————– |
+—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————-
+|<br />
+| Entity entity | 当前实体的实体实例。只要类型是
+Entity，您就可以将参数命名为任何名称。 |<br />
+| int entityInQueryIndex |
+实体在查询选择的所有实体列表中的索引。当您有一个需要为每个实体填充唯一值的native
+array时，请使用实体索引值。您可以使用 entityInQueryIndex
+作为该数组中的索引。您应该使用 entityInQueryIndex 作为 sortKey
+将命令添加到并发实体命令缓冲区。 |<br />
+| int nativeThreadIndex | 执行 lambda
+表达式当前迭代的线程的唯一索引。当您使用 Run() 执行 lambda
+表达式时，nativeThreadIndex 始终为零。不要使用 nativeThreadIndex
+作为并发实体命令缓冲区的 sortKey；使用 entityInQueryIndex 代替。 |<br />
+| EntityCommands commands | 只要类型是
+EntityCommands，您就可以将此参数命名为任何名称。仅将此参数与
+WithDeferredPlaybackSystem<T>() 或 WithImmediatePlayback() 结合使用。
+EntityCommands 类型包含几个方法，这些方法反映了 EntityCommandBuffer
+类型中的对应方法。如果您在 Entities.ForEach() 中使用 EntityCommands
+实例，编译器会在适当的地方创建额外的代码来处理实体命令缓冲区的创建、调度、播放和处置，在这些代码上调用
+EntityCommands 方法的对应方法。 |</p>
+<h3 id="执行-entities.foreach-lambda-表达式">执行
+<code>Entities.ForEach</code> lambda 表达式</h3>
+<p>您可以通过以下方式执行作业 lambda 表达式：</p>
+<ul>
+<li>使用 Schedule() 和 ScheduleParallel() 来安排作业</li>
+<li>使用 Run() 立即在主线程上执行作业。<br />
+以下示例说明了使用 <code>Entities.ForEach</code> 读取
+<code>Velocity</code> 组件并写入 <code>ObjectPosition</code> 组件的
+<code>SystemBase</code> 实现：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[RequireMatchingQueriesForUpdate]
+partial class ApplyVelocitySystem : SystemBase
+&#123;
+    protected override void OnUpdate()
+    &#123;
+        Entities.ForEach((ref ObjectPosition translation,
+            in Velocity velocity) &#x3D;&gt;
+            &#123;
+                translation.Value +&#x3D; velocity.Value;
+            &#125;)
+            .Schedule();
+    &#125;
+&#125;</code></pre></div></figure></li>
+</ul>
+<h3 id="选择实体">选择实体</h3>
+<p><code>Entities.ForEach</code>
+有自己的机制来定义用于选择要处理的实体的实体查询。该查询会自动包含您用作
+lambda 表达式参数的任何组件。</p>
+<p>您还可以使用 <code>WithAll</code>、<code>WithAny</code> 和
+<code>WithNone</code> 子句进一步细化 <code>Entities.ForEach</code>
+选择的实体。有关查询选项的完整列表，请参阅
+<code>SystemBase.Entities</code>。</p>
+<p>以下示例使用这些子句根据这些参数选择实体：</p>
+<ul>
+<li>该实体具有组件：<code>Destination</code>、<code>Source</code> 和
+<code>LocalToWorld</code></li>
+<li>实体至少具有以下组件之一：<code>ObjectRotation</code>、<code>ObjectPosition</code>
+或 <code>ObjectUniformScale</code></li>
+<li>该实体没有 <code>ObjectNonUniformScale</code> 组件。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">Entities.WithAll&lt;LocalToWorld&gt;()
+    .WithAny&lt;ObjectRotation, ObjectPosition, ObjectUniformScale&gt;()
+    .WithNone&lt;ObjectNonUniformScale&gt;()
+    .ForEach((ref Destination outputData, in Source inputData) &#x3D;&gt;
+    &#123;
+        &#x2F;* do some work *&#x2F;
+    &#125;)
+    .Schedule();</code></pre></div></figure><br />
+在此示例中，在 lambda 表达式中仅访问 <code>Destination</code> 和
+<code>Source</code> 组件，因为它们是参数列表中的唯一组件。</li>
+</ul>
+<h3 id="访问-entityquery-对象">访问 EntityQuery 对象</h3>
+<p><code>Entities.ForEach</code> 使用 <code>OnCreate</code> 创建一个
+<code>EntityQuery</code>，您可以随时使用它的副本，甚至在调用
+<code>Entities.ForEach</code> 之前。</p>
+<p>要访问此实体查询，请使用带有 <code>ref</code> 参数修饰符的
+<code>WithStoreEntityQueryInField(ref query)</code>。此方法将对查询的引用分配给您提供的字段。但是，此
+<code>EntityQuery</code> 没有 <code>Entities.ForEach</code>
+调用设置的任何过滤器。</p>
+<p>以下示例说明如何访问为 <code>Entities.ForEach</code> 构造隐式创建的
+<code>EntityQuery</code> 对象。它使用 <code>EntityQuery</code>
+对象来调用 <code>CalculateEntityCount()</code>
+方法，并使用此计数创建一个具有足够空间的native
+array，来为查询选择的每个实体存储一个值：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">
+private EntityQuery query;
+protected override void OnUpdate()
+&#123;
+    int dataCount &#x3D; query.CalculateEntityCount();
+    NativeArray&lt;float&gt; dataSquared
+        &#x3D; new NativeArray&lt;float&gt;(dataCount, Allocator.Temp);
+    Entities
+        .WithStoreEntityQueryInField(ref query)
+        .ForEach((int entityInQueryIndex, in Data data) &#x3D;&gt;
+        &#123;
+            dataSquared[entityInQueryIndex] &#x3D; data.Value * data.Value;
+        &#125;)
+        .ScheduleParallel();
+
+    Job
+        .WithCode(() &#x3D;&gt;
+    &#123;
+        &#x2F;&#x2F;使用 dataSquared 数组...
+        var v &#x3D; dataSquared[dataSquared.Length - 1];
+    &#125;)
+        .WithDisposeOnCompletion(dataSquared)
+        .Schedule();
+&#125;
+
+</code></pre></div></figure></p>
+<h3 id="访问可选组件">访问可选组件</h3>
+<p><code>Entities.ForEach</code> lambda 表达式不支持使用
+<code>WithAny&lt;T,U&gt;</code> 查询和访问可选组件。</p>
+<p>如果要读取或写入可选组件，请将 <code>Entities.ForEach</code>
+构造拆分为可选组件的每个组合的多个作业。例如，如果您有两个可选组件，则需要三个
+<code>ForEach</code>
+结构：一个包含第一个可选组件，一个包含第二个可选组件，一个包含两个组件。另一种选择是按块使用
+<code>IJobChunkiterate</code>。有关详细信息，请参阅按批次迭代数据。</p>
+<h3 id="更改过滤">更改过滤</h3>
+<p>您可以使用 <code>WithChangeFilter&lt;T&gt;</code>
+来启用<strong>更改过滤</strong>，只有在当前 <code>SystemBase</code>
+实例上次运行后实体中的另一个组件发生更改时，它才会处理组件。更改过滤器中的组件类型必须在
+lambda 表达式参数列表中，或者是 <code>WithAll&lt;T&gt;</code>
+语句的一部分。例如：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">Entities
+    .WithChangeFilter&lt;Source&gt;()
+    .ForEach((ref Destination outputData,
+        in Source inputData) &#x3D;&gt;
+        &#123;
+            &#x2F;* Do work *&#x2F;
+        &#125;)
+    .ScheduleParallel();</code></pre></div></figure><br />
+实体查询最多支持对两种组件类型进行更改过滤。</p>
+<p>Unity
+在原型块级别应用更改过滤。如果任何代码访问具有写访问权限的块中的组件，那么
+Unity
+会将该原型块中的组件类型标记为已更改，即使代码没有更改任何数据。</p>
+<h3 id="共享组件过滤">共享组件过滤</h3>
+<p>Unity
+将具有共享组件的实体与其他具有相同共享组件值的实体分组。要选择具有特定共享组件值的实体组，请使用
+<code>WithSharedComponentFilter</code> 方法。</p>
+<p>以下示例选择了全部按 <code>Cohort:ISharedComponentData</code>
+分组的实体。此示例中的 lambda 表达式根据实体的Cohort设置
+<code>DisplayColor:IComponentData</code> 组件：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[RequireMatchingQueriesForUpdate]
+public partial class ColorCycleJob : SystemBase
+&#123;
+    protected unsafe override void OnUpdate()
+    &#123;
+
+        EntityManager.GetAllUniqueSharedComponents&lt;Cohort&gt;(out var cohorts, Allocator.Temp);
+        for (int i&#x3D;0; i&lt;cohorts.Length; i++)
+        &#123;
+            var cohort &#x3D; cohorts[i];
+            DisplayColor newColor &#x3D; ColorTable.GetNextColor(cohort.Value);
+            Entities.WithSharedComponentFilter(cohort)
+                .ForEach((ref DisplayColor color) &#x3D;&gt; &#123; color &#x3D; newColor; &#125;)
+                .ScheduleParallel();
+        &#125;
+    &#125;
+&#125;</code></pre></div></figure><br />
+该示例使用 <code>EntityManager</code>
+获取所有唯一同类Cohort值的队列数组。然后它为每个队列安排一个 lambda
+作业，并将新颜色作为捕获变量传递给 lambda 表达式。</p>
+<h3 id="捕获变量">捕获变量</h3>
+<p>您可以捕获 <code>Entities.ForEach</code> lambda
+表达式的局部变量。当您调用其中一种 Schedule 方法而不是 Run
+来使用作业来执行 lambda
+表达式时，对捕获的变量以及如何使用它们有一些限制：</p>
+<ul>
+<li>您只能捕获 NativeContainer 和 blittable 类型。</li>
+<li>作业只能写入作为NativeContainer的捕获变量。要返回单个值，请创建一个包含一个元素的native
+array。</li>
+</ul>
+<p>如果您要读取NativeContainer，但不写入它，请始终使用
+<code>WithReadOnly(variable)</code>
+指定只读访问权限。有关为捕获的变量设置属性的详细信息，请参阅
+<code>SystemBase.Entities</code>。 <code>Entities.ForEach</code>
+将这些作为方法提供，因为 C# 语言不允许局部变量的属性。</p>
+<p>要在 <code>Entities.ForEach</code>
+运行后处理捕获的NativeContainer或包含NativeContainer的类型，请使用
+<code>WithDisposeOnCompletion(variable)</code>。如果您在
+<code>Run()</code> 中调用它，它会在 lambda
+表达式运行后立即处理这些类型。如果您在 <code>Schedule()</code> 和
+<code>ScheduleParallel()</code>
+中调用它，它会安排它们稍后与作业一起处理，并返回 JobHandle。</p>
+<div class="note note-info">
+            <p>当您使用 <code>Run()</code>执行该方法时，您可以写入不是NativeContainer的捕获变量。但是，您仍应尽可能使用blittable 类型，以便可以使用 Burst 编译该方法。</p>
+          </div>
+<h3 id="支持的功能">支持的功能</h3>
+<p>除了使用 <code>Run()</code> 在主线程上执行 lambda
+表达式。您还可以使用 <code>Schedule()</code>
+将其作为单个作业执行，或使用 <code>ScheduleParallel()</code>
+将其作为并行作业执行。这些不同的执行方法对您访问数据的方式有不同的限制。此外，Burst
+编译器使用 C# 语言的一个受限子集，因此如果要在该子集之外使用 C#
+功能，则需要指定 <code>WithoutBurst()</code>。这包括访问托管类型。</p>
+<p>下表显示了 <code>Entities.ForEach</code> 中支持哪些用于
+<code>SystemBase</code> 中的不同的调度方法：<br />
+| 支持的功能 | Run | Schedule | ScheduleParallel |<br />
+| ———————————– | ——————————————— | ——– | —————- |<br />
+| 捕获本地值类型 | ✓ | ✓ | ✓ |<br />
+| 捕获本地引用类型 | Only WithoutBurst and not in ISystem | | |<br />
+| 写入捕获的变量 | ✓ | | |<br />
+| 在系统类上使用字段 | Only WithoutBurst | | |<br />
+| 引用类型的方法 | Only WithoutBurst and not in ISystem | | |<br />
+| 共享组件 | Only WithoutBurst and not in ISystem | | |<br />
+| 托管组件 | Only WithoutBurst and not in ISystem | | |<br />
+| 结构变化 | Only WithStructuralChanges and not in ISystem | | |<br />
+| SystemBase.GetComponent | ✓ | ✓ | ✓ |<br />
+| SystemBase.SetComponent | ✓ | ✓ | |<br />
+| GetComponentDataFromEntity | ✓ | ✓ | Only as ReadOnly |<br />
+| HasComponent | ✓ | ✓ | ✓ |<br />
+| WithDisposeOnCompletion | ✓ | ✓ | ✓ |<br />
+| WithScheduleGranularity | | | ✓ |<br />
+| WithDeferredPlaybackSystem | ✓ | ✓ | ✓ |<br />
+| WithImmediatePlayback | ✓ | | |<br />
+| HasBuffer | ✓ | ✓ | ✓ |<br />
+| SystemBase.GetStorageInfoFromEntity | ✓ | ✓ | ✓ |<br />
+| SystemBase.Exists | ✓ | ✓ | ✓ |</p>
+<div class="note note-waring">
+            <p><code>WithStructuralChanges()</code> 会禁用突发。如果您想获得高性能<code>Entities.ForEach</code>，请不要使用此选项。如果要使用此选项，请使用<code>EntityCommandBuffer</code>。</p>
+          </div>
+<p><code>Entities.ForEach</code> 构造使用 Roslyn
+源代码生成器将您为构造编写的代码转换为正确的 ECS
+代码。这种翻译意味着您可以表达算法的意图，而无需包含复杂的样板代码。但是，这意味着一些常见的代码编写方式是不允许的。</p>
+<p>不支持以下功能：</p>
+<ul>
+<li><code>.With</code> 调用中的动态代码</li>
+<li>使用ref修饰 <code>SharedComponent</code> 参数</li>
+<li>嵌套 <code>Entities.ForEach</code> lambda 表达式</li>
+<li>调用存储在变量、字段或方法中的委托</li>
+<li>具有 lambda 参数类型的 <code>SetComponent</code></li>
+<li>具有可写 lambda 参数的 <code>GetComponent</code></li>
+<li>lambdas 中的泛型参数</li>
+<li>在具有泛型参数的系统中</li>
+</ul>
+<h3 id="依赖关系">依赖关系</h3>
+<p>默认情况下，系统使用其 <code>Dependency</code> 属性来管理其与 ECS
+相关的依赖项。默认情况下，系统按照它们在 <code>OnUpdate()</code>
+函数中出现的顺序将使用 <code>Entities.ForEach</code> 和
+<code>Job.WithCode</code> 创建的每个作业添加到依赖作业句柄。您还可以将
+<code>JobHandle</code> 传递给您的 <code>Schedule</code>
+方法以手动管理作业依赖性，然后返回生成的依赖性。有关详细信息，请参阅依赖项文档。</p>
+<p>有关作业依赖性的更多一般信息，请参阅作业依赖性。</p>
+<h2 id="使用-ijobentity-迭代数据">使用 <code>IJobEntity</code>
+迭代数据</h2>
+<p>当您在多个系统中使用不同的调用进行数据转换时，要遍历
+<code>ComponentData</code>，您可以使用 <code>IJobEntity</code>，它类似于
+<code>Entities.ForEach</code>。</p>
+<p>它创建一个 <code>IJobEntityBatch</code>
+作业，因此您只需考虑要转换的数据。</p>
+<h3 id="ijobentity-和-entities.foreach-的比较">IJobEntity 和
+<code>Entities.ForEach</code> 的比较</h3>
+<p><code>IJobEntity</code> 相对于 <code>Entities.ForEach</code>
+的优势在于您可以编写一次代码并在多个系统中重复使用它，而不是仅一次。</p>
+<p>这是一个 <code>Entities.ForEach</code> 示例：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[RequireMatchingQueriesForUpdate]
+public partial class BoidForEachSystem : SystemBase
+&#123;
+    EntityQuery m_BoidQuery;
+    EntityQuery m_ObstacleQuery;
+    EntityQuery m_TargetQuery;
+    protected override void OnUpdate()
+    &#123;
+        &#x2F;&#x2F; 计算各个查询中的实体数量。
+        var boidCount &#x3D; m_BoidQuery.CalculateEntityCount();
+        var obstacleCount &#x3D; m_ObstacleQuery.CalculateEntityCount();
+        var targetCount &#x3D; m_TargetQuery.CalculateEntityCount();
+
+        &#x2F;&#x2F; 分配数组，以存储与相应的查询匹配的实体数量相等的数据。
+        var cellSeparation &#x3D; CollectionHelper.CreateNativeArray&lt;float3, RewindableAllocator&gt;(boidCount, ref World.UpdateAllocator);
+        var copyTargetPositions &#x3D; CollectionHelper.CreateNativeArray&lt;float3, RewindableAllocator&gt;(targetCount, ref World.UpdateAllocator);
+        var copyObstaclePositions &#x3D; CollectionHelper.CreateNativeArray&lt;float3, RewindableAllocator&gt;(obstacleCount, ref World.UpdateAllocator);
+
+        &#x2F;&#x2F; 安排各个数组的作业与各个查询一起存储。
+        Entities
+            .WithSharedComponentFilter(new BoidSetting&#123;num&#x3D;1&#125;)
+            .ForEach((int entityInQueryIndex, in LocalToWorld localToWorld) &#x3D;&gt;
+            &#123;
+                cellSeparation[entityInQueryIndex] &#x3D; localToWorld.Position;
+            &#125;)
+            .ScheduleParallel();
+
+        Entities
+            .WithAll&lt;BoidTarget&gt;()
+            .WithStoreEntityQueryInField(ref m_TargetQuery)
+            .ForEach((int entityInQueryIndex, in LocalToWorld localToWorld) &#x3D;&gt;
+            &#123;
+                copyTargetPositions[entityInQueryIndex] &#x3D; localToWorld.Position;
+            &#125;)
+            .ScheduleParallel();
+
+        Entities
+            .WithAll&lt;BoidObstacle&gt;()
+            .WithStoreEntityQueryInField(ref m_ObstacleQuery)
+            .ForEach((int entityInQueryIndex, in LocalToWorld localToWorld) &#x3D;&gt;
+            &#123;
+                copyObstaclePositions[entityInQueryIndex] &#x3D; localToWorld.Position;
+            &#125;)
+            .ScheduleParallel();
+    &#125;
+&#125;</code></pre></div></figure><br />
+可以改写如下：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[RequireMatchingQueriesForUpdate]
+public partial class BoidJobEntitySystem : SystemBase
+&#123;
+    EntityQuery m_BoidQuery;
+    EntityQuery m_ObstacleQuery;
+    EntityQuery m_TargetQuery;
+
+    protected override void OnUpdate()
+    &#123;
+        &#x2F;&#x2F; 计算各个查询中的实体数量。
+        var boidCount &#x3D; m_BoidQuery.CalculateEntityCount();
+        var obstacleCount &#x3D; m_ObstacleQuery.CalculateEntityCount();
+        var targetCount &#x3D; m_TargetQuery.CalculateEntityCount();
+
+        &#x2F;&#x2F; 分配数组，以存储与相应的查询匹配的实体数量相等的数据。
+        var cellSeparation &#x3D; CollectionHelper.CreateNativeArray&lt;float3, RewindableAllocator&gt;(boidCount, ref World.UpdateAllocator);
+        var copyTargetPositions &#x3D; CollectionHelper.CreateNativeArray&lt;float3, RewindableAllocator&gt;(targetCount, ref World.UpdateAllocator);
+        var copyObstaclePositions &#x3D; CollectionHelper.CreateNativeArray&lt;float3, RewindableAllocator&gt;(obstacleCount, ref World.UpdateAllocator);
+
+        &#x2F;&#x2F; 为各自的数组安排作业，以与各自的查询一起存储。
+        new CopyPositionsJob &#123; copyPositions &#x3D; cellSeparation&#125;.ScheduleParallel(m_BoidQuery);
+        new CopyPositionsJob &#123; copyPositions &#x3D; copyTargetPositions&#125;.ScheduleParallel(m_TargetQuery);
+        new CopyPositionsJob &#123; copyPositions &#x3D; copyObstaclePositions&#125;.ScheduleParallel(m_ObstacleQuery);
+    &#125;
+
+    protected override void OnCreate()
+    &#123;
+        &#x2F;&#x2F; 获取相应的查询，其中包括前面描述的“CopyPositionsJob”所需的组件。
+        m_BoidQuery &#x3D; GetEntityQuery(typeof(LocalToWorld));
+        m_BoidQuery.SetSharedComponentFilter(new BoidSetting&#123;num&#x3D;1&#125;);
+        m_ObstacleQuery &#x3D; GetEntityQuery(typeof(LocalToWorld), typeof(BoidObstacle));
+        m_TargetQuery &#x3D; GetEntityQuery(typeof(LocalToWorld), typeof(BoidTarget));;
+    &#125;
+&#125;</code></pre></div></figure></p>
+<h3 id="创建-ijobentity-作业">创建 IJobEntity 作业</h3>
+<p>要创建 <code>IJobEntity</code> 作业，请编写一个使用
+<code>IJobEntity</code> 接口的结构，并实现您自己的自定义
+<code>Execute</code> 方法。</p>
+<p>使用 <code>partial</code>
+关键字是因为源代码生成创建了一个结构，该结构在
+<code>project/Temp/GeneratedCode/.....</code> 中找到的单独文件中实现
+<code>IJobEntityBatch</code>。</p>
+<p>以下示例每帧向每个 <code>SampleComponent</code> 值加1。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public struct SampleComponent : IComponentData &#123; public float Value; &#125;
+public partial struct ASampleJob : IJobEntity
+&#123;
+    &#x2F;&#x2F; 每个SampleComponent值+1
+    void Execute(ref SampleComponent sample)
+    &#123;
+        sample.Value +&#x3D; 1f;
+    &#125;
+&#125;
+
+public partial class ASample : SystemBase
+&#123;
+    protected override void OnUpdate()
+    &#123;
+        &#x2F;&#x2F; 调度作业
+        new ASampleJob().ScheduleParallel();
+    &#125;
+&#125;</code></pre></div></figure></p>
+<h3 id="指定查询">指定查询</h3>
+<p>您可以通过以下方式指定 IJobEntity 的查询：</p>
+<ul>
+<li>手动创建查询，以指定不同的调用要求。</li>
+<li>让已实施的 <code>IJobEntity</code>
+为您完成，基于其给定的执行参数，以及使用属性
+<code>[WithAll(params Type)]</code>、<code>[WithAny(params Type)]</code>、<code>[WithNone(params Type)]</code>、<code>[ WithChangeFilter(params Type)]</code>
+和
+<code>[WithEntityQueryOptions((params EntityQueryOptions)]</code>。</li>
+</ul>
+<p>以下示例显示了这两个选项：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">partial struct QueryJob : IJobEntity
+&#123;
+    &#x2F;&#x2F; 迭代所有 SampleComponents 并增加它们的值
+    public void Execute(ref SampleComponent sample)
+    &#123;
+        sample.Value +&#x3D; 1;
+    &#125;
+&#125;
+
+[RequireMatchingQueriesForUpdate]
+public partial class QuerySystem : SystemBase
+&#123;
+    &#x2F;&#x2F; 与 QueryJob 匹配的查询，为 &#96;BoidTarget&#96; 指定
+    EntityQuery query_boidtarget;
+
+    &#x2F;&#x2F; 与 QueryJob 匹配的查询，为 &#96;BoidObstacle&#96; 指定
+    EntityQuery query_boidobstacle;
+    protected override void OnCreate()
+    &#123;
+        &#x2F;&#x2F; 包含在“QueryJob”中找到的所有执行参数的查询 - 以及其他用户指定的组件“BoidTarget”。
+        query_boidtarget &#x3D; GetEntityQuery(ComponentType.ReadWrite&lt;SampleComponent&gt;(),ComponentType.ReadOnly&lt;BoidTarget&gt;());
+
+        &#x2F;&#x2F; 包含在“QueryJob”中找到的所有执行参数的查询 - 以及其他用户指定的组件“BoidObstacle”。
+        query_boidobstacle &#x3D; GetEntityQuery(ComponentType.ReadWrite&lt;SampleComponent&gt;(),ComponentType.ReadOnly&lt;BoidObstacle&gt;());
+    &#125;
+
+    protected override void OnUpdate()
+    &#123;
+        &#x2F;&#x2F; Uses the BoidTarget query
+        new QueryJob().ScheduleParallel(query_boidtarget);
+
+        &#x2F;&#x2F; Uses the BoidObstacle query
+        new QueryJob().ScheduleParallel(query_boidobstacle);
+
+        &#x2F;&#x2F; Uses query created automatically that matches parameters found in &#96;QueryJob&#96;.
+        new QueryJob().ScheduleParallel();
+    &#125;
+&#125;</code></pre></div></figure></p>
+<h4 id="属性">属性</h4>
+<p>因为 IJobEntity
+类似于作业，所以您可以使用对作业起作用的所有属性：</p>
+<ul>
+<li><code>Unity.Burst.BurstCompile</code></li>
+<li><code>Unity.Collections.DeallocateOnJobCompletion</code></li>
+<li><code>Unity.Collections.NativeDisableParallelForRestriction</code></li>
+<li><code>Unity.Burst.BurstDiscard</code></li>
+<li><code>Unity.Collections.LowLevel.Unsafe.NativeSetThreadIndex</code></li>
+<li><code>Unity.Burst.NoAlia</code></li>
+</ul>
+<p>IJobEntity 还具有您可以使用的其他属性：<br />
+| 属性 | 描述 |<br />
+| ——————————————————————– | ————————————————————————————————————————–
+|<br />
+| <code>Unity.Entities.WithAll(params Type[])</code> |
+在作业结构上设置。缩小查询范围，使实体必须匹配提供的所有类型。 |<br />
+| <code>Unity.Entities.WithAny(params Type[])</code> |
+在作业结构上设置。缩小查询范围，使实体必须匹配所提供的任何类型。 |<br />
+| <code>Unity.Entities.WithNone(params Type[])</code> |
+在作业结构上设置。缩小查询范围，使实体不必匹配所提供的任何类型。 |<br />
+| <code>Unity.Entities.WithChangeFilter(params Type[])</code> |
+在作业结构上设置或附加到执行中的参数。缩小查询范围，以便实体必须在给定组件的原型块中进行更改。
+|<br />
+|
+<code>Unity.Entities.WithEntityQueryOptions(params EntityQueryOptions[])</code>
+| 在作业结构上设置。更改查询范围以使用描述的 EntityQueryOptions。
+|<br />
+| <code>Unity.Entities.EntityInQueryIndex</code> | 在 Execute 中设置 int
+参数以获取查询中的当前索引，用于当前实体迭代。这与
+<code>Entities.ForEach</code> 中的 entityInQueryIndex 相同。 |</p>
+<p>以下是 <code>EntityInQueryIndex</code> 的示例：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[BurstCompile]
+partial struct CopyPositionsJob : IJobEntity
+&#123;
+    public NativeArray&lt;float3&gt; copyPositions;
+
+    &#x2F;&#x2F; 遍历所有 &#96;LocalToWorld&#96; 并将它们的位置存储在 &#96;copyPositions&#96; 中。
+    public void Execute([EntityInQueryIndex] int entityInQueryIndex, in LocalToWorld localToWorld)
+    &#123;
+        copyPositions[entityInQueryIndex] &#x3D; localToWorld.Position;
+    &#125;
+&#125;
+
+[RequireMatchingQueriesForUpdate]
+public partial class EntityInQuerySystem : SystemBase
+&#123;
+    &#x2F;&#x2F; 此查询应匹配 &#96;CopyPositionsJob&#96; 参数
+    EntityQuery query;
+    protected override void OnCreate()
+    &#123;
+        &#x2F;&#x2F; 获取匹配 &#96;CopyPositionsJob&#96; 参数的查询
+        query &#x3D; GetEntityQuery(ComponentType.ReadOnly&lt;LocalToWorld&gt;());
+    &#125;
+
+    protected override void OnUpdate()
+    &#123;
+        &#x2F;&#x2F; 获取一个native array，该数组的大小等于查询找到的实体数量。
+        var positions &#x3D; new NativeArray&lt;float3&gt;(query.CalculateEntityCount(), World.UpdateAllocator.ToAllocator);
+
+        &#x2F;&#x2F; 在并行线程上为此数组安排作业。
+        new CopyPositionsJob&#123;copyPositions &#x3D; positions&#125;.ScheduleParallel();
+
+        &#x2F;&#x2F; 处理作业找到的位置数组。
+        positions.Dispose(Dependency);
+    &#125;
+&#125;</code></pre></div></figure></p>
+<h4 id="执行参数">执行参数</h4>
+<p>以下是您可以在 <code>IJobEntity</code> 中使用的所有受支持
+<code>Execute</code> 参数的列表：</p>
+<table>
+
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>IComponentData</code></td>
+<td>标记为 <code>ref</code> 用于读写访问，或标记为对
+<code>ComponentData</code> 的只读访问。</td>
+</tr>
+<tr class="even">
+<td><code>ICleanupComponentData</code></td>
+<td>标记为 <code>ref</code> 用于读写访问，或标记为对
+<code>ComponentData</code> 的只读访问。</td>
+</tr>
+<tr class="odd">
+<td><code>ISharedComponent</code></td>
+<td>标记为只读访问
+<code>SharedComponentData</code>。如果这是托管的，你不能突发编译或安排它。使用
+<code>.Run</code> 代替。</td>
+</tr>
+<tr class="even">
+<td>Managed components</td>
+<td>使用值副本进行读写访问，或使用 <code>in</code>
+标记对托管组件进行只读访问。例如，UnityEngine.Transform。将托管组件标记为
+<code>ref</code> 是错误的，您不能对其进行突发编译或调度。使用 .Run
+代替。</td>
+</tr>
+<tr class="odd">
+<td><code>Entity</code></td>
+<td>获取当前实体。这只是一个值副本，所以不要用 <code>ref</code> 或
+<code>in</code> 标记。</td>
+</tr>
+<tr class="even">
+<td><code>DynamicBuffer&lt;T&gt;</code></td>
+<td>获取动态缓冲区。用 <code>ref</code> 标记为读写访问，用
+<code>in</code> 标记为只读访问。</td>
+</tr>
+<tr class="odd">
+<td><code>IAspect</code></td>
+<td>获取方面。方面充当参考，因此您无法分配它们。但是，您可以使用
+<code>ref</code> 和 value-copy 将其标记为可读写，使用 <code>in</code>
+其标记为只读访问。</td>
+</tr>
+<tr class="even">
+<td><code>int</code></td>
+<td>支持三种整数：</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>使用属性 [Unity.Entities.ChunkIndexInQuery] 标记 <code>int</code>
+以获取查询中的当前原型块索引。</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>使用属性 [Unity.Entities.EntityIndexInChunk] 标记 <code>int</code>
+以获取当前原型块中的当前实体索引。您可以添加
+<code>EntityIndexInChunk</code> 和 <code>ChunkIndexInQuery</code>
+以获得每个实体的唯一标识符。</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>使用属性 [Unity.Entities.EntityInQueryIndex] 标记 <code>int</code>
+以获取查询的打包索引。这对性能有影响，使用
+<code>EntityQuery.CalculateBaseEntityIndexArray[Async]</code>。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="使用-ijobentitybatch-遍历成批数据">使用
+<code>IJobEntityBatch</code> 遍历成批数据</h2>
+<p>在系统内实现 IJobEntityBatch 或 IJobEntityBatchWithIndex
+以在实体批次中迭代数据。</p>
+<p>当您在系统的 OnUpdate 函数中计划 IJobEntityBatch
+作业时，系统会使用您传递给计划函数的实体查询来识别应该传递给该作业的块。该作业会为这些块中的每批实体调用一次您的
+Execute
+函数。默认情况下，批处理大小是一个完整的块，但您可以在调度作业时将批处理大小设置为块的一部分。无论批次大小如何，给定批次中的实体始终存储在同一块中。在作业的执行函数中，您可以逐个实体地迭代每个批次中的数据。</p>
+<p>当您需要批次集中所有实体的索引值时，请使用
+<code>IJobEntityBatchWithIndex</code>。否则，<code>IJobEntityBatch</code>
+效率更高，因为它不需要计算这些索引。</p>
+<p>要实施批处理作业：</p>
+<ol type="1">
+<li><p>使用 EntityQuery 查询数据以确定要处理的实体。</p></li>
+<li><p>使用 IJobEntityBatch 或 IJobEntityBatchWithIndex
+定义作业结构。</p></li>
+<li><p>声明您的作业访问的数据。在作业结构中，包括用于标识作业必须直接访问的组件类型的
+ComponentTypeHandle
+对象的字段。此外，指定作业是读取还是写入这些组件。您还可以包含标识您要查找的实体数据的字段，这些实体不属于查询的一部分，以及用于非实体数据的字段。</p></li>
+<li><p>编写作业结构的执行函数来转换您的数据。获取作业读取或写入的组件的
+NativeArray 实例，然后迭代当前批处理以执行所需的工作。</p></li>
+<li><p>在系统 OnUpdate
+函数中安排作业，将标识要处理的实体的实体查询传递给调度函数。</p></li>
+</ol>
+<div class="note note-info">
+            <p>与使用 <code>Entities.ForEach</code> 相比，使用<code>IJobEntityBatch</code> 或 <code>IJobEntityBatchWithIndex</code>进行迭代更复杂并且需要更多的代码设置，并且只应在必要或更有效时使用。</p>
+          </div>
+<p>有关详细信息，ECS 示例存储库包含一个简单的 HelloCube
+示例，该示例演示了如何使用 IJobEntityBatch。</p>
+<h3 id="使用-entityquery-查询数据">使用 EntityQuery 查询数据</h3>
+<p><code>EntityQuery</code> 定义了 <code>EntityArchetype</code>
+必须包含的组件类型集，系统才能处理其关联的块和实体。原型可以有额外的组件，但它必须至少有查询定义的组件。您还可以排除包含特定类型组件的原型。</p>
+<p>将选择您的作业应处理的实体的查询传递给您用于安排作业的计划方法。</p>
+<p>有关定义查询的信息，请参阅使用 <code>EntityQuery</code>
+查询数据。</p>
+<div class="note note-info">
+            <p>不要在 <code>EntityQuery</code>中包含完全可选的组件。要处理可选组件，请使用<code>IJobEntityBatch.Execute</code> 中的<code>ArchetypeChunk.Has</code> 方法来确定当前<code>ArchetypeChunk</code>是否具有可选组件。因为同一批次中的所有实体都具有相同的组件，所以您只需要检查每个批次是否存在可选组件一次，而不是每个实体一次。</p>
+          </div>
+<h3 id="定义作业结构">定义作业结构</h3>
+<p>作业结构由执行要执行的工作的执行函数和声明执行函数使用的数据的字段组成。</p>
+<p>典型的 <code>IJobEntityBatch</code> 作业结构如下所示：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public struct UpdateTranslationFromVelocityJob : IJobEntityBatch
+&#123;
+    public ComponentTypeHandle&lt;VelocityVector&gt; velocityTypeHandle;
+    public ComponentTypeHandle&lt;ObjectPosition&gt; translationTypeHandle;
+    public float DeltaTime;
+
+    [BurstCompile]
+    public void Execute(ArchetypeChunk batchInChunk, int batchIndex)
+    &#123;
+        NativeArray&lt;VelocityVector&gt; velocityVectors &#x3D;
+            batchInChunk.GetNativeArray(velocityTypeHandle);
+        NativeArray&lt;ObjectPosition&gt; translations &#x3D;
+            batchInChunk.GetNativeArray(translationTypeHandle);
+
+        for(int i &#x3D; 0; i &lt; batchInChunk.Count; i++)
+        &#123;
+            float3 translation &#x3D; translations[i].Value;
+            float3 velocity &#x3D; velocityVectors[i].Value;
+            float3 newTranslation &#x3D; translation + velocity * DeltaTime;
+
+            translations[i] &#x3D; new ObjectPosition() &#123; Value &#x3D; newTranslation &#125;;
+        &#125;
+    &#125;
+&#125;</code></pre></div></figure><br />
+此示例访问实体的两个组件 VelocityVector 和 Translation
+的数据，并根据自上次更新以来经过的时间计算新的平移。</p>
+<h4 id="ijobentitybatch-与-ijobentitybatchwithindex">IJobEntityBatch 与
+IJobEntityBatchWithIndex</h4>
+<p><code>IJobEntityBatch</code> 和 <code>IJobEntityBatchWithIndex</code>
+之间的唯一区别是 <code>IJobEntityBatchWithIndex</code> 在对批处理调用
+<code>Execute</code> 函数时传递一个
+<code>indexOfFirstEntityInQuery</code>
+参数。该参数为当前batch中第一个实体在实体查询选中的所有实体列表中的索引。</p>
+<p>当您需要每个实体的单独索引时，请使用
+<code>IJobEntityBatchWithIndex</code>。例如，如果您为每个实体计算一个唯一的结果，您可以使用此索引将每个结果写入native
+array的不同元素。如果您不使用 <code>indexOfFirstEntityInQuery</code>
+值，请改用 <code>IJobEntityBatch</code>，以避免计算索引值的开销。</p>
+<div class="note note-info">
+            <p>当您向 <code>[EntityCommandBuffer.ParallelWriter]</code>添加命令时，您可以使用 <code>batchIndex</code> 参数作为命令缓冲区函数的<code>sortKey</code> 参数。您不需要仅使用<code>IJobEntityBatchWithIndex</code>来为每个实体获取唯一的排序键。两种作业类型都可用的<code>batchIndex</code> 参数可用于此目的。</p>
+          </div>
+<h4 id="声明您的工作访问的数据">声明您的工作访问的数据</h4>
+<p>作业结构中的字段声明可用于 Execute
+函数的数据。这些领域分为四大类：</p>
+<ul>
+<li><p>ComponentTypeHandle 字段 —— 组件句柄字段允许您的 Execute
+函数访问存储在当前块中的实体组件和缓冲区。请参阅访问实体组件和缓冲区数据。</p></li>
+<li><p>ComponentLookup、BufferLookup 字段 ——
+这些“来自实体的数据”字段允许您的 Execute
+函数查找任何实体的数据，无论它存储在何处。
+（这种类型的随机访问是访问数据效率最低的方式，只应在必要时使用。）请参阅查找其他实体的数据。</p></li>
+<li><p>其他字段 ——
+您可以根据需要为您的结构声明其他字段。您可以在每次安排作业时设置此类字段的值。请参阅访问其他数据。</p></li>
+<li><p>输出字段 ——
+除了更新作业中的可写实体组件或缓冲区外，您还可以写入为作业结构声明的NativeContainer字段。此类字段必须是原生容器，例如
+NativeArray；您不能使用其他数据类型。</p></li>
+</ul>
+<h5 id="访问实体组件和缓冲区数据">访问实体组件和缓冲区数据</h5>
+<p>访问存储在查询中实体之一的组件中的数据是三个步骤的过程：</p>
+<p>首先，您必须在作业结构上定义一个 ComponentTypeHandle 字段，将 T
+设置为组件的数据类型。例如：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public ComponentTypeHandle&lt;ObjectPosition&gt; translationTypeHandle;</code></pre></div></figure><br />
+接下来，您在作业的 Execute
+方法中使用此句柄字段来访问包含该类型组件数据的数组（作为
+NativeArray）。该数组包含批次中每个实体的一个元素：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">NativeArray&lt;ObjectPosition&gt; translations &#x3D; batchInChunk.GetNativeArray(translationTypeHandle);</code></pre></div></figure><br />
+最后，当您安排作业时（在系统的 OnUpdate 方法中，您使用
+ComponentSystemBase.GetComponentTypeHandle
+函数为类型句柄字段分配一个值：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; &quot;this&quot; is your &#96;SystemBase&#96; subclass
+updateFromVelocityJob.translationTypeHandle &#x3D; this.GetComponentTypeHandle&lt;ObjectPosition&gt;(false);</code></pre></div></figure><br />
+每次安排作业时，始终设置作业的组件句柄字段。不要缓存类型句柄并在以后使用它。</p>
+<p>批次中的每个组件数据数组都是对齐的，以便给定索引对应于所有数组中的相同实体。换句话说，如果您的作业使用一个实体的两个组件，请在两个数据数组中使用相同的数组索引来访问同一实体的数据。</p>
+<p>您可以使用 ComponentTypeHandle 变量来访问您未包含在 EntityQuery
+中的组件类型。但是，您必须检查以确保当前批次包含该组件，然后再尝试访问它。使用
+Has 函数检查当前批次是否包含特定组件类型：</p>
+<p>ComponentTypeHandle 字段是 ECS
+作业安全系统的一部分，可防止在读取和写入作业中的数据时出现竞争条件。始终设置
+GetComponentTypeHandle 函数的 isReadOnly
+参数以准确反映组件在作业中的访问方式。</p>
+<h5 id="查找其他实体的数据">查找其他实体的数据</h5>
+<p>通过 EntityQuery 和 IJobEntityBatch 作业（或
+Entities.ForEach）访问组件数据几乎总是访问数据的最有效方式。但是，通常情况下您需要以随机访问方式查找数据，例如，当一个实体依赖于另一个实体中的数据时。要执行这种类型的数据查找，您必须通过作业结构将不同类型的句柄传递给您的作业：</p>
+<p>ComponentLookup – 访问具有该组件类型的任何实体的组件</p>
+<p>BufferLookup – 访问具有该缓冲区类型的任何实体的缓冲区</p>
+<p>这些类型为组件和缓冲区提供类似数组的接口，由 Entity
+对象索引。除了由于随机数据访问而相对低效之外，以这种方式查找数据还会增加您遇到工作安全系统建立的保障措施的机会。例如，如果您尝试根据另一个实体的变换设置一个实体的变换，作业安全系统无法判断这是否安全，因为您可以通过
+ComponentLookup
+对象访问所有变换。您可能正在写入您正在读取的相同数据，从而造成竞争条件。</p>
+<p>要使用 ComponentLookup 和 BufferLookup，请在作业结构上声明一个类型为
+ComponentLookup 或 BufferLookup
+的字段，并在调度作业之前设置该字段的值。</p>
+<p>有关详细信息，请参阅查找数据。</p>
+<h5 id="访问其他数据">访问其他数据</h5>
+<p>如果在执行作业时需要其他信息，可以在作业结构上定义一个字段，然后在
+Execute
+方法中访问该字段。您只能在安排作业时设置该值，并且该值对于所有批次都保持不变。</p>
+<p>例如，如果您正在更新移动对象，您很可能需要传入自上次更新以来经过的时间。为此，您可以定义一个名为
+DeltaTime 的字段，在 OnUpdate
+中设置它的值并在作业执行函数中使用该值。在为新帧安排作业之前，您将在每一帧计算并为
+DeltaTime 字段分配一个新值。</p>
+<h4 id="编写执行函数">编写执行函数</h4>
+<p>编写作业结构的执行函数，将数据从输入状态转换为所需的输出状态。</p>
+<p>IJobEntityBatch.Execute 方法的签名是：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">void Execute(ArchetypeChunk batchInChunk, int batchIndex)</code></pre></div></figure><br />
+对于 IJobEntityBatchWithIndex.Execute，签名是：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">void Execute(ArchetypeChunk batchInChunk, int batchIndex, int indexOfFirstEntityInQuery)</code></pre></div></figure></p>
+<h5 id="batchinchunk-参数">batchInChunk 参数</h5>
+<p>batchInChunk 参数提供包含此作业迭代的实体和组件的 ArchetypeChunk
+实例。因为一个块只能包含一个原型，所以一个块中的所有实体都具有相同的组件集。默认情况下，此对象将所有实体包含在一个块中；但是，如果您使用
+ScheduleParallel
+安排作业，则可以指定一个批次仅包含块中实体数的一小部分。</p>
+<p>使用 batchInChunk 参数获取访问组件数据所需的 NativeArray 实例。
+（您还必须声明一个具有相应组件类型句柄的字段——并在安排作业时设置该字段。）</p>
+<h5 id="batchindex-参数">batchIndex 参数</h5>
+<p>batchIndex
+参数是当前批次在为当前作业创建的所有批次列表中的索引。作业中的批次不一定按索引顺序处理。</p>
+<p>您可以在以下情况下使用 batchIndex
+值：您有一个NativeContainer，每个批次有一个元素，您希望将在执行函数中计算的值写入其中。使用
+batchIndex 作为此容器的数组索引。</p>
+<p>如果您使用并行写入实体命令缓冲区，请将 batchIndex 参数作为 sortKey
+参数传递给命令缓冲区函数。</p>
+<h5 id="indexoffirstentityinquery-参数">indexOfFirstEntityInQuery
+参数</h5>
+<p>IJobEntityBatchWithIndex Execute 函数有一个名为
+indexofFirstEntityInQuery
+的附加参数。如果您将查询选择的实体描绘成一个列表，则
+indexOfFirstEntityInQuery
+将是当前批次中第一个实体的该列表的索引。作业中的批次不一定按索引顺序处理。</p>
+<h5 id="可选组件">可选组件</h5>
+<p>如果您的实体查询中有 Any
+过滤器或完全可选的组件根本没有出现在查询中，您可以使用
+ArchetypeChunk.Has 函数在使用之前测试当前块是否包含这些组件之一：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; If entity has Rotation and LocalToWorld components,
+&#x2F;&#x2F; slerp to align to the velocity vector
+if (batchInChunk.Has&lt;Rotation&gt;(rotationTypeHandle) &amp;&amp;
+    batchInChunk.Has&lt;LocalToWorld&gt;(l2wTypeHandle))
+&#123;
+    NativeArray&lt;Rotation&gt; rotations
+        &#x3D; batchInChunk.GetNativeArray(rotationTypeHandle);
+    NativeArray&lt;LocalToWorld&gt; transforms
+        &#x3D; batchInChunk.GetNativeArray(l2wTypeHandle);
+
+    &#x2F;&#x2F; By putting the loop inside the check for the
+    &#x2F;&#x2F; optional components, we can check once per batch
+    &#x2F;&#x2F; rather than once per entity.
+    for (int i &#x3D; 0; i &lt; batchInChunk.Count; i++)
+    &#123;
+        float3 direction &#x3D; math.normalize(velocityVectors[i].Value);
+        float3 up &#x3D; transforms[i].Up;
+        quaternion rotation &#x3D; rotations[i].Value;
+
+        quaternion look &#x3D; quaternion.LookRotation(direction, up);
+        quaternion newRotation &#x3D; math.slerp(rotation, look, DeltaTime);
+
+        rotations[i] &#x3D; new Rotation() &#123; Value &#x3D; newRotation &#125;;
+    &#125;
+&#125;
+</code></pre></div></figure></p>
+<h3 id="安排工作">安排工作</h3>
+<p>要运行 IJobEntityBatch
+作业，您必须创建作业结构的实例，设置结构字段，然后安排作业。当您在
+<code>SystemBase</code> 实现的 OnUpdate
+函数中执行此操作时，系统会安排作业在每一帧运行。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[RequireMatchingQueriesForUpdate]
+public partial class UpdateTranslationFromVelocitySystem : SystemBase
+&#123;
+    EntityQuery query;
+
+    protected override void OnCreate()
+    &#123;
+        &#x2F;&#x2F; Set up the query
+        var description &#x3D; new EntityQueryDesc()
+        &#123;
+            All &#x3D; new ComponentType[]
+                   &#123;ComponentType.ReadWrite&lt;ObjectPosition&gt;(),
+                    ComponentType.ReadOnly&lt;VelocityVector&gt;()&#125;
+        &#125;;
+        query &#x3D; this.GetEntityQuery(description);
+    &#125;
+
+    protected override void OnUpdate()
+    &#123;
+        &#x2F;&#x2F; Instantiate the job struct
+        var updateFromVelocityJob
+            &#x3D; new UpdateTranslationFromVelocityJob();
+
+        &#x2F;&#x2F; Set the job component type handles
+        &#x2F;&#x2F; &quot;this&quot; is your &#96;SystemBase&#96; subclass
+        updateFromVelocityJob.translationTypeHandle
+            &#x3D; this.GetComponentTypeHandle&lt;ObjectPosition&gt;(false);
+        updateFromVelocityJob.velocityTypeHandle
+            &#x3D; this.GetComponentTypeHandle&lt;VelocityVector&gt;(true);
+
+        &#x2F;&#x2F; Set other data need in job, such as time
+        updateFromVelocityJob.DeltaTime &#x3D; World.Time.DeltaTime;
+
+        &#x2F;&#x2F; Schedule the job
+        this.Dependency
+            &#x3D; updateFromVelocityJob.ScheduleParallel(query, this.Dependency);
+    &#125;
+&#125;</code></pre></div></figure><br />
+当您调用 GetComponentTypeHandle
+函数来设置组件类型变量时，请确保将作业读取但不写入的组件的 isReadOnly
+参数设置为 true。正确设置这些参数会对 ECS
+框架安排作业的效率产生重大影响。这些访问模式设置必须与其在结构定义和
+EntityQuery 中的等效设置相匹配。</p>
+<p>不要在系统类变量中缓存 GetComponentTypeHandle
+的返回值。您必须在每次系统运行时调用该函数，并将更新后的值传递给作业。</p>
+<h4 id="调度选项">调度选项</h4>
+<p>您可以在安排作业时通过选择适当的功能来控制作业的执行方式：</p>
+<ul>
+<li><p>运行——立即在当前（主）线程上执行作业。 Run
+还会完成当前作业所依赖的任何计划作业。批量大小始终为
+1（整个块）。</p></li>
+<li><p>Schedule——安排作业在当前作业所依赖的任何计划作业之后在工作线程上运行。为实体查询选择的每个块调用一次作业执行函数。块按顺序处理。批量大小始终为
+1。</p></li>
+<li><p>ScheduleParallel——与 Schedule
+类似，不同之处在于您可以指定批处理大小，并且这些批处理是并行处理的（假设工作线程可用）而不是顺序处理。</p></li>
+</ul>
+<h4 id="设置批量大小">设置批量大小</h4>
+<p>要设置批量大小，请使用 ScheduleParallel 方法来安排作业并将
+batchesPerChunk 参数设置为正整数。使用值 1
+将批处理大小设置为完整块。</p>
+<p>用于调度作业的查询选择的每个块都分为 batchesPerChunk
+指定的批次数。来自同一块的每个批次包含大致相同数量的实体；然而，来自不同块的批次可能包含非常不同数量的实体。最大批处理大小为
+1，这意味着每个块中的所有实体都在对 Execute
+函数的一次调用中一起处理。来自不同块的实体永远不能包含在同一批中。</p>
+<div class="note note-info">
+            <p>通常，使用 batchesPerChunk 设置为 1 来在对 Execute的单个调用中处理块中的所有实体是最有效的。然而，情况并非总是如此。例如，如果您的Execute函数执行的实体数量较少且算法成本较高，则可以通过使用较小的实体批次从并行处理中获得额外的好处。</p>
+          </div>
+<h3 id="跳过实体不变的块">跳过实体不变的块</h3>
+<p>如果您只需要在组件值更改时更新实体，则可以将该组件类型添加到为作业选择实体和块的
+EntityQuery
+的更改过滤器中。例如，如果您有一个系统读取两个组件并且只需要在前两个组件中的一个发生更改时更新第三个组件，则可以按如下方式使用
+EntityQuery：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">EntityQuery query;
+
+protected override void OnCreate()
+&#123;
+    query &#x3D; GetEntityQuery(
+        new ComponentType[]
+        &#123;
+            ComponentType.ReadOnly&lt;InputA&gt;(),
+            ComponentType.ReadOnly&lt;InputB&gt;(),
+            ComponentType.ReadWrite&lt;Output&gt;()
+        &#125;
+    );
+
+    query.SetChangedVersionFilter(
+            new ComponentType[]
+            &#123;
+                typeof(InputA),
+                typeof(InputB)
+            &#125;
+        );
+&#125;</code></pre></div></figure><br />
+EntityQuery 更改过滤器最多支持两个组件。如果您想检查更多或者您没有使用
+EntityQuery，您可以手动进行检查。要进行此检查，请使用
+ArchetypeChunk.DidChange 函数将组件的块更改版本与系统的
+LastSystemVersion 进行比较。如果此函数返回
+false，则您可以完全跳过当前块，因为自上次系统运行以来该类型的组件均未更改。</p>
+<p>您必须使用结构字段将 LastSystemVersion
+从系统传递到作业中，如下所示：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">struct UpdateOnChangeJob : IJobEntityBatch
+&#123;
+    public ComponentTypeHandle&lt;InputA&gt; InputATypeHandle;
+    public ComponentTypeHandle&lt;InputB&gt; InputBTypeHandle;
+    [ReadOnly] public ComponentTypeHandle&lt;Output&gt; OutputTypeHandle;
+    public uint LastSystemVersion;
+
+    [BurstCompile]
+    public void Execute(ArchetypeChunk batchInChunk, int batchIndex)
+    &#123;
+        var inputAChanged &#x3D; batchInChunk.DidChange(InputATypeHandle, LastSystemVersion);
+        var inputBChanged &#x3D; batchInChunk.DidChange(InputBTypeHandle, LastSystemVersion);
+
+        &#x2F;&#x2F; If neither component changed, skip the current batch
+        if (!(inputAChanged || inputBChanged))
+            return;
+
+        var inputAs &#x3D; batchInChunk.GetNativeArray(InputATypeHandle);
+        var inputBs &#x3D; batchInChunk.GetNativeArray(InputBTypeHandle);
+        var outputs &#x3D; batchInChunk.GetNativeArray(OutputTypeHandle);
+
+        for (var i &#x3D; 0; i &lt; outputs.Length; i++)
+        &#123;
+            outputs[i] &#x3D; new Output &#123; Value &#x3D; inputAs[i].Value + inputBs[i].Value &#125;;
+        &#125;
+    &#125;
+&#125;</code></pre></div></figure><br />
+与所有作业结构字段一样，您必须在安排作业之前分配其值：</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[RequireMatchingQueriesForUpdate]
+public partial class UpdateDataOnChangeSystem : &#96;SystemBase&#96; &#123;
+
+    EntityQuery query;
+
+    protected override void OnUpdate()
+    &#123;
+        var job &#x3D; new UpdateOnChangeJob();
+
+        job.LastSystemVersion &#x3D; this.LastSystemVersion;
+
+        job.InputATypeHandle &#x3D; GetComponentTypeHandle&lt;InputA&gt;(true);
+        job.InputBTypeHandle &#x3D; GetComponentTypeHandle&lt;InputB&gt;(true);
+        job.OutputTypeHandle &#x3D; GetComponentTypeHandle&lt;Output&gt;(false);
+
+        this.Dependency &#x3D; job.ScheduleParallel(query, this.Dependency);
+    &#125;
+
+    protected override void OnCreate()
+    &#123;
+        query &#x3D; GetEntityQuery(
+            new ComponentType[]
+            &#123;
+                ComponentType.ReadOnly&lt;InputA&gt;(),
+                ComponentType.ReadOnly&lt;InputB&gt;(),
+                ComponentType.ReadWrite&lt;Output&gt;()
+            &#125;
+        );
+    &#125;
+&#125;</code></pre></div></figure>
+<div class="note note-info">
+            <p>为了提高效率，更改版本适用于整个块而不是单个实体。如果另一个能够写入该类型组件的作业访问块，则ECS 会增加该组件的更改版本，并且 DidChange 函数返回true。即使声明对组件的写访问权限的作业实际上并未更改组件值，ECS也会增加更改版本。（这是在读取组件数据而不更新它时应始终只读的原因之一。）</p>
+          </div>
+<h2 id="手动迭代数据">手动迭代数据</h2>
+<p>如果您需要以一种不适合迭代 EntityQuery
+中所有块的简化模型的方式管理块，您可以在native
+array中显式手动请求所有原型块，并使用 IJobParallelFor
+等作业处理它们.下面是一个例子：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class RotationSpeedSystem : SystemBase
+&#123;
+   [BurstCompile]
+   struct RotationSpeedJob : IJobParallelFor
+   &#123;
+       [DeallocateOnJobCompletion] public NativeArray&lt;ArchetypeChunk&gt; Chunks;
+       public ArchetypeChunkComponentType&lt;RotationQuaternion&gt; RotationType;
+       [ReadOnly] public ArchetypeChunkComponentType&lt;RotationSpeed&gt; RotationSpeedType;
+       public float DeltaTime;
+
+       public void Execute(int chunkIndex)
+       &#123;
+           var chunk &#x3D; Chunks[chunkIndex];
+           var chunkRotation &#x3D; chunk.GetNativeArray(RotationType);
+           var chunkSpeed &#x3D; chunk.GetNativeArray(RotationSpeedType);
+           var instanceCount &#x3D; chunk.Count;
+
+           for (int i &#x3D; 0; i &lt; instanceCount; i++)
+           &#123;
+               var rotation &#x3D; chunkRotation[i];
+               var speed &#x3D; chunkSpeed[i];
+               rotation.Value &#x3D; math.mul(math.normalize(rotation.Value), quaternion.AxisAngle(math.up(), speed.RadiansPerSecond * DeltaTime));
+               chunkRotation[i] &#x3D; rotation;
+           &#125;
+       &#125;
+   &#125;
+
+   EntityQuery m_Query;   
+
+   protected override void OnCreate()
+   &#123;
+       var queryDesc &#x3D; new EntityQueryDesc
+       &#123;
+           All &#x3D; new ComponentType[]&#123; typeof(RotationQuaternion), ComponentType.ReadOnly&lt;RotationSpeed&gt;() &#125;
+       &#125;;
+
+       m_Query &#x3D; GetEntityQuery(queryDesc);
+   &#125;
+
+   protected override void OnUpdate()
+   &#123;
+       var rotationType &#x3D; GetArchetypeChunkComponentType&lt;RotationQuaternion&gt;();
+       var rotationSpeedType &#x3D; GetArchetypeChunkComponentType&lt;RotationSpeed&gt;(true);
+       var chunks &#x3D; m_Query.ToArchetypeChunkArray(Allocator.TempJob);
+
+       var rotationsSpeedJob &#x3D; new RotationSpeedJob
+       &#123;
+           Chunks &#x3D; chunks,
+           RotationType &#x3D; rotationType,
+           RotationSpeedType &#x3D; rotationSpeedType,
+           DeltaTime &#x3D; Time.deltaTime
+       &#125;;
+       this.Dependency rotationsSpeedJob.Schedule(chunks.Length,32, this.Dependency);
+   &#125;
+&#125;</code></pre></div></figure></p>
+<h3 id="如何手动迭代数据">如何手动迭代数据</h3>
+<p>您可以使用 EntityManager
+类手动遍历实体或原型块，但这效率不高。您应该只使用这些迭代方法来测试或调试您的代码，或者在您拥有一组受控实体的孤立世界中。</p>
+<p>例如，以下代码片段遍历活动世界中的所有实体：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">var entityManager &#x3D; World.Active.EntityManager;
+var allEntities &#x3D; entityManager.GetAllEntities();
+foreach (var entity in allEntities)
+&#123;
+   &#x2F;&#x2F;...
+&#125;
+allEntities.Dispose();</code></pre></div></figure><br />
+此代码段遍历活动世界中的所有块：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">var entityManager &#x3D; World.Active.EntityManager;
+var allChunks &#x3D; entityManager.GetAllChunks();
+foreach (var chunk in allChunks)
+&#123;
+   &#x2F;&#x2F;...
+&#125;
+allChunks.Dispose();</code></pre></div></figure></p>
+<h1 id="系统更新顺序">系统更新顺序</h1>
+<p>要指定系统的更新顺序，您可以使用 <code>ComponentSystemGroup</code>
+类。要将系统置于组中，请在系统的类声明中使用 <code>UpdateInGroup</code>
+属性。然后，您可以使用 <code>UpdateBefore</code> 或
+<code>UpdateAfter</code> 属性来指定系统必须更新的顺序。</p>
+<p>有一组默认系统组，您可以使用它们在框架的正确阶段更新系统。您可以将一个组嵌套在另一个组中，以便您组中的所有系统都在正确的阶段更新，并根据其组内的顺序进行更新。</p>
+<h2 id="组件系统组">组件系统组</h2>
+<p><code>ComponentSystemGroup</code> 类表示 Unity
+必须按特定顺序一起更新的相关组件系统的列表。
+<code>ComponentSystemGroup</code> 继承自
+<code>ComponentSystemBase</code>，因此您可以相对于其他系统对其进行排序，并且它具有
+<code>OnUpdate()</code> 方法。这也意味着您可以将一个
+<code>ComponentSystemGroup</code> 嵌套在另一个
+<code>ComponentSystemGroup</code> 中，并形成层次结构。</p>
+<p>默认情况下，当您在 <code>ComponentSystemGroup</code> 中调用
+<code>Update()</code>
+方法时，它会在其已排序的成员系统列表中的每个系统上调用
+<code>Update()</code>。如果任何成员系统是系统组，它们将递归更新自己的成员。生成的系统排序遵循树的深度优先遍历。</p>
+<h2 id="系统排序属性">系统排序属性</h2>
+<p>您可以在系统上使用以下属性来确定其更新顺序：</p>
+<table>
+
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>UpdateInGroup</code></td>
+<td>指定此系统应属于的
+<code>ComponentSystemGroup</code>。如果不设置该属性，Unity
+会自动将其添加到默认世界的 <code>SimulationSystemGroup</code>
+中。有关详细信息，请参阅默认系统组部分。</td>
+</tr>
+<tr class="even">
+<td><code>UpdateBefore</code> <code>UpdateAfter</code></td>
+<td>排序系统相对于其他系统。为这些属性指定的系统类型必须是同一组的成员。
+Unity 在包含两个系统的适当的最深组中处理跨组边界的排序。例如，如果
+<code>CarSystem</code> 在 <code>CarGroup</code> 中，而
+<code>TruckSystem</code> 在 <code>TruckGroup</code> 中，并且
+<code>CarGroup</code> 和 <code>TruckGroup</code> 都是
+<code>VehicleGroup</code> 的成员，那么 <code>CarGroup</code> 和
+<code>TruckGroup</code> 的顺序隐式决定了 <code>CarSystem</code> 和
+<code>TruckSystem</code> 的相对顺序。您无需明确订购系统。</td>
+</tr>
+<tr class="odd">
+<td><code>DisableAutoCreation</code></td>
+<td>阻止 Unity
+在默认世界初始化期间创建系统。您必须明确地创建和更新系统。但是，您可以将带有此标记的系统添加到
+<code>ComponentSystemGroup</code>
+的更新列表中，它会像该列表中的其他系统一样自动更新。</td>
+</tr>
+</tbody>
+</table>
+<p>如果您将 <code>DisableAutoCreation</code>
+属性添加到组件系统或系统组，Unity
+不会创建它或将其添加到默认系统组。要手动创建系统，请使用
+<code>World.GetOrCreateSystem&lt;MySystem&gt;()</code> 并从主线程调用
+<code>MySystem.Update()</code> 来更新它。您可以使用它在 Unity
+播放器循环中的其他位置插入系统，例如，如果您有一个应该在帧中稍后或更早运行的系统。</p>
+<h2 id="默认系统组">默认系统组</h2>
+<p>默认世界包含 <code>ComponentSystemGroup</code> 实例的层次结构。 Unity
+播放器循环中有三个根级系统组：</p>
+<ul>
+<li><code>InitializationSystemGroup</code>：在播放器循环的初始化阶段结束时更新。</li>
+<li><code>SimulationSystemGroup</code>：在播放器循环的更新阶段结束时更新。</li>
+<li><code>PresentationSystemGroup</code>：在播放器循环的
+<code>PreLateUpdate</code> 阶段结束时更新。</li>
+</ul>
+<p>默认系统组也有一些预定义的成员系统：</p>
+<p><strong>InitializationSystemGroup</strong>:</p>
+<ul>
+<li>BeginInitializationEntityCommandBufferSystem</li>
+<li>CopyInitialTransformFromGameObjectSystem</li>
+<li>SubSceneLiveConversionSystem</li>
+<li>SubSceneStreamingSystem</li>
+<li>EndInitializationEntityCommandBufferSystem</li>
+</ul>
+<p><strong>SimulationSystemGroup</strong>:</p>
+<ul>
+<li>BeginSimulationEntityCommandBufferSystem</li>
+<li>TransformSystemGroup
+<ul>
+<li>ParentSystem</li>
+<li>CopyTransformFromGameObjectSystem</li>
+<li>TRSToLocalToWorldSystem</li>
+<li>TRSToLocalToParentSystem</li>
+<li>LocalToParentSystem</li>
+<li>CopyTransformToGameObjectSystem</li>
+</ul></li>
+<li>LateSimulationSystemGroup</li>
+<li>EndSimulationEntityCommandBufferSystem</li>
+</ul>
+<p><strong>PresentationSystemGroup</strong>:</p>
+<ul>
+<li>BeginPresentationEntityCommandBufferSystem</li>
+<li>CreateMissingRenderBoundsFromMeshRenderer</li>
+<li>RenderingSystemBootstrap</li>
+<li>RenderBoundsUpdateSystem</li>
+<li>RenderMeshSystem</li>
+<li>LODGroupSystemV1</li>
+<li>LodRequirementsUpdateSystem</li>
+<li>EndPresentationEntityCommandBufferSystem</li>
+</ul>
+<p>请注意，此列表的具体内容可能会发生变化。</p>
+<h2 id="多个世界">多个世界</h2>
+<p>您可以创建多个世界，也可以在多个世界中实例化相同的组件系统类。您还可以从更新顺序中的不同点以不同的速率更新每个实例。</p>
+<p>您无法手动更新给定世界中的每个系统，但您可以控制在哪个世界中创建哪些系统，以及将它们添加到哪些现有系统组中。</p>
+<p>例如，您可以创建一个实例化 <code>SystemX</code> 和
+<code>SystemY</code> 的自定义世界，并将 <code>SystemX</code>
+添加到默认世界的 <code>SimulationSystemGroup</code>，并将
+<code>SystemY</code> 添加到默认世界的
+<code>PresentationSystemGroup</code>。这些系统可以像往常一样相对于它们的同级组对自己进行排序，Unity
+会更新它们以及相应的组。</p>
+<p>您还可以使用 <code>ICustomBootstrap</code>
+接口来管理多个世界中的系统：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public interface ICustomBootstrap
+&#123;
+    &#x2F;&#x2F; 返回应由默认引导程序处理的系统。
+    &#x2F;&#x2F; 如果返回 null，则根本不会创建默认世界。
+    &#x2F;&#x2F; 空列表创建默认世界和入口点
+    List&lt;Type&gt; Initialize(List&lt;Type&gt; systems);
+&#125;</code></pre></div></figure><br />
+当您实现此接口时，它会在默认世界初始化之前将组件系统类型的完整列表传递给
+<code>Initialize()</code>
+方法。自定义引导程序可以遍历此列表并在您定义的世界中创建系统。您可以从
+<code>Initialize()</code> 方法返回系统列表，Unity
+创建它们作为默认世界初始化的一部分。</p>
+<p>例如，这是自定义 <code>MyCustomBootstrap.Initialize()</code>
+实现的典型过程：</p>
+<ol type="1">
+<li>创建任何其他世界及其顶级 <code>ComponentSystemGroups</code>。</li>
+<li>对于系统类型列表中的每个类型：
+<ol type="1">
+<li>向上搜索 <code>ComponentSystemGroup</code>
+层次结构以找到此系统类型的顶级组。</li>
+<li>如果它是在步骤 1 中创建的组之一，则在该世界中创建系统并使用
+<code>group.AddSystemToUpdateList()</code> 将其添加到层次结构中。</li>
+<li>如果不是，则将此类型附加到列表以返回到
+<code>DefaultWorldInitialization</code>。</li>
+</ol></li>
+<li>在新的顶级组上调用 <code>group.SortSystemUpdateList()</code>。
+<ol type="1">
+<li>可选择将它们添加到默认世界组之一</li>
+</ol></li>
+<li>将未处理系统的列表返回给
+<code>DefaultWorldInitialization</code>。</li>
+</ol>
+<div class="note note-info">
+            <p>ECS 框架通过反射找到您的 <code>ICustomBootstrap</code> 实现。</p>
+          </div>
+<h1 id="使用作业在多个线程上调度数据">使用作业在多个线程上调度数据</h1>
+<p>实体包和 Unity 的 DOTS 架构广泛使用 C#
+作业系统。只要有可能，您应该在系统代码中使用作业。</p>
+<p><code>SystemBase</code> 类提供 <code>Entities.ForEach</code> 和
+<code>Job.WithCode</code>
+以将应用程序的逻辑实现为多线程代码。在更复杂的情况下，您可以使用
+<code>IJobEntityBatch</code> 的 <code>Schedule()</code> 和
+<code>ScheduleParallel()</code> 方法在主线程之外转换数据。
+<code>Entities.ForEach</code>
+使用起来最简单，通常需要较少的代码来实现。</p>
+<p>ECS 按照您的系统所在的顺序在主线程上安排作业。当您安排作业时，ECS
+会跟踪哪些作业读取和写入哪些组件。读取组件的作业依赖于写入同一组件的任何先前计划的作业，反之亦然。作业调度程序使用作业依赖关系来确定哪些作业可以并行运行，哪些作业必须按顺序运行。</p>
+<p>例如，以下系统更新位置：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">using Unity.Burst;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Jobs;
+using Unity.Transforms;
+
+public class MovementSpeedSystem : SystemBase
+&#123;
+    &#x2F;&#x2F; OnUpdate runs on the main thread.
+    protected override void OnUpdate()
+    &#123;
+        Entities
+            .ForEach((ref Translation position, in MovementSpeed speed) &#x3D;&gt;
+                &#123;
+                    float3 displacement &#x3D; speed.Value * dt;
+                    position &#x3D; new Translation()&#123;
+                            Value &#x3D; position.Value + displacement
+                        &#125;;
+                &#125;)
+            .ScheduleParallel();
+    &#125;
+&#125;</code></pre></div></figure></p>
+<h2 id="工作扩展">工作扩展</h2>
+<p>Unity C#
+作业系统允许您在多个线程上运行代码。该系统提供调度、并行处理和多线程安全。作业系统是一个核心
+Unity 模块，它提供通用接口和类来创建和运行作业，无论您是否使用 Entities
+包。</p>
+<p>这些接口包括：</p>
+<ul>
+<li><code>IJob</code>：创建一个在任何线程或内核上运行的作业，由作业系统调度程序确定。</li>
+<li><code>IJobParallelFor</code>：创建一个可以在多个线程上并行运行的作业，以处理
+<code>NativeContainer</code> 的元素。</li>
+<li><code>IJobExtensions</code>：提供运行 <code>IJob</code>
+作业的扩展方法。</li>
+<li><code>IJobParallelForExtensions</code>：提供运行
+<code>IJobParallelFor</code> 作业的扩展方法。</li>
+<li><code>JobHandle</code>：访问计划作业的句柄。您还可以使用
+<code>JobHandle</code> 实例来指定作业之间的依赖关系。</li>
+</ul>
+<p>有关作业系统的概述，请参阅 Unity 用户手册中的 C# 作业系统。</p>
+<p>Jobs 包扩展了作业系统以支持 ECS。它包含：</p>
+<ul>
+<li><code>IJobParallelForDeferExtensions</code></li>
+<li><code>IJobFilter</code></li>
+<li><code>JobParallelIndexListExtensions</code></li>
+<li><code>Job​Struct​Produce&lt;T&gt;</code></li>
+</ul>
+<h2 id="通用职位">通用职位</h2>
+<p>在 C#
+中，您可以使用继承和接口使一段代码适用于一系列类型。例如：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; 该方法不仅限于一种输入，而是任何实现 IBlendable 的类型。
+void foo(IBlendable a) &#123;...&#125;</code></pre></div></figure><br />
+在 Burst 编译器使用的高性能 C# (HPC#)
+中，您不能使用托管类型或虚拟方法调用，因此泛型是使一段代码在一系列类型上运行的选项：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; 他的方法可以对任何 IBlendable 结构进行操作（并且可以调用IBlendable 方法），但不需要托管对象或虚拟方法调用。
+void foo&lt;T&gt;(T a) where T : struct, IBlendable &#123;...&#125;</code></pre></div></figure><br />
+您必须在 HPC#
+中编写作业，因此对于在一系列类型上运行的作业，它必须是通用的：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[BurstCompile()]
+public struct BlendJob&lt;T&gt; : IJob
+    where T : struct, IBlendable
+&#123;
+    public NativeReference&lt;T&gt; blendable;
+
+    public void Execute() 
+    &#123;
+        var val &#x3D; blendable.Value;
+        val.Blend();
+        blendable.Value &#x3D; val;
+    &#125;
+&#125;
+</code></pre></div></figure></p>
+<h3 id="从-burst-编译代码中调度通用作业">从 Burst
+编译代码中调度通用作业</h3>
+<p>要从 Burst
+编译代码安排通用作业，您需要作业具体专业化的反射数据。不幸的是，Unity
+不会为所有具体的特化自动生成此反射，因此在某些情况下您必须手动注册它们：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; 此程序集属性允许同一程序集中的突发编译代码为 MyJob 安排具体的专业化 &lt;int, float&gt;。
+[assembly: RegisterGenericJobType(typeof(MyJob&lt;int, float&gt;))]</code></pre></div></figure><br />
+如果您尝试安排未在程序集中注册具体专业化的作业，则 Unity
+会抛出异常。</p>
+<p>注册类型的程序集无关紧要。例如，如果一个作业类型只在程序集 Foo
+中注册，您也可以在程序集 Bar 中安排它。</p>
+<p>如果您多次重复注册相同的具体专业化，则不会将其视为错误。</p>
+<h3 id="具体作业类型的自动注册">具体作业类型的自动注册</h3>
+<p>当您直接实例化通用作业的具体特化时，Unity
+会自动在程序集中注册该特化：</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; Registers specialization &lt;int, float&gt; for MyJob in the assembly.
+var job &#x3D; new MyJob&lt;int, float&gt;();</code></pre></div></figure>
+<p>但是，在间接实例化具体特化时，Unity 不会自动注册它：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">void makeJob&lt;T&gt;()
+&#123;
+    new MyJob&lt;T, float&gt;().Schedule();   
+&#125;
+
+void foo()
+&#123;
+    makeJob&lt;int&gt;();    &#x2F;&#x2F; does NOT register MyJob&lt;int, float&gt;
+&#125;</code></pre></div></figure><br />
+但是，如果您将通用作业作为返回类型或输出参数包含在签名中，则 Unity
+会自动注册它：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">MyJob&lt;T, float&gt; makeJob&lt;T&gt;()
+&#123;
+    var j &#x3D; new MyJob&lt;T, float&gt;()
+    j.Schedule();   
+    return j;
+&#125;
+
+void foo()
+&#123;
+    makeJob&lt;int&gt;();    &#x2F;&#x2F; registers MyJob&lt;int, float&gt;
+&#125;</code></pre></div></figure><br />
+您可以通过多级通用方法调用使用此间接注册作品：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">MyJob&lt;T, float&gt; makeJob&lt;T&gt;()
+&#123;
+    var j &#x3D; new MyJob&lt;T, float&gt;()
+    j.Schedule();   
+    return j;
+&#125;
+
+void foo&lt;T&gt;()
+&#123;
+    makeJob&lt;T&gt;();    
+&#125;
+
+void bar()
+&#123;
+    foo&lt;int&gt;();       &#x2F;&#x2F; registers MyJob&lt;int, float&gt;
+&#125;</code></pre></div></figure><br />
+您还可以将通用作业嵌套在另一个类或结构中：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">struct BlendJobWrapper&lt;T&gt; where T : struct, IBlendable
+&#123;
+    public T blendable;
+
+    [BurstCompile()]
+    public struct BlendJob : IJob
+    &#123;
+        public T blendable;
+
+        public void Execute() &#123;...&#125;
+    &#125;
+
+    public JobHandle Schedule(JobHandle dep &#x3D; new JobHandle())
+    &#123;
+        return new BlendJob &#123; blendable &#x3D; blendable &#125;.Schedule(dep);
+    &#125;
+&#125;</code></pre></div></figure><br />
+在前面的示例中，如果 <code>BlendJobWrapper&lt;foo&gt;</code>
+是自动或手动注册的，那么 <code>BlendJob&lt;foo&gt;</code>
+也会有效注册。仅围绕一个通用作业的包装器类型并不能解决任何问题，但是当您同时使用多个通用作业时，这些包装器类型允许更优雅的作业创建和调度。</p>
+<h3 id="作业化分拣">作业化分拣</h3>
+<p><code>NativeSortExtension</code>
+类具有排序方法，包括使用作业进行排序的方法：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public unsafe static JobHandle Sort&lt;T, U&gt;(T* array, int length, U comp, JobHandle deps)
+    where T : unmanaged
+    where U : IComparer&lt;T&gt;
+&#123;
+    if (length &#x3D;&#x3D; 0)
+        return inputDeps;
+
+    var segmentSortJob &#x3D; new SegmentSort&lt;T, U&gt; &#123; Data &#x3D; array, Comp &#x3D; comp, Length &#x3D; length, SegmentWidth &#x3D; 1024 &#125;;
+    var segmentSortMergeJob &#x3D; new SegmentSortMerge&lt;T, U&gt; &#123; Data &#x3D; array, Comp &#x3D; comp, Length &#x3D; length, SegmentWidth &#x3D; 1024 &#125;;
+
+    var segmentCount &#x3D; (length + 1023) &#x2F; 1024;
+    var workerSegmentCount &#x3D; segmentCount &#x2F; math.max(1, JobsUtility.MaxJobThreadCount);
+    var handle &#x3D; segmentSortJob.Schedule(segmentCount, workerSegmentCount, deps);
+    return segmentSortMergeJob.Schedule(segmentSortJobHandle);
+&#125;</code></pre></div></figure><br />
+在此示例中，排序分为两个作业：第一个作业将数组拆分为多个子部分，然后分别对它们进行并行排序。第二个作业等待第一个，然后将这些排序的子部分合并为最终的排序结果。</p>
+<p>但是，此方法不会自动注册两个通用作业 SegmentSort 和 SegmentSortMerge
+的具体特化，因为这两种类型都未用作方法的返回类型或输出参数。</p>
+<p>一种解决方案是将两个作业都放入参数中：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public unsafe static JobHandle Sort&lt;T, U&gt;(T* array, int length, U comp, JobHandle deps
+        out SegmentSort&lt;T, U&gt; segmentSortJob, out SegmentSortMerge&lt;T, U&gt; segmentSortMergeJob)
+    where T : unmanaged
+    where U : IComparer&lt;T&gt;
+&#123;
+    if (length &#x3D;&#x3D; 0)
+        return inputDeps;
+
+    segmentSortJob &#x3D; new SegmentSort&lt;T, U&gt; &#123; Data &#x3D; array, Comp &#x3D; comp, Length &#x3D; length, SegmentWidth &#x3D; 1024 &#125;;
+    segmentSortMergeJob &#x3D; new SegmentSortMerge&lt;T, U&gt; &#123; Data &#x3D; array, Comp &#x3D; comp, Length &#x3D; length, SegmentWidth &#x3D; 1024 &#125;;
+
+    var segmentCount &#x3D; (length + 1023) &#x2F; 1024;
+    var workerSegmentCount &#x3D; segmentCount &#x2F; math.max(1, JobsUtility.MaxJobThreadCount);
+    var handle &#x3D; segmentSortJob.Schedule(segmentCount, workerSegmentCount, deps);
+    return segmentSortMergeJob.Schedule(segmentSortJobHandle);
+&#125;</code></pre></div></figure><br />
+然而，这解决了注册问题，但是您随后必须传递参数以获得您可能不想要的两个作业结构。</p>
+<p>更好的解决方案是将两种作业类型包装在一个包装器类型中：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">unsafe struct SortJob&lt;T, U&gt; :
+    where T : unamanged
+    where U : IComparer&lt;T&gt;
+&#123;
+    public T* data;
+    public U comparer;
+    public int length;
+
+    unsafe struct SegmentSort : IJobParallelFor
+    &#123;
+        [NativeDisableUnsafePtrRestriction]
+        public T* data;
+        public U comp;
+        public int length;
+        public int segmentWidth;
+
+        public void Execute(int index) &#123;...&#125;
+    &#125;
+
+    unsafe struct SegmentSortMerge : IJob
+    &#123;
+        [NativeDisableUnsafePtrRestriction]
+        public T* data;
+        public U comp;
+        public int length;
+        public int segmentWidth;
+
+        public void Execute() &#123;...&#125;
+    &#125;
+
+    public JobHandle Schedule(JobHandle dep &#x3D; new JobHandle())
+    &#123;
+        if (length &#x3D;&#x3D; 0)
+            return inputDeps;
+
+        var segmentSortJob &#x3D; new SegmentSort&lt;T, U&gt; &#123; Data &#x3D; array, Comp &#x3D; comp, Length &#x3D; length, SegmentWidth &#x3D; 1024 &#125;;
+        var segmentSortMergeJob &#x3D; new SegmentSortMerge&lt;T, U&gt; &#123; Data &#x3D; array, Comp &#x3D; comp, Length &#x3D; length, SegmentWidth &#x3D; 1024 &#125;;
+
+        var segmentCount &#x3D; (length + 1023) &#x2F; 1024;
+        var workerSegmentCount &#x3D; segmentCount &#x2F; math.max(1, JobsUtility.MaxJobThreadCount);
+        var handle &#x3D; segmentSortJob.Schedule(segmentCount, workerSegmentCount, deps);
+        return segmentSortMergeJob.Schedule(segmentSortJobHandle);
+    &#125;
+&#125;</code></pre></div></figure><br />
+在这种安排中，您可以创建 SortJob 的实例并调用其 Schedule()
+方法，而不是调用 Sort() 方法。通过对 SortJob
+进行具体实例化，您还可以自动注册所需的 SegmentSort 和 SegmentSortMerge
+具体特化。</p>
+<p>这种嵌套通用作业的模式启用了一个方便的
+API，可以将相关的通用作业集安排在一起。</p>
+<h2 id="使用-job.withcode-安排后台作业">使用 Job.WithCode
+安排后台作业</h2>
+<p>SystemBase 类中的 Job.WithCode
+构造将方法作为单个后台作业运行。您还可以在主线程上运行 Job.WithCode
+并利用 Burst 编译来加快执行速度。</p>
+<h3 id="使用-job.withcode">使用 Job.WithCode</h3>
+<p>以下示例使用一个 Job.WithCode lambda 表达式用随机数填充native
+array，并使用另一个作业将这些数字加在一起：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public partial class RandomSumJob : SystemBase
+&#123;
+    private uint seed &#x3D; 1;
+
+    protected override void OnUpdate()
+    &#123;
+        Random randomGen &#x3D; new Random(seed++);
+        NativeArray&lt;float&gt; randomNumbers
+            &#x3D; new NativeArray&lt;float&gt;(500, Allocator.TempJob);
+
+        Job.WithCode(() &#x3D;&gt;
+        &#123;
+            for (int i &#x3D; 0; i &lt; randomNumbers.Length; i++)
+            &#123;
+                randomNumbers[i] &#x3D; randomGen.NextFloat();
+            &#125;
+        &#125;).Schedule();
+
+        &#x2F;&#x2F; To get data out of a job, you must use a NativeArray
+        &#x2F;&#x2F; even if there is only one value
+        NativeArray&lt;float&gt; result
+            &#x3D; new NativeArray&lt;float&gt;(1, Allocator.TempJob);
+
+        Job.WithCode(() &#x3D;&gt;
+        &#123;
+            for (int i &#x3D; 0; i &lt; randomNumbers.Length; i++)
+            &#123;
+                result[0] +&#x3D; randomNumbers[i];
+            &#125;
+        &#125;).Schedule();
+
+        &#x2F;&#x2F; This completes the scheduled jobs to get the result immediately, but for
+        &#x2F;&#x2F; better efficiency you should schedule jobs early in the frame with one
+        &#x2F;&#x2F; system and get the results late in the frame with a different system.
+        this.CompleteDependency();
+        UnityEngine.Debug.Log(&quot;The sum of &quot;
+            + randomNumbers.Length + &quot; numbers is &quot; + result[0]);
+
+        randomNumbers.Dispose();
+        result.Dispose();
+    &#125;
+&#125;</code></pre></div></figure><br />
+要运行并行作业，请实施 IJobFor。您可以使用 ScheduleParallel() 在系统的
+OnUpdate() 函数中安排并行作业。</p>
+<h3 id="捕获变量-1">捕获变量</h3>
+<p>您不能将参数传递给 Job.WithCode lambda
+表达式或返回值。相反，您必须在系统的 OnUpdate() 函数中捕获局部变量。</p>
+<p>如果您使用 Schedule() 来安排您的作业在 Unity
+的作业系统中运行，则还有其他限制：</p>
+<ul>
+<li>您必须将捕获的变量声明为 NativeArray、NativeContainer或 blittable
+类型。</li>
+<li>要返回数据，您必须将返回值写入捕获的native
+array，即使数据是单个值也是如此。但是，如果您使用 Run()
+来执行作业，则可以写入任何捕获的变量。<br />
+Job.WithCode
+有一组方法将只读和安全属性应用于捕获的NativeContainer的变量。例如，您可以使用
+WithReadOnly 将对变量的访问限制为只读。您还可以使用
+WithDisposeOnCompletion 在作业完成后自动释放容器。有关详细信息，请参阅
+Job.WithCode 文档的捕获变量部分。</li>
+</ul>
+<h3 id="执行-job.withcode-lambda-表达式">执行 Job.WithCode lambda
+表达式</h3>
+<p>要执行 Job.WithCode lambda 表达式，您可以使用以下命令：</p>
+<ul>
+<li>Schedule()：将方法作为单个非并行作业执行。安排作业在后台线程上运行代码并更好地利用所有可用的
+CPU 资源。您可以显式地将 JobHandle 传递给
+Schedule()，或者，如果您不传递任何依赖项，系统会假定当前系统的
+Dependency
+属性表示作业的依赖项。或者，如果作业没有依赖项，您可以传入一个新的
+JobHandle。</li>
+<li>Run()：在主线程上执行方法。您可以 Burst 编译
+Job.WithCode，因此如果您使用 Run()
+来执行代码，即使它在主线程上运行也会更快。当你调用 Run() 时，Unity
+会自动完成 Job.WithCode 构造的所有依赖。</li>
+</ul>
+<h3 id="依赖关系-1">依赖关系</h3>
+<p>默认情况下，系统使用其 Dependency 属性来管理其依赖项。系统按照它们在
+OnUpdate() 方法中出现的顺序将您创建的每个 <code>Entities.ForEach</code>
+和 Job.WithCode 作业添加到依赖作业句柄。</p>
+<p>要手动管理作业依赖性，请将 JobHandle 传递给 Schedule
+方法，然后返回生成的依赖性。有关详细信息，请参阅依赖项 API 文档。</p>
+<p>有关作业依赖性的一般信息，请参阅有关作业依赖性的文档。</p>
+<h2 id="作业依赖">作业依赖</h2>
+<p>Unity根据系统读写的ECS组件分析各个系统的数据依赖关系。如果在帧中较早更新的系统读取较晚系统写入的数据，或写入较晚系统读取的数据，则第二个系统依赖于第一个系统。为了防止竞争条件，作业调度程序确保系统依赖的所有作业在运行该系统的作业之前已经完成。</p>
+<h3 id="作业依赖更新顺序">作业依赖更新顺序</h3>
+<p>系统的 Dependency 属性是一个 JobHandle，表示系统的 ECS 相关依赖项。在
+OnUpdate() 之前，Dependency
+属性反映系统对先前作业的传入依赖项。默认情况下，系统会根据您在系统中安排作业时每个作业读取和写入的组件来更新依赖属性。</p>
+<h4 id="覆盖默认顺序">覆盖默认顺序</h4>
+<p>要覆盖此默认行为，请使用 <code>Entities.ForEach</code> 和
+Job.WithCode 的重载版本，它们将作业依赖项作为参数并将更新的依赖项作为
+JobHandle 返回。当您使用这些构造的显式版本时，ECS
+不会自动将作业句柄与系统的 Dependency
+属性组合在一起。您必须在需要时手动组合它们。</p>
+<p>Dependency 属性不跟踪作业可能对通过 NativeArray
+或其他类似容器传递的数据的依赖关系。如果您在一个作业中编写
+NativeArray，并在另一个作业中读取该数组，则必须手动将第一个作业的
+JobHandle 添加为第二个作业的依赖项。您可以使用
+JobHandle.CombineDependencies 来执行此操作。</p>
+<h4 id="entities.foreach-的作业依赖顺序"><code>Entities.ForEach</code>
+的作业依赖顺序</h4>
+<p>当您调用 Entities.ForEach.Run() 时，作业计划程序会在开始
+<code>ForEach</code> 迭代之前完成系统依赖的所有计划作业。如果您还使用
+WithStructuralChanges()
+作为构造的一部分，则作业调度程序将完成所有正在运行和已调度的作业。结构更改还会使对组件数据的任何直接引用无效。有关详细信息，请参阅有关结构更改的文档。</p>
+<h3 id="更多资源">更多资源</h3>
+<ul>
+<li>JobHandle 和依赖项</li>
+<li>Unity的工作系统</li>
+</ul>
+<h1 id="使用-entityquery-查询数据-1">使用 EntityQuery 查询数据</h1>
+<p>EntityQuery
+查找具有一组指定组件类型的原型。然后它将原型的块收集到一个系统可以处理的数组中。</p>
+<p>例如，如果查询匹配组件类型 A 和
+B，则查询会收集具有这两种组件类型的所有原型的块，而不管这些原型可能具有的任何其他组件类型。因此，具有组件类型
+A、B 和 C 的原型将匹配查询。</p>
+<p>您可以使用 EntityQuery 执行以下操作：</p>
+<p>运行作业以处理选定的实体和组件<br />
+获取包含所有选定实体的 NativeArray<br />
+按组件类型获取所选组件的 NativeArray<br />
+EntityQuery
+返回的实体和组件数组是并行的。这意味着相同的索引值始终适用于任何数组中的相同实体。</p>
+<h2 id="创建实体查询">创建实体查询</h2>
+<p>要创建实体查询，您可以将组件类型传递给 EntityQueryBuilder
+帮助器类型。以下示例定义了一个 EntityQuery，它查找所有同时具有
+ObjectRotation 和 ObjectRotationSpeed 组件的实体：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">EntityQuery query &#x3D; new EntityQueryBuilder(Allocator.Temp)
+    .WithAllRW&lt;ObjectRotation&gt;()
+    .WithAll&lt;ObjectRotationSpeed&gt;()
+    .Build(this);</code></pre></div></figure><br />
+查询使用 EntityQueryBuilder.WithAllRW<T> 来显示系统写入
+ObjectRotation。如果可能，您应该始终指定只读访问权限，因为对数据的读取访问权限的限制较少。这有助于作业调度程序更有效地执行作业。</p>
+<h3 id="指定系统选择的原型">指定系统选择的原型</h3>
+<p>查询将仅匹配包含您指定组件的原型。可以使用三种不同的
+EntityQueryBuilder 方法指定组件：</p>
+<ul>
+<li>WithAll<T>()：这些组件是必需的。为了匹配查询，原型必须包含查询的所有必需组件。</li>
+<li>WithAny<T>()：这些组件是可选的。为了匹配查询，原型必须至少包含一个查询的可选组件。</li>
+<li>WithNone<T>()：排除这些组件。为了匹配查询，原型不得包含任何查询的排除组件。<br />
+例如，以下查询包括包含 ObjectRotation 和 ObjectRotationSpeed
+组件的原型，但不包括包含 Static 组件的任何原型：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">EntityQuery query &#x3D; new EntityQueryBuilder(Allocator.Temp)
+    .WithAllRW&lt;ObjectRotation&gt;()
+    .WithAll&lt;ObjectRotationSpeed&gt;()
+    .WithNone&lt;Static&gt;()
+    .Build(this);</code></pre></div></figure></li>
+</ul>
+<div class="note note-info">
+            <p>要处理可选组件，请使用 ArchetypeChunk.Has<T>方法来确定块是否包含可选组件。这是因为同一块中的所有实体都具有相同的组件，因此您只需检查每个块是否存在可选组件一次：而不是每个实体一次。</p>
+          </div>
+<p>您可以使用 EntityQueryBuilder.WithOptions()
+来查找专门的原型。例如：</p>
+<ul>
+<li>IncludePrefab：包括包含 Prefab 标签组件的原型。</li>
+<li>IncludeDisabledEntities：包括包含 Disabled 标签组件的原型。</li>
+<li>FilterWriteGroup：仅包含 WriteGroup
+中明确包含在查询中的组件的实体。排除具有来自同一 WriteGroup
+的任何其他组件的实体。<br />
+有关选项的完整列表，请参阅 EntityQueryOptions。</li>
+</ul>
+<h4 id="按写入组过滤">按写入组过滤</h4>
+<p>在以下示例中，LuigiComponent 和 MarioComponent 是基于
+CharacterComponent 组件的同一 WriteGroup 中的组件。此查询使用需要
+CharacterComponent 和 MarioComponent 的 FilterWriteGroup 选项：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public struct CharacterComponent : IComponentData &#123; &#125;
+
+[WriteGroup(typeof(CharacterComponent))]
+public struct LuigiComponent : IComponentData &#123; &#125;
+
+[WriteGroup(typeof(CharacterComponent))]
+public struct MarioComponent : IComponentData &#123; &#125;
+
+[RequireMatchingQueriesForUpdate]
+public partial class ECSSystem : SystemBase
+&#123;
+    protected override void OnCreate()
+    &#123;
+        var query &#x3D; new EntityQueryBuilder(Allocator.Temp)
+            .WithAllRW&lt;CharacterComponent&gt;()
+            .WithAll&lt;MarioComponent&gt;()
+            .WithOptions(EntityQueryOptions.FilterWriteGroup)
+            .Build(this);
+    &#125;
+
+    protected override void OnUpdate()
+    &#123;
+        throw new NotImplementedException();
+    &#125;
+&#125;</code></pre></div></figure><br />
+此查询排除任何同时具有 LuigiComponent 和 MarioComponent 的实体，因为
+LuigiComponent 未明确包含在查询中。</p>
+<p>这比 None
+字段更有效，因为您不需要更改其他系统使用的查询，只要它们也使用写组。</p>
+<p>您可以使用写入组来扩展现有系统。例如，如果您在另一个系统中将
+CharacterComponent 和 LuigiComponent
+定义为不受您控制的库的一部分，则可以将 MarioComponent 与 LuigiComponent
+放在同一写入组中，以更改 CharacterComponent
+的更新方式。然后，对于您添加到 MarioComponent 的任何实体，系统都会更新
+CharacterComponent，但原始系统不会更新它。对于没有 MarioComponent
+的实体，原始系统像以前一样更新
+CharacterComponent。有关详细信息，请参阅有关写入组的文档。</p>
+<h2 id="定义过滤器">定义过滤器</h2>
+<p>要进一步对实体进行排序，您可以使用过滤器根据以下内容排除实体：</p>
+<p>共享组件过滤器：根据共享组件的特定值过滤实体集。<br />
+更改过滤器：根据特定组件类型的值是否已更改来过滤实体集。<br />
+在您对查询对象调用 ResetFilter 之前，您设置的过滤器一直有效。</p>
+<p>要忽略查询的活动块过滤器，请使用名称以 IgnoreFilter 结尾的
+EntityQuery 方法。这些方法通常比过滤等效方法更有效。例如，请参阅 IsEmpty
+与 IsEmptyIgnoreFilter。</p>
+<h3 id="使用共享组件过滤器">使用共享组件过滤器</h3>
+<p>要使用共享组件筛选器，请在 EntityQuery
+中包含共享组件以及任何其他需要的组件，然后调用 SetSharedComponentFilter
+方法。然后传入包含要选择的值的相同 ISharedComponent
+类型的结构。所有值都必须匹配。您最多可以向过滤器添加两个不同的共享组件。</p>
+<p>您可以随时更改筛选器，但如果您更改筛选器，它不会更改您从组
+ToComponentDataArray<T> 或 ToEntityArray
+方法接收的任何现有实体或组件数组。您必须重新创建这些数组。</p>
+<p>以下示例定义了一个名为 SharedGrouping
+的共享组件和一个仅处理组字段设置为 1 的实体的系统。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">
+struct SharedGrouping : ISharedComponentData
+&#123;
+    public int Group;
+&#125;
+
+[RequireMatchingQueriesForUpdate]
+partial class ImpulseSystem : SystemBase
+&#123;
+    EntityQuery query;
+
+    protected override void OnCreate()
+    &#123;
+        query &#x3D; new EntityQueryBuilder(Allocator.Temp)
+            .WithAllRW&lt;ObjectPosition&gt;()
+            .WithAll&lt;Displacement, SharedGrouping&gt;()
+            .Build(this);
+    &#125;
+
+    protected override void OnUpdate()
+    &#123;
+        &#x2F;&#x2F; Only iterate over entities that have the SharedGrouping data set to 1
+        query.SetSharedComponentFilter(new SharedGrouping &#123; Group &#x3D; 1 &#125;);
+
+        var positions &#x3D; query.ToComponentDataArray&lt;ObjectPosition&gt;(Allocator.Temp);
+        var displacements &#x3D; query.ToComponentDataArray&lt;Displacement&gt;(Allocator.Temp);
+
+        for (int i &#x3D; 0; i &lt; positions.Length; i++)
+            positions[i] &#x3D; new ObjectPosition
+            &#123;
+                Value &#x3D; positions[i].Value + displacements[i].Value
+            &#125;;
+    &#125;
+&#125;
+
+</code></pre></div></figure></p>
+<h3 id="使用更改过滤器">使用更改过滤器</h3>
+<p>如果您只需要在组件值更改时更新实体，请使用 SetChangedVersionFilter
+方法将该组件添加到 EntityQuery 过滤器。例如，以下 EntityQuery
+仅包含来自另一个系统已写入 Translation 组件的块的实体：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">
+EntityQuery query;
+
+protected override void OnCreate()
+&#123;
+    query &#x3D; new EntityQueryBuilder(Allocator.Temp)
+        .WithAllRW&lt;LocalToWorld&gt;()
+        .WithAll&lt;ObjectPosition&gt;()
+        .Build(this);
+    query.SetChangedVersionFilter(typeof(ObjectPosition));
+
+&#125;</code></pre></div></figure><br />
+为了提高效率，更改过滤器适用于整个原型块，而不是单个实体。更改过滤器还只检查声明对组件进行写访问的系统是否已运行，而不检查它是否更改了任何数据。例如，如果可以写入该组件类型的另一个作业访问该块，则更改过滤器将包括该块中的所有实体。这就是为什么您应该始终声明对不需要修改的组件的只读访问权限。</p>
+<h2 id="按启用组件过滤">按启用组件过滤</h2>
+<p>启用组件允许在运行时启用和禁用单个实体上的组件。禁用实体上的组件不会将该实体移动到新的原型中，但出于
+EntityQuery 匹配的目的，实体将被视为没有组件。具体来说：</p>
+<p>如果一个实体禁用了组件 T，它将不会匹配需要组件 T 的查询（使用
+WithAll<T>()）。<br />
+如果实体禁用了组件 T，它将匹配排除组件 T 的查询（使用
+WithNone<T>()）。<br />
+大多数 EntityQuery 操作（例如 ToEntityArray 和
+CalculateEntityCount）会自动过滤掉其可启用组件会导致它们与查询不匹配的实体。要禁用此过滤，请使用这些操作的
+IgnoreFilter 变体，或在查询创建时传递
+EntityQueryOptions.IgnoreComponentEnabledState。</p>
+<p>有关更多详细信息，请参阅启用的组件文档。</p>
+<h2 id="合并查询">合并查询</h2>
+<p>要有效地将多个查询合并为一个，您可以创建一个包含多个查询描述的查询。生成的查询与匹配任何提供的查询描述的原型相匹配。本质上，组合查询匹配查询描述的并集。以下示例选择包含
+ObjectRotation 组件或 ObjectRotationSpeed 组件（或两者）的任何原型：</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">EntityQuery query &#x3D; new EntityQueryBuilder(Allocator.Temp)
+    .WithAllRW&lt;ObjectRotation&gt;()
+    &#x2F;&#x2F; Start a new query description
+    .AddAdditionalQuery()
+    .WithAllRW&lt;ObjectRotationSpeed&gt;()
+    .Build(this);</code></pre></div></figure>
+<h2 id="执行查询">执行查询</h2>
+<p>通常，您在安排使用它的作业时执行实体查询。您还可以调用返回实体、组件或原型块数组的
+EntityQuery 方法之一：</p>
+<p>ToEntityArray：返回所选实体的数组。<br />
+ToComponentDataArray：返回所选实体的 T 类型组件的数组。<br />
+CreateArchetypeChunkArray：返回包含所选实体的所有块。因为查询对原型、共享组件值和更改过滤器进行操作，这些对于块中的所有实体都是相同的，所以存储在返回的块集中的实体集与
+ToEntityArray 返回的实体集相同。<br />
+上述方法的异步版本也可用，它安排一个作业来收集请求的数据。其中一些变体必须返回
+NativeList 而不是 NativeArray 才能支持可启用的组件。请参阅
+ToEntityListAsync、ToComponentDataListAsync 和
+CreateArchetypeChunkArrayAsync。</p>
+<h2 id="编辑器中的查询">编辑器中的查询</h2>
+<p>在编辑器中，以下图标代表查询：
+。当您使用特定的实体窗口和检查器时，您会看到这一点。您还可以使用“查询”窗口查看与所选查询匹配的组件和实体。</p>
+<h1 id="使用-entitycommandbuffer-安排数据更改">使用 EntityCommandBuffer
+安排数据更改</h1>
+<p>要对实体数据更改进行排队而不是立即执行更改，您可以使用
+EntityCommandBuffer
+结构，它创建一个线程安全的命令缓冲区。如果您想在作业完成时推迟任何结构更改，这将很有用。</p>
+<h2 id="entitycommandbuffer-方法">EntityCommandBuffer 方法</h2>
+<p>您可以使用 EntityCommandBuffer 中的方法来记录命令，这些方法反映了
+EntityManager 的一些方法，例如：</p>
+<ul>
+<li>CreateEntity(EntityArchetype)：创建具有指定原型的新实体。</li>
+<li>DestroyEntity(Entity)：销毁实体。</li>
+<li>SetComponent<T>(Entity, T)：为实体上类型 T 的组件设置值。</li>
+<li>AddComponent<T>(Entity)：将类型 T 的组件添加到实体。</li>
+<li>RemoveComponent<T>(EntityQuery)：从匹配查询的所有实体中移除类型 T
+的组件。<br />
+Unity 仅在调用主线程上的 Playback 方法时才将更改记录在
+EntityCommandBuffer
+中。如果您尝试在播放后记录任何对命令缓冲区的进一步更改，Unity
+会抛出异常。</li>
+</ul>
+<p>EntityCommandBuffer
+有一个作业安全句柄，类似于NativeContainer。如果您尝试对使用命令缓冲区的未完成计划作业执行以下任何操作，安全检查会抛出异常：</p>
+<ul>
+<li>通过其 AddComponent、Playback、Dispose 或其他方法访问
+EntityCommandBuffer。</li>
+<li>安排另一个访问相同 EntityCommandBuffer
+的作业，除非新作业依赖于已安排的作业。</li>
+</ul>
+<h2 id="在单线程作业中使用-entitycommandbuffer">在单线程作业中使用
+EntityCommandBuffer</h2>
+<p>Unity
+无法在作业中执行结构更改，因此您可以使用实体的命令缓冲区来推迟结构更改，直到
+Unity 完成作业。例如：</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; ... in a system update
+
+&#x2F;&#x2F; You don&#39;t specify a size because the buffer will grow as needed.
+EntityCommandBuffer ecb &#x3D; new EntityCommandBuffer(Allocator.TempJob);
+
+&#x2F;&#x2F; The ECB is captured by the &#96;ForEach&#96; job.
+&#x2F;&#x2F; Until completed, the job owns the ECB&#39;s job safety handle.
+Entities
+    .ForEach((Entity e, in FooComp foo) &#x3D;&gt;
+    &#123;
+        if (foo.Value &gt; 0)
+        &#123;
+            &#x2F;&#x2F; Record a command that will later add
+            &#x2F;&#x2F; BarComp to the entity.
+            ecb.AddComponent&lt;BarComp&gt;(e);
+        &#125;
+    &#125;).Schedule();
+
+this.Dependency.Complete();
+
+&#x2F;&#x2F; Now that the job is completed, you can enact the changes.
+&#x2F;&#x2F; Note that Playback can only be called on the main thread.
+ecb.Playback(this.EntityManager);
+
+&#x2F;&#x2F; You are responsible for disposing of any ECB you create.
+ecb.Dispose();
+</code></pre></div></figure>
+<h2 id="在并行作业中使用-entitycommandbuffer">在并行作业中使用
+EntityCommandBuffer</h2>
+<p>如果要在并行作业中使用实体命令缓冲区，请使用
+EntityCommandBuffer.ParallelWriter，它以线程安全的方式并发记录到命令缓冲区：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">EntityCommandBuffer ecb &#x3D; new EntityCommandBuffer(Allocator.TempJob);
+
+&#x2F;&#x2F; Methods of this writer record commands to 
+&#x2F;&#x2F; the EntityCommandBuffer in a thread-safe way.
+EntityCommandBuffer.ParallelWriter parallelEcb &#x3D; ecb.AsParallelWriter();</code></pre></div></figure></p>
+<blockquote>
+<p>note<br />
+只有记录需要线程安全才能并发。回放在主线程上始终是单线程的。</p>
+</blockquote>
+<h3 id="确定性回放">确定性回放</h3>
+<p>因为命令的记录是跨线程拆分的，所以记录命令的顺序取决于作业调度，因此是不确定的。</p>
+<p>确定性并不总是必不可少的，但产生确定性结果的代码更容易调试。还有一些网络场景需要在不同机器上获得一致的结果。但是，确定性会对性能产生影响，因此您可能需要在某些项目中接受不确定性。</p>
+<p>您无法避免不确定的录制顺序，但可以通过以下方式确定命令的播放顺序：</p>
+<ol type="1">
+<li>每个命令记录一个“排序键”int
+作为第一个参数传递给每个命令方法。您必须调用 lambda 参数
+entityInQueryIndex，否则 <code>Entities.ForEach</code> 将无法识别
+int。</li>
+<li>在播放时，在执行命令之前按命令的排序键对命令进行排序。<br />
+只要记录的排序键独立于调度，排序就可以确定播放顺序。</li>
+</ol>
+<p>在并行作业中，每个实体所需的排序键是一个数字，它与作业查询中的该实体具有固定且唯一的关联。</p>
+<p>并行作业中提供的 entityInQueryIndex
+值满足这些条件。在与作业查询匹配的原型块列表中，实体具有以下索引：</p>
+<ul>
+<li>第一个块的第一个实体有 entityInQueryIndex 0</li>
+<li>第一个块的第二个实体有 entityInQueryIndex 1</li>
+<li>第二个块的第一个实体有一个
+entityInQueryIndex，它是第一个块的计数</li>
+<li>第三个块的第一个实体有一个
+entityInQueryIndex，它是前两个块的计数之和</li>
+</ul>
+<p>entityInQueryIndex 始终遵循此模式。</p>
+<p>以下示例代码显示了并行作业中使用的实体命令缓冲区：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; ... in a system update
+
+EntityCommandBuffer ecb &#x3D; new EntityCommandBuffer(Allocator.TempJob);
+
+&#x2F;&#x2F; We need to write to the ECB concurrently across threads.
+EntityCommandBuffer.ParallelWriter ecbParallel &#x3D; ecb.AsParallelWriter();
+
+&#x2F;&#x2F; The entityInQueryIndex is unique for each entity and will be
+&#x2F;&#x2F; consistent for each particular entity regardless of scheduling.
+Entities
+    .ForEach((Entity e, int entityInQueryIndex, in FooComp foo) &#x3D;&gt; &#123;
+        if (foo.Value &gt; 0)
+        &#123;
+            &#x2F;&#x2F; The first arg is the &#39;sort key&#39; recorded with the command.
+            ecbParallel.AddComponent&lt;BarComp&gt;(entityInQueryIndex, e);
+        &#125;
+    &#125;).Schedule();
+
+&#x2F;&#x2F; Playback is single-threaded as normal.
+this.Dependency.Complete();
+
+&#x2F;&#x2F; To ensure deterministic playback order,
+&#x2F;&#x2F; the commands are first sorted by their sort keys.
+ecb.Playback(this.EntityManager);
+
+ecb.Dispose();</code></pre></div></figure></p>
+<h2 id="重用-entitycommandbuffer-实例">重用 EntityCommandBuffer
+实例</h2>
+<p>最好的做法是为每个作业提供自己的命令缓冲区。这是因为与在单个命令缓冲区中记录相同的命令相比，将一组命令记录到多个命令缓冲区的开销很小。</p>
+<p>但是，您可以在非并行作业中重用相同的
+EntityCommandBuffer，只要这些作业在调度中不重叠即可。如果您在并行作业中重复使用
+EntityCommandBuffer
+实例，这可能会导致播放中命令的意外排序顺序，除非每个作业的排序键位于不同的范围内。</p>
+<h2 id="多重回放">多重回放</h2>
+<p>如果多次调用 Playback 方法，它会抛出异常。为避免这种情况，请使用
+PlaybackPolicy.MultiPlayback 选项创建一个 EntityCommandBuffer
+实例：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; ... in a system update
+
+EntityCommandBuffer ecb &#x3D;
+        new EntityCommandBuffer(Allocator.TempJob, PlaybackPolicy.MultiPlayback);
+
+&#x2F;&#x2F; ... record commands
+
+ecb.Playback(this.EntityManager);
+
+&#x2F;&#x2F; Additional playbacks are OK because this ECB is MultiPlayback.
+ecb.Playback(this.EntityManager);
+
+ecb.Dispose();</code></pre></div></figure><br />
+如果您想重复生成一组实体，则多重播放很有用。为此，使用
+EntityCommandBuffer
+创建并配置一组新实体，然后重复播放以重新生成另一组匹配的实体。</p>
+<h2 id="在主线程上使用-entitycommandbuffer">在主线程上使用
+EntityCommandBuffer</h2>
+<p>您可以在主线程上记录命令缓冲区更改。这在以下情况下很有用：</p>
+<ul>
+<li>延迟您的更改。</li>
+<li>多次回放一组更改。</li>
+<li>在一个统一的地方回放很多变化。这比将更改散布在框架的不同部分更有效。</li>
+</ul>
+<p>每个结构更改操作都会触发一个同步点，这意味着该操作必须等待部分或所有计划作业完成。如果将结构更改组合到命令缓冲区中，则帧的同步点会更少。</p>
+<h2 id="使用-entitycommandbuffersystem-自动播放和处理命令缓冲区">使用
+EntityCommandBufferSystem 自动播放和处理命令缓冲区</h2>
+<p>您可以使用 EntityCommandBufferSystem
+回放和处理命令缓冲区，而不是自己手动执行。去做这个：</p>
+<ol type="1">
+<li>获取要进行播放的 EntityCommandBuffer 系统的实例。</li>
+<li>通过系统创建一个 EntityCommandBuffer 实例。</li>
+<li>安排一个将命令写入 EntityCommandBuffer 的作业。</li>
+<li>注册系统完成的预定作业。</li>
+</ol>
+<p>例如：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; ... in a system
+
+&#x2F;&#x2F; Assume an EntityCommandBufferSystem exists named FooECBSystem.
+EntityCommandBufferSystem sys &#x3D;
+        this.World.GetExistingSystemManaged&lt;FooECBSystem&gt;();
+
+&#x2F;&#x2F; Create a command buffer that will be played back
+&#x2F;&#x2F; and disposed by MyECBSystem.
+EntityCommandBuffer ecb &#x3D; sys.CreateCommandBuffer();
+
+&#x2F;&#x2F; A &#96;ForEach&#96; with no argument to Schedule implicitly
+&#x2F;&#x2F; assigns its returned JobHandle to this.Dependency
+Entities
+    .ForEach((Entity e, in FooComp foo) &#x3D;&gt; &#123;
+        &#x2F;&#x2F; ... record to the ECB
+    &#125;).Schedule();
+
+&#x2F;&#x2F; Register the job so that it gets completed by the ECB system.
+sys.AddJobHandleForProducer(this.Dependency);</code></pre></div></figure></p>
+<div class="note note-waring">
+            <p>不要手动回放和处置 EntityCommandBufferSystem 创建的EntityCommandBuffer。 EntityCommandBufferSystem 为您完成这两件事。</p>
+          </div>
+<p>在每次更新中，一个 EntityCommandBufferSystem：</p>
+<ol type="1">
+<li>完成所有已注册的作业，以确保他们已完成录制）。</li>
+<li>以创建它们的相同顺序播放通过系统创建的所有实体命令缓冲区。</li>
+<li>处理 EntityCommandBuffer。</li>
+</ol>
+<h3 id="默认-entitycommandbuffersystem-系统">默认
+EntityCommandBufferSystem 系统</h3>
+<p>默认世界具有以下默认 EntityCommandBufferSystem 系统：</p>
+<ul>
+<li>BeginInitializationEntityCommandBufferSystem</li>
+<li>EndInitializationEntityCommandBufferSystem</li>
+<li>BeginSimulationEntityCommandBufferSystem</li>
+<li>EndSimulationEntityCommandBufferSystem</li>
+<li>BeginPresentationEntityCommandBufferSystem</li>
+</ul>
+<p>因为在 Unity 将渲染数据交给渲染器之后，帧中不会发生结构变化，所以没有
+EndPresentationEntityCommandBufferSystem 系统。您可以改用
+BeginInitializationEntityCommandBufferSystem：一帧的结尾是下一帧的开始。</p>
+<p>这些更新在标准系统组的开头和结尾。有关详细信息，请参阅有关系统更新顺序的文档。</p>
+<p>对于大多数用例，默认系统应该足够了，但如果需要，您可以创建自己的
+EntityCommandBufferSystem：</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; You should specify where exactly in the frame
+&#x2F;&#x2F; that the ECB system should update.
+[UpdateInGroup(typeof(SimulationSystemGroup))]
+[UpdateAfter(typeof(FooSystem))]
+public class MyECBSystem : EntityCommandBufferSystem &#123;
+    &#x2F;&#x2F; This class is intentionally empty. There is generally no
+    &#x2F;&#x2F; reason to put any code in an EntityCommandBufferSystem.
+&#125;
+</code></pre></div></figure>
+<h2 id="延迟实体">延迟实体</h2>
+<p>EntityCommandBuffer 方法 CreateEntity 和 Instantiate
+记录创建实体的命令。这些方法只记录命令，不创建实体。因此，它们返回带有负索引的实体值，代表尚不存在的占位符实体。这些占位符实体值仅在同一
+ECB 的记录命令中有意义。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; ... in a system
+
+EntityCommandBuffer ecb &#x3D; new EntityCommandBuffer(Allocator.TempJob);
+
+Entity placeholderEntity &#x3D; ecb.CreateEntity();
+
+&#x2F;&#x2F; Valid to use placeholderEntity in later commands of same ECB.
+ecb.AddComponent&lt;FooComp&gt;(placeholderEntity);
+
+&#x2F;&#x2F; The real entity is created, and
+&#x2F;&#x2F; FooComp is added to the real entity.
+ecb.Playback(this.EntityManager);
+
+&#x2F;&#x2F; Exception! The placeholderEntity has no meaning outside
+&#x2F;&#x2F; the ECB which created it, even after playback.
+this.EntityManager.AddComponent&lt;BarComp&gt;(placeholderEntity);
+
+ecb.Dispose();</code></pre></div></figure><br />
+AddComponent、SetComponent 或 SetBuffer 命令中记录的值可能具有 Entity
+字段。在回放中，Unity
+将这些组件或缓冲区中的任何占位符实体值重新映射到相应的实际实体。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">&#x2F;&#x2F; ... in a system
+
+EntityCommandBuffer ecb &#x3D; new EntityCommandBuffer(Allocator.TempJob);
+
+&#x2F;&#x2F; For all entities with a FooComp component...
+Entities
+    .WithAll&lt;FooComp&gt;()
+    .ForEach((Entity e) &#x3D;&gt;
+    &#123;
+        &#x2F;&#x2F; In playback, an actual entity will be created
+        &#x2F;&#x2F; that corresponds to this placeholder entity.
+        Entity placeholderEntity &#x3D; ecb.CreateEntity();
+
+        &#x2F;&#x2F; (Assume BarComp has an Entity field called TargetEnt.)
+        BarComp bar &#x3D; new BarComp &#123; TargetEnt &#x3D; placeholderEntity &#125;;
+
+        &#x2F;&#x2F; In playback, TargetEnt will be assigned the
+        &#x2F;&#x2F; actual Entity that corresponds to placeholderEntity.
+        ecb.AddComponent(e, bar);
+    &#125;).Run();
+
+&#x2F;&#x2F; After playback, each entity with FooComp now has a
+&#x2F;&#x2F; BarComp component whose TargetEnt references a new entity.
+ecb.Playback(this.EntityManager);
+
+ecb.Dispose();
+</code></pre></div></figure></p>
+<h2 id="在-entities.foreach-方法中使用命令缓冲区">在
+<code>Entities.ForEach</code> 方法中使用命令缓冲区</h2>
+<p>要在 <code>Entities.ForEach</code> 方法中使用命令缓冲区，请将
+EntityCommandBuffer 参数传递给 lambda 表达式本身。仅支持一小部分
+EntityCommandBuffer 方法，它们具有 [SupportedInEntitiesForEach]
+属性：</p>
+<ul>
+<li>Entity Instantiate(实体实体)</li>
+<li>void DestroyEntity(实体实体)</li>
+<li>void AddComponent<T>(Entity e, T component) where T : unmanaged,
+IComponentData</li>
+<li>void SetComponent<T>(Entity e, T component) where T : unmanaged,
+IComponentData</li>
+<li>void RemoveComponent<T>(实体 e)<br />
+例如，以下代码执行此操作：</li>
+</ul>
+<ol type="1">
+<li>它检查每个实体以查看其 HealthLevel 是否为 0。</li>
+<li>如果为真，它会记录一条销毁实体的命令。</li>
+<li>它还指定 EndSimulationEntityCommandBufferSystem 应该回放命令。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public struct HealthLevel : IComponentData
+&#123;
+    public int Value;
+&#125;
+
+Entities
+    .WithDeferredPlaybackSystem&lt;EndSimulationEntityCommandBufferSystem&gt;
+    .ForEach(
+        (Entity entity, EntityCommandBuffer buffer, HealthLevel healthLevel) &#x3D;&gt; 
+        &#123;
+            if (healthLevel &#x3D;&#x3D; 0)
+            &#123;
+                buffer.DestroyEntity(entity);
+            &#125;
+        &#125;
+    ).ScheduleParallel();</code></pre></div></figure><br />
+当您在 <code>ForEach()</code>
+函数中使用这些方法中的任何一种时，编译器会在运行时生成创建、填充、回放和处理
+EntityCommandBuffer 实例或 EntityCommandBuffer.ParallelWriter
+实例所需的代码（如果调用了 ScheduleParallel()） .</li>
+</ol>
+<p>在 <code>ForEach()</code> 之外调用这些方法会导致异常。</p>
+<h3 id="在-entities.foreach-中回放-entitycommandbuffer">在
+<code>Entities.ForEach</code> 中回放 EntityCommandBuffer</h3>
+<p>要将 EntityCommandBuffer 参数传递给 <code>ForEach()</code>
+函数，您还必须调用以下方法之一来指定何时回放命令：</p>
+<ul>
+<li>延迟回放：调用 WithDeferredPlaybackSystem<T>()，其中 T
+标识回放命令的实体命令缓冲区系统。它必须是从 EntityCommandBufferSystem
+派生的类型。</li>
+<li>立即回放：在 <code>ForEach()</code> 函数完成所有迭代后立即调用
+WithImmediatePlayback() 执行实体命令。您只能将 WithImmediatePlayback()
+与 Run() 一起使用。</li>
+</ul>
+<p>编译器自动生成代码来创建和处理任何 EntityCommandBuffer 实例。</p>
+<h1 id="查找任意数据">查找任意数据</h1>
+<p>访问和修改数据的最有效方法是使用具有实体查询和作业的系统。这以最高效的方式利用
+CPU
+资源，内存缓存未命中率最低。理想情况下，您应该使用最有效、最快的路径来执行大量数据转换。但是，有时您可能需要在程序的任意位置访问任意实体的任意组件。</p>
+<p>您可以在实体的 IComponentData
+及其动态缓冲区中查找数据。您查找数据的方式取决于您的代码是使用
+Entities.ForEach、IJobEntityBatch
+作业，还是在系统中执行的主线程上的其他一些方法。</p>
+<h2 id="在系统中查找实体数据">在系统中查找实体数据</h2>
+<p>要从系统的 <code>Entities.ForEach</code> 或 Job.WithCode
+方法中查找存储在任意实体组件中的数据，请使用 GetComponent<T>(Entity)</p>
+<p>例如，以下代码使用 GetComponent<T>(Entity) 获取 Target
+组件，该组件具有标识要定位的实体的实体字段。然后它将跟踪实体旋转到它们的目标：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[RequireMatchingQueriesForUpdate]
+public partial class TrackingSystem : SystemBase
+&#123;
+    protected override void OnUpdate()
+    &#123;
+        float deltaTime &#x3D; SystemAPI.Time.DeltaTime;
+
+        Entities
+            .ForEach((ref Rotation orientation,
+            in LocalToWorld transform,
+            in Target target) &#x3D;&gt;
+            &#123;
+                &#x2F;&#x2F; Check to make sure the target Entity still exists and has
+                &#x2F;&#x2F; the needed component
+                if (!HasComponent&lt;LocalToWorld&gt;(target.entity))
+                    return;
+
+                &#x2F;&#x2F; Look up the entity data
+                LocalToWorld targetTransform &#x3D; GetComponent&lt;LocalToWorld&gt;(target.entity);
+                float3 targetPosition &#x3D; targetTransform.Position;
+
+                &#x2F;&#x2F; Calculate the rotation
+                float3 displacement &#x3D; targetPosition - transform.Position;
+                float3 upReference &#x3D; new float3(0, 1, 0);
+                quaternion lookRotation &#x3D; quaternion.LookRotationSafe(displacement, upReference);
+
+                orientation.Value &#x3D; math.slerp(orientation.Value, lookRotation, deltaTime);
+            &#125;)
+            .ScheduleParallel();
+    &#125;
+&#125;</code></pre></div></figure><br />
+如果要访问存储在动态缓冲区中的数据，还需要在 <code>SystemBase</code> 的
+OnUpdate 方法中声明一个 BufferLookup 类型的局部变量。然后，您可以在
+lambda 表达式中捕获局部变量。例如：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public struct BufferData : IBufferElementData
+&#123;
+    public float Value;
+&#125;
+[RequireMatchingQueriesForUpdate]
+public partial class BufferLookupSystem : SystemBase
+&#123;
+    protected override void OnUpdate()
+    &#123;
+        BufferLookup&lt;BufferData&gt; buffersOfAllEntities
+            &#x3D; this.GetBufferLookup&lt;BufferData&gt;(true);
+
+        Entities
+            .ForEach((ref Rotation orientation,
+            in LocalToWorld transform,
+            in Target target) &#x3D;&gt;
+            &#123;
+                &#x2F;&#x2F; Check to make sure the target Entity with this buffer type still exists
+                if (!buffersOfAllEntities.HasBuffer(target.entity))
+                    return;
+
+                &#x2F;&#x2F; Get a reference to the buffer
+                DynamicBuffer&lt;BufferData&gt; bufferOfOneEntity &#x3D; buffersOfAllEntities[target.entity];
+
+                &#x2F;&#x2F; Use the data in the buffer
+                float avg &#x3D; 0;
+                for (var i &#x3D; 0; i &lt; bufferOfOneEntity.Length; i++)
+                &#123;
+                    avg +&#x3D; bufferOfOneEntity[i].Value;
+                &#125;
+                if (bufferOfOneEntity.Length &gt; 0)
+                    avg &#x2F;&#x3D; bufferOfOneEntity.Length;
+            &#125;)
+            .ScheduleParallel();
+    &#125;
+&#125;</code></pre></div></figure></p>
+<h2 id="在作业中查找实体数据">在作业中查找实体数据</h2>
+<p>要在 IJobEntityBatch
+等作业结构中随机访问组件数据，请使用以下类型之一：</p>
+<ul>
+<li>组件查找</li>
+<li>缓冲区查找<br />
+这些类型获得一个类似于数组的组件接口，由 Entity 对象索引。</li>
+</ul>
+<p>要使用它们，请声明一个类型为 ComponentLookup 或 BufferLookup
+的字段，设置该字段的值，然后安排作业。</p>
+<p>例如，您可以使用 ComponentLookup 字段来查找实体的世界位置：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[ReadOnly]
+public ComponentLookup&lt;LocalToWorld&gt; EntityPositions;</code></pre></div></figure></p>
+<div class="note note-info">
+            <p>此声明使用 ReadOnly 属性。您应该始终将 ComponentLookup对象声明为只读，除非您想写入您访问的组件。</p>
+          </div>
+<p>以下示例说明了如何设置数据字段和安排作业：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">protected override void OnUpdate()
+&#123;
+    var job &#x3D; new ChaserSystemJob();
+
+    &#x2F;&#x2F; Set non-ECS data fields
+    job.deltaTime &#x3D; SystemAPI.Time.DeltaTime;
+
+    &#x2F;&#x2F; Schedule the job using Dependency property
+    Dependency &#x3D; job.ScheduleParallel(query, this.Dependency);
+&#125;</code></pre></div></figure><br />
+要查找组件的值，请在作业的 Execute 方法中使用实体对象：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">                float3 targetPosition &#x3D; entityPosition.Position;
+if !ENABLE_TRANSFORM_V1
+                float3 chaserPosition &#x3D; transform.Value.Position;
+else
+                float3 chaserPosition &#x3D; position.Value;
+endif
+                float3 displacement &#x3D; targetPosition - chaserPosition;
+                float3 newPosition &#x3D; chaserPosition + displacement * deltaTime;
+if !ENABLE_TRANSFORM_V1
+                transform.Value.Position &#x3D; newPosition;
+else
+                position &#x3D; new Translation &#123; Value &#x3D; newPosition &#125;;
+endif</code></pre></div></figure><br />
+以下完整示例显示了一个系统，该系统将具有目标字段的实体移动到目标的当前位置：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">    [RequireMatchingQueriesForUpdate]
+    public partial class MoveTowardsEntitySystem : SystemBase
+    &#123;
+        private EntityQuery query;
+
+        [BurstCompile]
+        private partial struct MoveTowardsJob : IJobEntity
+        &#123;
+
+            &#x2F;&#x2F; Read-only data stored (potentially) in other chunks
+            [ReadOnly]
+            public ComponentLookup&lt;LocalToWorld&gt; EntityPositions;
+
+            &#x2F;&#x2F; Non-entity data
+            public float deltaTime;
+
+if !ENABLE_TRANSFORM_V1
+            public void Execute(ref LocalToWorldTransform transform, in Target target, in LocalToWorld entityPosition)
+else
+            public void Execute(Translation position, in Target target, in LocalToWorld entityPosition)
+endif
+            &#123;
+                &#x2F;&#x2F; Get the target Entity object
+                Entity targetEntity &#x3D; target.entity;
+
+                &#x2F;&#x2F; Check that the target still exists
+                if (!EntityPositions.HasComponent(targetEntity))
+                    return;
+
+                &#x2F;&#x2F; Update translation to move the chasing enitity toward the target
+                float3 targetPosition &#x3D; entityPosition.Position;
+if !ENABLE_TRANSFORM_V1
+                float3 chaserPosition &#x3D; transform.Value.Position;
+
+                float3 displacement &#x3D; targetPosition - chaserPosition;
+                transform.Value.Position &#x3D; chaserPosition + displacement * deltaTime;
+else
+                float3 chaserPosition &#x3D; position.Value;
+
+                float3 displacement &#x3D; targetPosition - chaserPosition;
+                position &#x3D; new Translation
+                &#123;
+                    Value &#x3D; chaserPosition + displacement * deltaTime
+                &#125;;
+endif
+            &#125;
+        &#125;
+
+        protected override void OnCreate()
+        &#123;
+            &#x2F;&#x2F; Select all entities that have Translation and Target Component
+            query &#x3D; this.GetEntityQuery
+                (
+if !ENABLE_TRANSFORM_V1
+                    typeof(LocalToWorldTransform),
+else
+                    typeof(Translation),
+endif
+                    ComponentType.ReadOnly&lt;Target&gt;()
+                );
+        &#125;
+
+        protected override void OnUpdate()
+        &#123;
+            &#x2F;&#x2F; Create the job
+            var job &#x3D; new MoveTowardsJob();
+
+            &#x2F;&#x2F; Set the component data lookup field
+            job.EntityPositions &#x3D; GetComponentLookup&lt;LocalToWorld&gt;(true);
+
+            &#x2F;&#x2F; Set non-ECS data fields
+            job.deltaTime &#x3D; SystemAPI.Time.DeltaTime;
+
+            &#x2F;&#x2F; Schedule the job using Dependency property
+            Dependency &#x3D; job.ScheduleParallel(query, Dependency);
+        &#125;
+    &#125;
+</code></pre></div></figure></p>
+<h2 id="数据访问错误">数据访问错误</h2>
+<p>如果您查找的数据与您要在作业中读取和写入的数据重叠，则随机访问可能会导致竞争条件。</p>
+<p>如果您确定要直接读取或写入的实体数据与要随机读取或写入的特定实体数据之间没有重叠，则可以使用
+NativeDisableParallelForRestriction 属性标记访问器对象。</p>
+<h1 id="写入组">写入组</h1>
+<p>写入组为一个系统提供了一种覆盖另一个系统的机制，即使您无法更改另一个系统。</p>
+<p>一种常见的 ECS
+模式是系统读取一组输入组件并将其写入另一个组件作为其输出。但是，您可能希望覆盖系统的输出，并使用基于不同输入集的不同系统来更新输出组件。</p>
+<p>目标组件类型的写入组由 ECS 将 WriteGroup
+属性应用于的所有其他组件类型组成，并以该目标组件类型作为参数。作为系统创建者，您可以使用写入组，以便您的系统用户可以排除您的系统将以其他方式选择和处理的实体。这种过滤机制允许系统用户根据自己的逻辑为排除的实体更新组件，同时让您的系统在其余部分照常运行。</p>
+<h2 id="使用写组">使用写组</h2>
+<p>要使用写入组，您必须对系统中的查询使用写入组过滤器选项。这从查询中排除所有实体，这些实体具有来自查询中可写的任何组件的写入组的组件。</p>
+<p>要覆盖使用写入组的系统，请将您自己的组件类型标记为该系统输出组件的写入组的一部分。原始系统忽略任何具有您的组件的实体，您可以使用您自己的系统更新这些实体的数据。</p>
+<h2 id="编写组示例">编写组示例</h2>
+<p>在此示例中，您使用外部包根据角色的健康状况为游戏中的所有角色着色。为此，包中有两个组件：HealthComponent
+和 ColorComponent；</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public struct HealthComponent : IComponentData
+&#123;
+   public int Value;
+&#125;
+
+public struct ColorComponent : IComponentData
+&#123;
+   public float4 Value;
+&#125;</code></pre></div></figure>
+<p>包中还有两个系统：</p>
+<ol type="1">
+<li>ComputeColorFromHealthSystem，它从 HealthComponent 读取并写入
+ColorComponent</li>
+<li>RenderWithColorComponent，从 ColorComponent 读取<br />
+为了表示玩家何时使用能量提升并且他们的角色变得无敌，您将
+InvincibleTagComponent
+附加到角色的实体。在这种情况下，角色的颜色应该更改为单独的不同颜色，而上面的示例不适用。</li>
+</ol>
+<p>您可以创建自己的系统来覆盖 ColorComponent 值，但理想情况下
+ComputeColorFromHealthSystem 不会计算实体的颜色。它应该忽略任何具有
+InvincibleTagComponent
+的实体。当屏幕上有成千上万的玩家时，这就变得更加重要。</p>
+<p>这个系统来自另一个不知道 InvincibleTagComponent
+的包，所以这是写组有用的时候。当您知道它计算的值无论如何都会被覆盖时，它允许系统忽略查询中的实体。您需要做两件事来支持这一点：</p>
+<ol type="1">
+<li><p>将 InvincibleTagComponent 标记为 ColorComponent
+写入组的一部分：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">[WriteGroup(typeof(ColorComponent))]
+struct InvincibleTagComponent : IComponentData &#123;&#125;</code></pre></div></figure><br />
+ColorComponent 的写入组由所有组件类型组成，这些组件类型具有以
+typeof(ColorComponent) 作为参数的 WriteGroup 属性。</p></li>
+<li><p>ComputeColorFromHealthSystem
+必须明确支持写组。为此，系统需要为其所有查询指定
+EntityQueryOptions.FilterWriteGroup 选项，如下所示：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">...
+protected override void OnUpdate() &#123;
+Entities
+    .WithName(&quot;ComputeColor&quot;)
+    .WithEntityQueryOptions(EntityQueryOptions.FilterWriteGroup) &#x2F;&#x2F; support write groups
+    .ForEach((ref ColorComponent color, in HealthComponent health) &#x3D;&gt; &#123;
+        &#x2F;&#x2F; compute color here
+    &#125;).ScheduleParallel();
+&#125;
+...</code></pre></div></figure><br />
+执行时，会发生以下情况：</p></li>
+<li><p>系统检测到你写入 ColorComponent 因为它是一个引用参数</p></li>
+<li><p>它查找 ColorComponent 的写入组并在其中找到
+InvincibleTagComponent</p></li>
+<li><p>它排除了所有具有 InvincibleTagComponent 的实体</p></li>
+</ol>
+<p>好处是，这允许系统根据系统未知的类型排除实体，并且可能存在于不同的包中。</p>
+<div class="note note-info">
+            <p>有关更多示例，请参阅 Unity.Transforms代码，它为其更新的每个组件使用写入组，包括 LocalToWorld。</p>
+          </div>
+<h2 id="创建写入组">创建写入组</h2>
+<p>要创建写入组，请将 WriteGroup
+属性添加到写入组中每个组件类型的声明中。 WriteGroup
+属性采用一个参数，即组中组件用于更新的组件类型。单个组件可以是多个写入组的成员。</p>
+<p>例如，如果您的系统在实体上存在组件 A 或 B 时写入组件 W，那么您可以为
+W 定义一个写入组，如下所示：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public struct W : IComponentData
+&#123;
+   public int Value;
+&#125;
+
+[WriteGroup(typeof(W))]
+public struct A : IComponentData
+&#123;
+   public int Value;
+&#125;
+
+[WriteGroup(typeof(W))]
+public struct B : IComponentData
+&#123;
+   public int Value;
+&#125;</code></pre></div></figure><br />
+您没有将写入组的目标（上例中的组件 W）添加到它自己的写入组。</p>
+<h2 id="启用写组过滤">启用写组过滤</h2>
+<p>要启用写入组过滤，请在您的作业上设置 FilterWriteGroups 标志：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class AddingSystem : SystemBase
+&#123;
+   protected override void OnUpdate() &#123;
+      Entities
+          &#x2F;&#x2F; support write groups by setting EntityQueryOptions
+         .WithEntityQueryOptions(EntityQueryOptions.FilterWriteGroup) 
+         .ForEach((ref W w, in B b) &#x3D;&gt; &#123;
+            &#x2F;&#x2F; perform computation here
+         &#125;).ScheduleParallel();&#125;
+&#125;</code></pre></div></figure><br />
+对于查询描述对象，在创建查询时设置标志：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class AddingSystem : SystemBase
+&#123;
+   private EntityQuery m_Query;
+
+   protected override void OnCreate()
+   &#123;
+       var queryDescription &#x3D; new EntityQueryDesc
+       &#123;
+           All &#x3D; new ComponentType[] &#123;
+              ComponentType.ReadWrite&lt;W&gt;(),
+              ComponentType.ReadOnly&lt;B&gt;()
+           &#125;,
+           Options &#x3D; EntityQueryOptions.FilterWriteGroup
+       &#125;;
+       m_Query &#x3D; GetEntityQuery(queryDescription);
+   &#125;
+   &#x2F;&#x2F; Define IJobEntityBatch struct and schedule...
+&#125;</code></pre></div></figure><br />
+当您在查询中启用写入组过滤时，该查询会将可写组件的写入组中的所有组件添加到查询的
+None 列表中，除非您明确将它们添加到 All 或 Any
+列表中。因此，如果查询明确需要来自特定写入组的实体上的每个组件，则查询只会选择该实体。如果实体具有来自该写入组的一个或多个附加组件，则查询将拒绝它。</p>
+<p>在上面的示例代码中，查询：</p>
+<ul>
+<li>排除具有组件 A 的任何实体，因为 W 是可写的并且 A 是 W
+的写入组的一部分。</li>
+<li>不排除具有组件 B 的任何实体。即使 B 是 W 的写入组的一部分，它也在
+All 列表中明确指定。</li>
+</ul>
+<h2 id="覆盖另一个使用写入组的系统">覆盖另一个使用写入组的系统</h2>
+<p>如果系统在其查询中使用写组过滤，您可以使用自己的系统覆盖该系统并写入那些组件。要覆盖系统，请将您自己的组件添加到其他系统写入的组件的写入组中。</p>
+<p>因为写组过滤排除了查询未明确要求的写组中的任何组件，所以其他系统会忽略任何具有您的组件的实体。</p>
+<p>例如，如果您想通过指定旋转的角度和轴来设置实体的方向，您可以创建一个组件和一个系统来将角度和轴值转换为四元数并将其写入
+Unity.Transforms.Rotation零件。</p>
+<p>为了防止 Unity.Transforms 系统更新
+Rotation，无论除您之外的其他组件是否存在，您都可以将您的组件放在
+Rotation 的写入组中：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">using System;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Transforms;
+using Unity.Mathematics;
+
+[Serializable]
+[WriteGroup(typeof(Rotation))]
+public struct RotationAngleAxis : IComponentData
+&#123;
+   public float Angle;
+   public float3 Axis;
+&#125;</code></pre></div></figure><br />
+然后，您可以无竞争地使用 RotationAngleAxis 组件更新任何实体：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">using Unity.Burst;
+using Unity.Entities;
+using Unity.Jobs;
+using Unity.Collections;
+using Unity.Mathematics;
+using Unity.Transforms;
+
+public class RotationAngleAxisSystem : SystemBase
+&#123;
+   protected override void OnUpdate()
+   &#123;
+      Entities.ForEach((ref Rotation destination, in RotationAngleAxis source) &#x3D;&gt;
+      &#123;
+         destination.Value 
+             &#x3D; quaternion.AxisAngle(math.normalize(source.Axis), source.Angle);
+      &#125;).ScheduleParallel();
+   &#125;
+&#125;</code></pre></div></figure></p>
+<h2 id="扩展另一个使用写组的系统">扩展另一个使用写组的系统</h2>
+<p>如果你想扩展另一个系统而不是覆盖它，或者如果你想让未来的系统覆盖或扩展你的系统，那么你可以在你自己的系统上启用写组过滤。但是，当您这样做时，默认情况下两个系统都不会处理任何组件组合。您必须明确查询和处理每个组合。</p>
+<p>在前面的示例中，它定义了一个写入组，其中包含以组件 W 为目标的组件 A
+和 B。如果将名为 C 的新组件添加到写入组，那么知道 C
+的新系统可以查询包含的实体C，这些实体是否也有组件 A 或 B 并不重要。</p>
+<p>但是，如果新系统还启用了写组过滤，那就不再是这样了。如果您只需要组件
+C，则写入组过滤会排除任何具有 A 或 B
+的实体。相反，您必须显式查询每个有意义的组件组合。</p>
+<div class="note note-info">
+            <p>您可以在适当的时候使用查询的 Any 子句。</p>
+          </div>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">var query &#x3D; new EntityQueryDesc
+&#123;
+    All &#x3D; new ComponentType[] &#123;
+       ComponentType.ReadOnly&lt;C&gt;(), 
+       ComponentType.ReadWrite&lt;W&gt;()
+    &#125;,
+    Any &#x3D; new ComponentType[] &#123;
+       ComponentType.ReadOnly&lt;A&gt;(), 
+       ComponentType.ReadOnly&lt;B&gt;()
+    &#125;,
+    Options &#x3D; EntityQueryOptions.FilterWriteGroup
+&#125;;</code></pre></div></figure>
+<p>如果有任何实体包含未明确提及的写入组中的组件组合，则写入写入组目标的系统及其过滤器不会处理它们。但是，如果存在任何这些类型的实体，则很可能是程序中的逻辑错误，它们不应该存在。</p>
+<h1 id="版本号">版本号</h1>
+<p>您可以使用 ECS
+架构各部分的版本号（也称为世代）来检测潜在的变化并实施有效的优化策略，例如在数据自应用程序的最后一帧以来未发生变化时跳过处理。对实体执行快速版本检查以提高应用程序的性能非常有用。</p>
+<p>此页面概述了 ECS 使用的所有不同版本号，以及导致它们更改的条件。</p>
+<h2 id="版本号结构">版本号结构</h2>
+<p>所有版本号都是 32
+位有符号整数。它们总是增加，除非它们环绕：有符号整数溢出是 C#
+中定义的行为。这意味着要比较版本号，您应该使用（不）相等运算符，而不是关系运算符。</p>
+<p>例如，检查 VersionB 是否比 VersionA
+更新的正确方法是使用以下内容：<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">bool VersionBIsMoreRecent &#x3D; (VersionB - VersionA) &gt; 0;</code></pre></div></figure><br />
+无法保证版本号增加多少。</p>
+<h2 id="实体版本号">实体版本号</h2>
+<p>EntityId 包含索引和版本号。因为 ECS
+回收索引，所以每次实体销毁实体时它都会增加 EntityManager
+中的版本号。如果在 EntityManager 中查找 EntityId
+时版本号不匹配，则意味着引用的实体不再存在。</p>
+<p>例如，在您通过 EntityId
+获取一个单位正在跟踪的敌人的位置之前，您可以调用
+ComponentDataFromEntity.Exists。这使用版本号来检查实体是否仍然存在。</p>
+<h2 id="世界版本号">世界版本号</h2>
+<p>ECS每创建或销毁一个管理器（如系统），就会增加一个世界的版本号。</p>
+<h2 id="作业组件系统版本号">作业组件系统版本号</h2>
+<p>EntityDataManager.GlobalVersion
+在每次作业组件系统更新之前都会增加。</p>
+<p>您应该将此版本号与 System.LastSystemVersion
+结合使用。这会在每次作业组件系统更新后获取
+EntityDataManager.GlobalVersion 的值。</p>
+<p>您应该将此版本号与 Chunk.ChangeVersion[] 结合使用。</p>
+<h3 id="块.changeversion">块.ChangeVersion</h3>
+<p>对于原型中的每个组件类型，此数组包含 EntityDataManager.GlobalVersion
+的值，在组件数组最后一次被访问为在此块中可写时。这并不能保证任何事情都发生了变化，只是它可能已经发生了变化。</p>
+<p>您不能以可写方式访问共享组件，即使也为这些组件存储了版本号：它没有任何用处。</p>
+<p>当您在 <code>Entities.ForEach</code> 构造中使用 WithChangeFilter()
+方法时，ECS 将该特定组件的 Chunk.ChangeVersion 与
+System.LastSystemVersion
+进行比较，并且它仅处理其组件数组在系统上次开始运行后被访问为可写的块。</p>
+<p>例如，如果保证一组单位的生命值数量自上一帧以来没有变化，则可以跳过检查这些单位是否应更新其损坏模型。</p>
+<h2 id="非共享组件版本号">非共享组件版本号</h2>
+<p>对于每个非共享组件类型，每当涉及该类型的迭代器变得无效时，ECS
+都会增加 EntityManager.m_ComponentTypeOrderVersion[]
+版本号。换句话说，任何可能修改该类型数组（不是实例）的东西。</p>
+<p>例如，如果您有特定组件标识的静态对象和每个块的边界框，则只需在该组件的类型顺序版本更改时更新这些边界框。</p>
+<h2 id="共享组件版本号">共享组件版本号</h2>
+<p>当存储在引用共享组件的块中的实体发生任何结构更改时，SharedComponentDataManager.m_S​​haredComponentVersion[]
+版本号会增加。</p>
+<p>例如，如果您为每个共享组件保留一个实体计数，您可以依靠该版本号仅在相应版本号更改时重做每个计数。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%85%B6%E4%BB%96/" class="category-chain-item">其他</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Entities/" class="print-no-link">#Entities</a>
+      
+        <a href="/tags/ECS/" class="print-no-link">#ECS</a>
+      
+        <a href="/tags/DOTS/" class="print-no-link">#DOTS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>ECS 系统</div>
+      <div>https://www.kuanmi.top/2022/11/17/ECS-systems-intro/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年11月17日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/11/17/ECS-components-intro/" title="ECS 组件">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">ECS 组件</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/11/17/ECS-concepts-intro/" title="ECS 概念">
+                        <span class="hidden-mobile">ECS 概念</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

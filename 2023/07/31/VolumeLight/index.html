@@ -1,0 +1,1014 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前述 又造一个轮子，为了庆祝URP终于出了TAA，撸一个简单体积光来庆祝一下。 就最最基础的用光线步进，采样阴影贴图。稍微抖动一下搭配TAA。 还是有一些URP的坑在里面的。简单记录一下，以备将来查验。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="URP体积光">
+<meta property="og:url" content="https://www.kuanmi.top/2023/07/31/VolumeLight/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="前述 又造一个轮子，为了庆祝URP终于出了TAA，撸一个简单体积光来庆祝一下。 就最最基础的用光线步进，采样阴影贴图。稍微抖动一下搭配TAA。 还是有一些URP的坑在里面的。简单记录一下，以备将来查验。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.kuanmi.top/images/VLight-slim.png">
+<meta property="article:published_time" content="2023-07-30T17:16:12.000Z">
+<meta property="article:modified_time" content="2025-03-18T01:12:03.950Z">
+<meta property="article:author" content="KuanMi">
+<meta property="article:tag" content="Shader">
+<meta property="article:tag" content="体积光">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/VLight-slim.png">
+  
+  
+  
+  <title>URP体积光 - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/VLight.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="URP体积光"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-07-31 01:16" pubdate>
+          2023年7月31日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          69 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">URP体积光</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前述">前述</h1>
+<p>又造一个轮子，为了庆祝URP终于出了TAA，撸一个简单体积光来庆祝一下。<br />
+就最最基础的用光线步进，采样阴影贴图。稍微抖动一下搭配TAA。<br />
+还是有一些URP的坑在里面的。简单记录一下，以备将来查验。<br />
+<span id="more"></span><br />
+<img src="VLight01.png" srcset="/img/loading.gif" lazyload alt="平行光" /><br />
+<img src="VLight02.png" srcset="/img/loading.gif" lazyload alt="射灯" /><br />
+<a
+target="_blank" rel="noopener" href="https://github.com/MaZhengKe/VolumetricLighting">项目地址</a>，直接PackageManager导入Git仓库就行</p>
+<h1 id="renderer-feature">Renderer Feature</h1>
+<p>因为不打算再写一个RenderFeature了，直接用现成的<code>Full Screen Pass Renderer Feature</code>，所以就按照这个Pass要求的Shader的写法，要写两个Pass</p>
+<ul>
+<li>DrawProcedural</li>
+<li>Blit</li>
+</ul>
+<p>这里就是第一个坑。如果只写一个Pass，在编辑器是没问题的，打包出来就失效，还不报错。。。</p>
+<h1 id="shader">Shader</h1>
+<h2 id="顶点">顶点</h2>
+<p>可以直接用vertexID来计算位置。这个<code>VERTEXID_SEMANTIC</code>语义还挺少见的。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">Varyings vert(Attributes IN)
+&#123;
+    Varyings output;
+    output.positionCS &#x3D; GetFullScreenTriangleVertexPosition(IN.vertexID);
+    output.texCoord0 &#x3D; output.positionCS.xy * 0.5 + 0.5;
+
+    #if UNITY_UV_STARTS_AT_TOP
+    output.texCoord0.y &#x3D; 1 - output.texCoord0.y;
+    #endif
+    return output;
+&#125;</code></pre></div></figure><br />
+记得考虑到DX与OpenGL的区别。</p>
+<h2 id="片元">片元</h2>
+<p>首先是依据深度图重建世界坐标，用这个坐标作为步进的终点。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#if UNITY_REVERSED_Z
+real depth &#x3D; SampleSceneDepth(IN.texCoord0);
+#else
+real depth &#x3D; lerp(UNITY_NEAR_CLIP_VALUE, 1, SampleSceneDepth(IN.texCoord0));
+#endif
+float3 worldPos &#x3D; ComputeWorldSpacePosition(IN.texCoord0, depth, UNITY_MATRIX_I_VP);</code></pre></div></figure></p>
+<p>这里考虑一下米氏散射。即光线散射的方向和光线的照射方向有关。<br />
+步进前的准备<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float3 rayOrigin &#x3D; _WorldSpaceCameraPos;
+float numSteps &#x3D; 30;
+float3 ray &#x3D; worldPos - rayOrigin;
+float3 rayDir &#x3D; (worldPos - rayOrigin) &#x2F; numSteps;
+
+float n &#x3D; length(rayDir);
+
+float density &#x3D; 0;
+
+float cosAngle &#x3D; dot(-_MainLightPosition.xyz, normalize(ray));</code></pre></div></figure><br />
+起点是相机位置，采样的位置是从起点到终点均匀的30个点。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">for (int i &#x3D; 1; i &lt; numSteps; i++)
+&#123;
+    float3 pos &#x3D; rayOrigin + rayDir * (i + noise(IN.texCoord0*i+_Time.xy));
+    float4 shadowCoord &#x3D; TransformWorldToShadowCoord(pos);
+    float light &#x3D; MainLightRealtimeShadow(shadowCoord);
+    light *&#x3D; MieScattering2(cosAngle, _MieK);
+    light *&#x3D; n;
+    density +&#x3D; light;
+&#125;</code></pre></div></figure>
+<p>这里针对采样点做了前后的偏移抖动，保证从侧面看体积光的分界线分明。搭配TAA效果还可以。</p>
+<p>然后就是采样阴影，计算米氏散射系数，</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">
+density &#x3D; 1 - exp(-density);
+density *&#x3D; _scale;
+return half4(density, density, density, 1.0);</code></pre></div></figure>
+<p>最后依据强度取对数并乘以系数就完活。</p>
+<h1 id="聚光灯点光源">聚光灯/点光源</h1>
+<p>平行光用整个屏幕步进，聚光灯与点光源就没必要全屏了，还可以通过AABB来剔除。</p>
+<h2 id="mesh">Mesh</h2>
+<p>点光源的网格很简单，Blender弄个棱角球等比放大即可。<br />
+聚光灯就实时根据角度和高度去生成两个锥体包裹起来。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">
+private Vector3[] GetVertices()
+&#123;
+    var vertices &#x3D; new Vector3[num + 2];
+    float halfAngle &#x3D; Light.spotAngle * 0.5f * Mathf.Deg2Rad;
+
+    float qAngle &#x3D; halfAngle * 0.5f;
+
+    float r &#x3D; Light.range &#x2F; Mathf.Cos(qAngle);
+
+    float h &#x3D; r * Mathf.Cos(halfAngle);
+    float v &#x3D; Mathf.Sin(halfAngle) * r;
+
+    v &#x2F;&#x3D; Mathf.Cos(Mathf.PI * 2 &#x2F; (num * 2));
+
+    vertices[0] &#x3D; Vector3.zero;
+
+    for (int i &#x3D; 0; i &lt; num; i++)
+    &#123;
+        vertices[i + 1] &#x3D; new Vector3(Mathf.Cos(i * Mathf.PI * 2 &#x2F; num) * v,
+            Mathf.Sin(i * Mathf.PI * 2 &#x2F; num) * v, h);
+    &#125;
+
+    vertices[num + 1] &#x3D; new Vector3(0, 0, r);
+
+    return vertices;
+&#125;
+
+private void AddTriangle(ref int[] triangles, ref int index, int a, int b, int c)
+&#123;
+    triangles[index++] &#x3D; a;
+    triangles[index++] &#x3D; b;
+    triangles[index++] &#x3D; c;
+&#125;
+
+private int[] GetTriangles()
+&#123;
+    var triangles &#x3D; new int[num * 2 * 3];
+    int index &#x3D; 0;
+
+    for (int i &#x3D; 0; i &lt; num; i++)
+    &#123;
+        AddTriangle(ref triangles, ref index, num + 1, i + 1, (i + 1) % num + 1);
+        AddTriangle(ref triangles, ref index, 0, (i + 1) % num + 1, i + 1);
+    &#125;
+
+    return triangles;
+&#125;
+</code></pre></div></figure></p>
+<h2 id="shader-1">Shader</h2>
+<p>和平行光类似，但步进的起点与终点可以手动计算，计算得出射线与光照范围的交点，再根据相机与场景深度是否在范围内，可以缩小光线步进的距离。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">
+Sphere sphere;
+sphere.origin &#x3D; lightPositionWS.xyz;
+sphere.r &#x3D; _Range;
+
+Line viewLine;
+viewLine.origin &#x3D; _WorldSpaceCameraPos;
+viewLine.direction &#x3D; normalize(ray);
+
+
+#ifdef _POINT_LIGHT
+
+float3 nearPoint;
+float3 farPoint;
+float num &#x3D; LineToSpherePoint(viewLine, sphere, nearPoint, farPoint);
+clip(num - 0.5);
+
+#else
+
+half4 spotDirection &#x3D; _AdditionalLightsSpotDir[perObjectLightIndex];
+const float halfAngle &#x3D; _SpotAngle * 0.5 * PI &#x2F; 180;
+float3 spotDir &#x3D; -spotDirection.xyz;
+
+Cone cone;
+cone.C &#x3D; lightPositionWS.xyz + spotDir * _Range * cos(halfAngle);
+cone.H &#x3D; lightPositionWS.xyz;
+cone.r &#x3D; _Range * tan(halfAngle) * cos(halfAngle);
+
+Hemisphere hemisphere;
+hemisphere.sphere &#x3D; sphere;
+hemisphere.normal &#x3D; spotDir;
+hemisphere.angle &#x3D; halfAngle;
+
+float3 TP1;
+float3 TP2;
+
+float num &#x3D; LineToConePoint(viewLine, cone, TP1, TP2);
+
+float3 P1;
+float3 P2;
+float num2 &#x3D; LineToHemispherePoint(viewLine, hemisphere, P1, P2);
+
+float sumNum &#x3D; num + num2;
+clip(sumNum - 0.5);
+
+float3 nearPoint &#x3D; TP1 + P1;
+float3 farPoint &#x3D; TP2 + P2;
+
+#endif</code></pre></div></figure>
+<p>如果是点光源就简单一点，计算视线与球体的交点即可。</p>
+<p>聚光灯复杂一点，要算视线与锥体侧边的交点，以及视线与一球冠（圆台）的交点。</p>
+<p>关于直线（射线）与各种三维曲面的交点，有时间单独记录在一篇文章吧。</p>
+<h2 id="附加光索引">附加光索引</h2>
+<p>这里还有一点比较麻烦的是获取指定灯光的索引。<br />
+untiy并没有提供官方的API。但从RenderPass的renderingData.lightData.visibleLights;中可以得到一个列表。<br />
+这个列表的索引和实际索引顺序相同，只是前面要剔除平行光。<br />
+所以最后还是没能逃过写RenderFeature。</p>
+<h2 id="render-feature">Render Feature</h2>
+<p>这里就不赘述了，借鉴了SRP的炫光的写法，为每个要添加体积光的Light添加一个PointVolumeLight或者SpotVolumeLight。<br />
+用一静态列表来记录需要渲染的体积光。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">
+public abstract class BaseVolumeLight : MonoBehaviour
+&#123;
+    public static readonly List&lt;BaseVolumeLight&gt; BaseVolumeLightList &#x3D; new();
+
+    protected virtual void OnEnable()
+    &#123;
+        Light &#x3D; GetComponent&lt;Light&gt;();
+        if (Light &#x3D;&#x3D; null)
+        &#123;
+            Debug.LogError(&quot;Light is null, please add a light component&quot;);
+            return;
+        &#125;
+
+        if (!LightTypeIsSupported())
+        &#123;
+            Debug.LogError(&quot;Light type is not supported&quot;);
+            return;
+        &#125;
+        material &#x3D; CoreUtils.CreateEngineMaterial(Shader.Find(shaderName));
+        GenMesh();
+        BaseVolumeLightList.Add(this);
+    &#125;
+
+    private void OnDisable()
+    &#123;
+        BaseVolumeLightList.Remove(this);
+        DestroyImmediate(material);
+        material &#x3D; null;
+    &#125;
+
+&#125;</code></pre></div></figure><br />
+这样就能在pass中获取到要渲染的对象了。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class SpotVolumeRenderPass : ScriptableRenderPass
+&#123;
+    private readonly ProfilingSampler m_ProfilingSampler &#x3D; ProfilingSampler.Get(VolumeRenderFeature.ProfileId.SpotVolume);
+    public Mesh defaultMesh &#123; get; set; &#125;
+
+
+    public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+    &#123;
+        
+        var cmd &#x3D; CommandBufferPool.Get();
+
+        using (new ProfilingScope(cmd, m_ProfilingSampler))
+        &#123;
+            var volumeLights &#x3D; BaseVolumeLight.BaseVolumeLightList;
+
+            foreach (var volumeLight in volumeLights)
+            &#123;
+                var visibleLights &#x3D; renderingData.lightData.visibleLights;
+
+                var lightIndex &#x3D; -1;
+                for (int i &#x3D; 0; i &lt; visibleLights.Length; i++)
+                &#123;
+                    if (visibleLights[i].light &#x3D;&#x3D; volumeLight.Light)
+                    &#123;
+                        lightIndex &#x3D; i - 1;
+                    &#125;
+                &#125;
+                
+                if(lightIndex &#x3D;&#x3D; -1 || volumeLight.intensity &lt;&#x3D; float.Epsilon) continue;
+
+                volumeLight.lightIndex &#x3D; lightIndex;
+                volumeLight.UpdateIfNeed();
+                
+                var mesh  &#x3D; volumeLight.mesh? volumeLight.mesh : defaultMesh;
+
+                cmd.DrawMesh(mesh, volumeLight.matrix, volumeLight.material);
+            &#125;
+        &#125;
+        
+        context.ExecuteCommandBuffer(cmd);
+        CommandBufferPool.Release(cmd);
+    &#125;
+    
+    public void Dispose()
+    &#123;
+        
+    &#125;
+&#125;</code></pre></div></figure>
+<p>写都写了，把平行光也做成一个pass吧。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-csharp" data-language="csharp"><code class="language-csharp">public class DirectionalVolumeRenderPass : ScriptableRenderPass
+&#123;
+    private readonly ProfilingSampler m_ProfilingSampler &#x3D; ProfilingSampler.Get(VolumeRenderFeature.ProfileId.DirectionalVolume);
+
+    
+    private static readonly int Intensity &#x3D; Shader.PropertyToID(&quot;_Intensity&quot;);
+    private static readonly int MieK &#x3D; Shader.PropertyToID(&quot;_MieK&quot;);
+    
+    
+    private VolumetricLighting m_VolumetricLighting;
+    private Material m_Material;
+    
+    public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+    &#123;
+        
+        if (m_Material &#x3D;&#x3D; null)
+        &#123;
+            Debug.LogErrorFormat(
+                &quot;&#123;0&#125;.Execute(): Missing material. DirectionalVolumeRenderPass pass will not execute. Check for missing reference in the renderer resources.&quot;,
+                GetType().Name);
+            return;
+        &#125;
+        var stack &#x3D; VolumeManager.instance.stack;
+        m_VolumetricLighting &#x3D; stack.GetComponent&lt;VolumetricLighting&gt;();
+
+        if (!m_VolumetricLighting.IsActive())
+            return;
+
+        m_Material.SetFloat(Intensity, m_VolumetricLighting.intensity.value);
+        m_Material.SetFloat(MieK, m_VolumetricLighting.mieK.value);
+
+        var cmd &#x3D; CommandBufferPool.Get();
+
+        using (new ProfilingScope(cmd, m_ProfilingSampler))
+        &#123;
+            CoreUtils.DrawFullScreen(cmd, m_Material);
+        &#125;
+        
+        context.ExecuteCommandBuffer(cmd);
+        CommandBufferPool.Release(cmd);
+    &#125;
+
+    public bool Setup(Material material)
+    &#123;
+        m_Material &#x3D; material;
+        return true;
+    &#125;
+    
+    public void Dispose()
+    &#123;
+    &#125;
+&#125;</code></pre></div></figure><br />
+这里顺便用了VolumeComponent，方便在场景中调整全局平行体积光的效果。</p>
+<h1 id="优化与改进">优化与改进</h1>
+<h2 id="blue-noise">Blue Noise</h2>
+<p>之前抖动步进距离是采用的一般的shader内的随机数，但还是有一种更好更适合光线步进的噪声，BlueNoise。<br />
+具体这东西有多神奇请移步<a
+target="_blank" rel="noopener" href="http://momentsingraphics.de/BlueNoise.html">BlueNoise</a>。</p>
+<p>可惜的是这没办法实时单帧内在GPU生成，只能预先生成然后采样，好消息是仅需64*64分辨率平铺，肉眼也很难发现重复结构，我觉得这才是BlueNoise最最神奇的地方，而且也基本发现不了有什么突出的结构。<br />
+<img src="BlueNoise01.png" srcset="/img/loading.gif" lazyload alt="64*64平铺" /></p>
+<p>为了搭配TAA，有两种方式，一是随时间随机抖动整体偏移一张噪声图，二是用TextureArray，随时间随机采样不同的噪声图。好在噪声图不大，即使放上64张，一共也才512<em>512。<br />
+为了方便使用，下面打包了一张512</em>512的包含了64张64*64的噪声图，可以方便在Untiy中直接生成TextureArray，图片来源<a
+target="_blank" rel="noopener" href="http://momentsingraphics.de/BlueNoise.html">图片来源</a><br />
+<img src="output.png" srcset="/img/loading.gif" lazyload alt="512*512图集" /></p>
+<p>只能说这个噪声太神奇了，原先平行光需要采样15次的效果，搭配TAA仅需4次。射灯原先10次采样，现在仅需3次就能有不错的效果。</p>
+<p><img src="VLight-32.png" srcset="/img/loading.gif" lazyload alt="采样32次" /><br />
+<img src="VLight-4.png" srcset="/img/loading.gif" lazyload alt="采样4次" /></p>
+<h2 id="可控性">可控性</h2>
+<p>其实在日常中，很少能发现体积光的现象，一般只有在山洞，森林等光线单一且潮湿的地方才有。<br />
+但这种效果却在游戏中经常运用。</p>
+<p>会过来看Shader，发现其实这里也没有多么“物理”，比如平行光就没有计算衰减，最后的归一化函数也是基于经验。<br />
+所以调整一下最后的归一化函数，增加几个系数，便于调整美术效果。</p>
+<ul>
+<li>均匀度：调整步进总量光线强度与实际显示亮度的关系</li>
+<li>最大强度：便于调整整体的颜色和强度</li>
+<li>距离衰减系数：是否考虑距离或角度的衰减</li>
+<li>阴影反向衰减强度：阴影不仅不计入光线总量，反而会反向衰减现有的光线总量，会加深阴影的表现，但“不物理”。</li>
+</ul>
+<h2 id="升降采样与模糊">升降采样与模糊</h2>
+<p>算最常见的优化方案了，确实体积光也没必要全分辨率渲染，而且模糊后再搭配TAA效果应该也不错，边缘也不会那么锐利。<br />
+这就单独再开一篇文章记录吧，打算在URP中用RenderFeature和Volume框架复刻毛星云大佬的那个模糊后处理的库。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%B8%B2%E6%9F%93/" class="category-chain-item">渲染</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Shader/" class="print-no-link">#Shader</a>
+      
+        <a href="/tags/%E4%BD%93%E7%A7%AF%E5%85%89/" class="print-no-link">#体积光</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>URP体积光</div>
+      <div>https://www.kuanmi.top/2023/07/31/VolumeLight/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年7月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/07/31/MirrorCamera/" title="相机镜面反射">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">相机镜面反射</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/07/26/TMP/" title="基于TMP、SDF、光线步进的体积字渲染">
+                        <span class="hidden-mobile">基于TMP、SDF、光线步进的体积字渲染</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
