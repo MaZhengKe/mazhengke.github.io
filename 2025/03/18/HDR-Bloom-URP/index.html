@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.kuanmi.top/images/bloomMR.png">
 <meta property="article:published_time" content="2025-03-18T02:16:57.000Z">
-<meta property="article:modified_time" content="2025-03-18T05:30:04.022Z">
+<meta property="article:modified_time" content="2025-03-18T08:52:40.961Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.kuanmi.top/images/bloomMR.png">
@@ -232,7 +232,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.8k 字
+          4k 字
         
       </span>
     
@@ -243,7 +243,7 @@
         
         
         
-          32 分钟
+          33 分钟
         
       </span>
     
@@ -434,12 +434,14 @@ half4 FragUpsample(Varyings input) : SV_Target
 <p>最后在<code>UberPost</code>中把Bloom的结果和HDR的结果合并。</p>
 <figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">half4 bloom &#x3D; SAMPLE_TEXTURE2D_X(_Bloom_Texture, sampler_LinearClamp, SCREEN_COORD_REMOVE_SCALEBIAS(uvBloom));
 alpha &#x3D;  alpha +  bloom.w  * _Bloom_Alpha;</code></pre></div></figure>
+<h2 id="透明度混合问题">透明度混合问题</h2>
 <p>这里有个问题，一般的bloom是加到Color上，但这里要考虑透明通道，最终和MR相机的图层进行混合时，是用透明通道来混合的。<br />
 这导致含有透明度的bloom颜色再叠加透明度会变淡。所以这里再传一个参数进去，适当提高透明度。</p>
 <p>但不能加太多，否则周围没有bloom颜色的地方（默认黑色），就会被多出来的透明度混合成黑色。<br />
 这里只能寄希望于Meta或者Pico给出MR透视的贴图，当作天空盒提前渲染到相机的buffer上才能解决这个问题。<br />
-但如果这样做，又会导致MR相机的贴图被二次采样，势必会降低渲染质量。（目前meta和pico都给出了对应的SDK来获取相机图像，但都有一些限制）<br />
-所以没什么好办法</p>
+但如果这样做，又会导致MR相机的贴图被二次采样，势必会降低渲染质量。（目前meta和pico都给出了对应的SDK来获取相机图像，但都有一些限制）</p>
+<p>或者利用现有硬件的合成层功能，把这张bloom贴图提出来，单独给到头显，让头显来用颜色叠加模式来混合。<br />
+但目前pico或meta合成层仅仅支持常见的Quad、Cylinder、Equirect等几种模式，无法直接传入贴图应用到头显上。</p>
 <h1 id="便于在编辑器调试的mr背景图">便于在编辑器调试的MR背景图</h1>
 <p>在编辑器中，MR背景图是黑色的，这样在调试时就看不到背景了，也就无法确认Bloom经过透明度混合后的效果。</p>
 <p>所以在<code>UberPost</code>中加入一张背景图，模仿alpha混合的效果。</p>
