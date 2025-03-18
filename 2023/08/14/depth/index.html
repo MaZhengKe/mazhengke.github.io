@@ -23,10 +23,12 @@
 <meta property="og:site_name" content="KuanMi">
 <meta property="og:description" content="简要记录一下shader中几种Depth的定义与转换规则，同时再记录下容易混淆的裁切空间，NDC，屏幕空间。 视角空间 那就一个一个看，先看UNITY_MATRIX_V，从世界坐标到视角坐标。 这个矩阵和之前类似，视角坐标系是右手，所以Z轴要翻转（UNITY_MATRIX_V这个矩阵就已经包含翻转了）。也就是Z轴朝向屏幕外。 这里的posVS.z 表示的是物体距离摄像机在摄像机forwa">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@11.0/manual/images/shader-examples/urp-shader-tutorial-reconstruct-world-positions-from-depth.png">
 <meta property="article:published_time" content="2023-08-13T16:54:09.000Z">
-<meta property="article:modified_time" content="2025-03-18T01:12:03.970Z">
+<meta property="article:modified_time" content="2025-03-18T02:10:18.297Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@11.0/manual/images/shader-examples/urp-shader-tutorial-reconstruct-world-positions-from-depth.png">
   
   
   
@@ -196,7 +198,7 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+     style="background: url('https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@11.0/manual/images/shader-examples/urp-shader-tutorial-reconstruct-world-positions-from-depth.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">

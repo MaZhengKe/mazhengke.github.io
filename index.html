@@ -619,7 +619,13 @@
   <div class="row mx-auto index-card">
     
     
-    <article class="col-12 col-md-12 mx-auto index-info">
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2023/08/14/depth/" target="_blank">
+          <img src="https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@11.0/manual/images/shader-examples/urp-shader-tutorial-reconstruct-world-positions-from-depth.png" srcset="/img/loading.gif" lazyload alt="depth">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
       <h2 class="index-header">
         
         <a href="/2023/08/14/depth/" target="_blank">
@@ -628,7 +634,7 @@
       </h2>
 
       
-      <a class="index-excerpt index-excerpt__noimg" href="/2023/08/14/depth/" target="_blank">
+      <a class="index-excerpt " href="/2023/08/14/depth/" target="_blank">
         <div>
           简要记录一下shader中几种Depth的定义与转换规则，同时再记录下容易混淆的裁切空间，NDC，屏幕空间。 视角空间 那就一个一个看，先看UNITY_MATRIX_V，从世界坐标到视角坐标。 这个矩阵和之前类似，视角坐标系是右手，所以Z轴要翻转（UNITY_MATRIX_V这个矩阵就已经包含翻转了）。也就是Z轴朝向屏幕外。 这里的posVS.z 表示的是物体距离摄像机在摄像机forwa
         </div>
