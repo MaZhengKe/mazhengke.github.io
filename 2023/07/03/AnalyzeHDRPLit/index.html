@@ -1,0 +1,1318 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Lit 在改动Lit之前有必要详细的逐行分析一下Lit的Shader 虽然类似的文章已经有了，但还是选择自己手敲一遍以加深印象。 版本是14.0.8 Common.hlsl 路径 core&#x2F;ShaderLibrary&#x2F;Common.hlsl untiy为SRP单独抽象出了一个库，com.unity.render-pipelines.core，包含了很多基础的渲染代码，同时被URP和HD">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AnalyzeHDRPLit">
+<meta property="og:url" content="https://www.kuanmi.top/2023/07/03/AnalyzeHDRPLit/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="Lit 在改动Lit之前有必要详细的逐行分析一下Lit的Shader 虽然类似的文章已经有了，但还是选择自己手敲一遍以加深印象。 版本是14.0.8 Common.hlsl 路径 core&#x2F;ShaderLibrary&#x2F;Common.hlsl untiy为SRP单独抽象出了一个库，com.unity.render-pipelines.core，包含了很多基础的渲染代码，同时被URP和HD">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-07-02T17:05:57.000Z">
+<meta property="article:modified_time" content="2025-03-18T02:03:56.905Z">
+<meta property="article:author" content="KuanMi">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>AnalyzeHDRPLit - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="AnalyzeHDRPLit"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-07-03 01:05" pubdate>
+          2023年7月3日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          20k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          168 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">AnalyzeHDRPLit</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="lit">Lit</h1>
+<p>在改动Lit之前有必要详细的逐行分析一下Lit的Shader<br />
+虽然类似的文章已经有了，但还是选择自己手敲一遍以加深印象。<br />
+版本是14.0.8</p>
+<h1 id="common.hlsl">Common.hlsl</h1>
+<p>路径 core/ShaderLibrary/Common.hlsl<br />
+untiy为SRP单独抽象出了一个库，com.unity.render-pipelines.core，包含了很多基础的渲染代码，同时被URP和HDRP使用。</p>
+<h2 id="约定">约定</h2>
+<p>首先就规定了一些惯例<br />
+坐标系:</p>
+<ul>
+<li>世界坐标系：Yup左手</li>
+<li>当从世界空间到视图空间时，视图空间中的单位为右手，矩阵的行列式为负</li>
+<li>对于立方体贴图采样（反射探针），视图空间仍然是左手（立方体贴图约定）并且行列式为正。</li>
+<li>单位：一米</li>
+</ul>
+<p>然后是变量的后缀的约定</p>
+<ul>
+<li>WS：世界</li>
+<li>RWS：相机相关的世界</li>
+<li>VS：视角</li>
+<li>OS：物体</li>
+<li>CS：齐次裁切</li>
+<li>TS：切线</li>
+<li>TXS：贴图</li>
+</ul>
+<p>默认向量都是归一化的，非归一化用un前缀</p>
+<p>用大写字母表示常见向量，向量总是指向像素外部。<br />
+大写字母也意味着归一化，除非有un的前缀</p>
+<ul>
+<li>V：视角</li>
+<li>L：光线</li>
+<li>N：法线</li>
+<li>H：半程</li>
+</ul>
+<p>输入输出的结构体用帕斯卡命名，前缀表示类型<br />
+如 AttributesDefault VaryingsDefault<br />
+当使用这些结构体时，用input/output作为变量名</p>
+<p>常量浮点写作1.0 不是1，1.0f，1.0h<br />
+全局变量uniform 使用_前缀，大写，然后驼峰 _LowercaseThenCamelCase</p>
+<p>不要使用in，仅使用out或inout关键字，也不要使用inline<br />
+当声明out参数时，放到最后</p>
+<p>其他shader库不应包含common.hlsl，应放在.shader文件中。</p>
+<p>所以全局变量应放在常量缓冲区中。</p>
+<p>在C#与hlsl中共享结构定义。<br />
+结构要基于float4对齐。<br />
+定义数组时，总是使用float4<br />
+不要使用 SetGlobalFloatArray 或 SetComputeFloatParams</p>
+<p>这个库中的函数都是无状态的，即没有全局声明。<br />
+需要显式声明精度的可以使用float与half，同时支持两者的，可以使用real。</p>
+<h2 id="real">real</h2>
+<p>这里就是依据定义的宏来确定是real的精度，大致看下来在移动端以及switch上，默认会启用half精度。当然可以手动指定REAL_IS_HALF为1。</p>
+<h2 id="宏定义">宏定义</h2>
+<p>这里定义了一些方便使用的宏<br />
+#define SV_POSITION_QUALIFIERS<br />
+#define DEPTH_OFFSET_SEMANTIC SV_Depth</p>
+<p>然后依据宏选择对应的api<br />
+PC就对应了D3D11.hlsl，大致包含了一些采样贴图的方式，等会再回过头来看看这个文件吧<br />
+接下来包含了Macros.hlsl与Random.hlsl，顾名思义，前者是主要是一些常量和一些模板方法，后者就是随机数了。</p>
+<p>然后是Vulkan支持的Native Renderpass。这里先跳过。</p>
+<p>然后是为了支持光追定义的宏<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#if (SHADER_STAGE_RAY_TRACING &amp;&amp; UNITY_RAY_TRACING_GLOBAL_RESOURCES)
+    #define GLOBAL_RESOURCE(type, name, reg) type name : register(reg, space1);
+    #define GLOBAL_CBUFFER_START(name, reg) cbuffer name : register(reg, space1) &#123;
+#else
+    #define GLOBAL_RESOURCE(type, name, reg) type name;
+    #define GLOBAL_CBUFFER_START(name, reg) CBUFFER_START(name)
+#endif</code></pre></div></figure></p>
+<h2 id="工具函数">工具函数</h2>
+<p>再往下就是存储的工具函数了。、</p>
+<ul>
+<li>数学函数，如remap01，min，max，HasFlag等。</li>
+<li>采样贴图</li>
+<li>深度相关</li>
+<li>还包含了一个PositionInputs的结构体，</li>
+<li>并实现了一系列空间变换相关的函数。</li>
+</ul>
+<h1 id="d3d.hlsl">D3D.hlsl</h1>
+<p>路径 core/ShaderLibrary/API/D3D.hlsl</p>
+<p>是放到API中的，同级别的还有PSSL、Switch、Vulkan等等。所以可以猜出应该类似与接口一样，实现Unity常见的特定于平台的函数。</p>
+<h2 id="常量">常量</h2>
+<p>首先是用宏定义了一些常量。<br />
+如下<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#define UNITY_UV_STARTS_AT_TOP 1
+#define UNITY_REVERSED_Z 1
+#define UNITY_NEAR_CLIP_VALUE (1.0)
+&#x2F;&#x2F; This value will not go through any matrix projection conversion
+#define UNITY_RAW_FAR_CLIP_VALUE (0.0)
+#define VERTEXID_SEMANTIC SV_VertexID
+#define INSTANCEID_SEMANTIC SV_InstanceID
+#define FRONT_FACE_SEMANTIC SV_IsFrontFace
+#define FRONT_FACE_TYPE bool
+#define IS_FRONT_VFACE(VAL, FRONT, BACK) ((VAL) ? (FRONT) : (BACK))</code></pre></div></figure><br />
+都可以通过名称来看出含义。</p>
+<h2 id="支持的特性">支持的特性</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#define PLATFORM_SUPPORTS_EXPLICIT_BINDING
+#define PLATFORM_NEEDS_UNORM_UAV_SPECIFIER
+#define PLATFORM_SUPPORTS_BUFFER_ATOMICS_IN_PIXEL_SHADER
+#define PLATFORM_SUPPORTS_PRIMITIVE_ID_IN_PIXEL_SHADER</code></pre></div></figure>
+<h2 id="采样贴图">采样贴图</h2>
+<p>这里就顺便看下各种采样的区别吧<br />
+Sample 采样<br />
+SampleLevel 指定mipmap级别<br />
+SampleBias 输入mipmap偏差<br />
+SampleGrad 用梯度来选择mip级别<br />
+SampleCmpLevelZero 采样后与0比较<br />
+以及<br />
+Load 仅加载，即不寻址不过滤，使用指定的lod<br />
+Gather 收集周围4个像素的R通道</p>
+<h1 id="shadervariables.hlsl">ShaderVariables.hlsl</h1>
+<p>主要是定义一个名为UnityPerDraw的CBuffer。包含了和材质相关的一些全局变量，如球谐函数参数，renderBox，光照贴图参数，渲染层等等和材质相关的。</p>
+<p>还顺便声明了一系列常用的采样器。</p>
+<p>再往下就是贴图的声明，如深度，光照，阴影，ProbeVolume。</p>
+<p>这里还改了SAMPLE_TEXTURE2D与SAMPLE_TEXTURE2D_BIAS的宏，全局应用_GlobalMipBias</p>
+<p>然后是采样这些贴图的工具函数 如
+SampleCameraDepth、SampleCameraColor等<br />
+接着还是一些关于相机矩阵位置等参数的工具函数，如
+GetRawUnityObjectToWorld、GetCameraPositionWS等等。</p>
+<h1 id="texturexr.hlsl">TextureXR.hlsl</h1>
+<p>顾名思义，是为了XR的单通道渲染定义的一系列在XR中采样贴图的宏</p>
+<h1
+id="shadervariablesglobal.cs.hlsl">ShaderVariablesGlobal.cs.hlsl</h1>
+<p>这是一个由cs代码来自动生成的库文件。<br />
+单纯用来定义了一些全局变量，如_ViewMatrix、_ScreenSize、_Time等和材质无关的属性。<br />
+由此可以取看看ShaderVariablesGlobal.cs，通过cs代码来生成hlsl在HDRP中很常见。</p>
+<h2 id="shadervariablesglobal.cs">ShaderVariablesGlobal.cs</h2>
+<p>这个文件主要就是定义了一个结构体，其内容和hlsl中的cbuffer一模一样，值得注意的是这里的参数的排布应用了float4对齐。</p>
+<h1 id="fraginputs.hlsl">FragInputs.hlsl</h1>
+<p>一个结构体FragInputs，片元的输入，但这并不是Vert或者Frag的输出和输入，因为unity在传输时会打包再解包。</p>
+<h1 id="litproperties.cs">LitProperties.cs</h1>
+<p>和材质相关的属性，各种贴图与参数</p>
+<h1 id="lightloopdef.hlsl">LightLoopDef.hlsl</h1>
+<p>光照计算相关的定义</p>
+<h1 id="lit.hlsl">Lit.hlsl</h1>
+<p>PBR BSDF相关的计算</p>
+<h1 id="lightloop.hlsl">LightLoop.hlsl</h1>
+<p>?计算全部光源并汇总？</p>
+<h1 id="varyingmesh.hlsl">VaryingMesh.hlsl</h1>
+<p>顶点与片元的输入与输出，也包含了打包与解包相关函数。</p>
+<h1 id="litdata.hlsl">LitData.hlsl</h1>
+<p>???</p>
+<h1 id="shaderpassforward.hlsl">ShaderPassForward.hlsl</h1>
+<p>这里定义了前向渲染的顶点和片元着色器函数Vert与Frag。</p>
+<h2 id="vert">Vert</h2>
+<p>这里倒是意外的简单，常规的坐标变换，打包输出到片元着色器。</p>
+<h1 id="frag">Frag</h1>
+<p>头大的来了。<br />
+一行一行看！！！</p>
+<h2 id="函数输入输出">函数输入输出</h2>
+<p>输入就是从顶点打包过来的。<br />
+这里根据几个宏来判断是否需要多Target输出，<br />
+共有虚拟纹理，分光？，运动向量，深度偏移。这些都先不考虑，只看outColor。</p>
+<figure><div class="code-wrapper"><pre class="language-none"><code class="language-none">FragInputs input = UnpackVaryingsToFragInputs(packedInput);</code></pre></div></figure>
+<p>解包数据<br />
+AdjustFragInputsToOffScreenRendering(input, _OffScreenRendering &gt; 0,
+_OffScreenDownsampleFactor);<br />
+离屏渲染？？
+目前没有搞明白有什么作用，大致看起来是用来处理低分辨率的。<br />
+uint2 tileIndex = uint2(input.positionSS.xy) / GetTileSize();<br />
+获取像素网格坐标int<br />
+PositionInputs posInput = GetPositionInput(input.positionSS.xy,
+_ScreenSize.zw, input.positionSS.z, input.positionSS.w,
+input.positionRWS.xyz, tileIndex);<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">struct PositionInputs
+&#123;
+    float3 positionWS;  &#x2F;&#x2F; World space position (could be camera-relative)
+    float2 positionNDC; &#x2F;&#x2F; Normalized screen coordinates within the viewport    : [0, 1) (with the half-pixel offset)
+    uint2  positionSS;  &#x2F;&#x2F; Screen space pixel coordinates                       : [0, NumPixels)
+    uint2  tileCoord;   &#x2F;&#x2F; Screen tile coordinates                              : [0, NumTiles)
+    float  deviceDepth; &#x2F;&#x2F; Depth from the depth buffer                          : [0, 1] (typically reversed)
+    float  linearDepth; &#x2F;&#x2F; View space Z coordinate                              : [Near, Far]
+&#125;;</code></pre></div></figure><br />
+获取一系列各种空间下的坐标</p>
+<figure><div class="code-wrapper"><pre class="language-none"><code class="language-none">float3 V = GetWorldSpaceNormalizeViewDir(input.positionRWS);</code></pre></div></figure>
+<p>计算视线<br />
+SurfaceData surfaceData;<br />
+BuiltinData builtinData;<br />
+GetSurfaceAndBuiltinData(input, V, posInput, surfaceData,
+builtinData);<br />
+这里就为之后的光照计算准备数据了，来源就是采样各个贴图或者预先计算。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">struct SurfaceData
+&#123;
+    uint materialFeatures;
+    real3 baseColor;
+    real specularOcclusion;
+    float3 normalWS;
+    real perceptualSmoothness;
+    real ambientOcclusion;
+    real metallic;
+    real coatMask;
+    real3 specularColor;
+    uint diffusionProfileHash;
+    real subsurfaceMask;
+    real transmissionMask;
+    real thickness;
+    float3 tangentWS;
+    real anisotropy;
+    real iridescenceThickness;
+    real iridescenceMask;
+    real3 geomNormalWS;
+    real ior;
+    real3 transmittanceColor;
+    real atDistance;
+    real transmittanceMask;
+&#125;;
+struct BuiltinData
+&#123;
+    real opacity;
+    real alphaClipTreshold;
+    real3 bakeDiffuseLighting;
+    real3 backBakeDiffuseLighting;
+    real shadowMask0;
+    real shadowMask1;
+    real shadowMask2;
+    real shadowMask3;
+    real3 emissiveColor;
+    real2 motionVector;
+    real2 distortion;
+    real distortionBlur;
+    uint isLightmap;
+    uint renderingLayers;
+    float depthOffset;
+    #if defined(UNITY_VIRTUAL_TEXTURING)
+    real4 vtPackedFeedback;
+    #endif
+&#125;;</code></pre></div></figure></p>
+<p>看结构体就能知道这里函数的作用是什么了。</p>
+<p>那就开看看这个函数</p>
+<h2 id="双面法线">双面法线</h2>
+<p>前面的和LodFade相关的先略过。<br />
+先看看和双面法线相关的<br />
+float3 doubleSidedConstants = GetDoubleSidedConstants();</p>
+<figure><div class="code-wrapper"><pre class="language-none"><code class="language-none">ApplyDoubleSidedFlipOrMirror(input, doubleSidedConstants);</code></pre></div></figure>
+<p>对应材质中的Mirror和Flip。定义了反面法线的朝向。<br />
+这里法线存在了input.tangentToWorld[2]中。</p>
+<h2 id="uv">UV</h2>
+<figure><div class="code-wrapper"><pre class="language-none"><code class="language-none">LayerTexCoord layerTexCoord;
+ZERO_INITIALIZE(LayerTexCoord, layerTexCoord);
+GetLayerTexCoord(input, layerTexCoord);</code></pre></div></figure>
+<p>预处理UV。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">struct LayerTexCoord
+&#123;
+#ifndef LAYERED_LIT_SHADER
+    UVMapping base;
+    UVMapping details;
+#else
+    &#x2F;&#x2F; Regular texcoord
+    UVMapping base0;
+    UVMapping base1;
+    UVMapping base2;
+    UVMapping base3;
+
+    UVMapping details0;
+    UVMapping details1;
+    UVMapping details2;
+    UVMapping details3;
+
+    &#x2F;&#x2F; Dedicated for blend mask
+    UVMapping blendMask;
+#endif
+
+    &#x2F;&#x2F; Store information that will be share by all UVMapping
+    float3 vertexNormalWS; &#x2F;&#x2F; TODO: store also object normal map for object triplanar
+    float3 triplanarWeights;
+
+#ifdef SURFACE_GRADIENT
+    &#x2F;&#x2F; tangent basis for each UVSet - up to 4 for now
+    float3 vertexTangentWS0, vertexBitangentWS0;
+    float3 vertexTangentWS1, vertexBitangentWS1;
+    float3 vertexTangentWS2, vertexBitangentWS2;
+    float3 vertexTangentWS3, vertexBitangentWS3;
+#endif
+&#125;;
+struct UVMapping
+&#123;
+    int mappingType;
+    float2 uv;  &#x2F;&#x2F; Current uv or planar uv
+
+    &#x2F;&#x2F; Triplanar specific
+    float2 uvZY;
+    float2 uvXZ;
+    float2 uvXY;
+
+    float3 normalWS; &#x2F;&#x2F; vertex normal
+    float3 triplanarWeights;
+
+#ifdef SURFACE_GRADIENT
+    &#x2F;&#x2F; tangent basis to use when mappingType is UV_MAPPING_UVSET
+    &#x2F;&#x2F; these are vertex level in world space
+    float3 tangentWS;
+    float3 bitangentWS;
+    &#x2F;&#x2F; TODO: store also object normal map for object triplanar
+#endif
+&#125;;</code></pre></div></figure><br />
+LAYERED_LIT_SHADER 是分层，先略过。<br />
+所以共有两种UVMapping，base与details。<br />
+这也就要求相关的贴图的UV分布要一致。<br />
+观察UVMapping能看出这里还考虑了三平面映射UV。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">void GetLayerTexCoord(FragInputs input, inout LayerTexCoord layerTexCoord)
+&#123;
+#ifdef SURFACE_GRADIENT
+    GenerateLayerTexCoordBasisTB(input, layerTexCoord);
+#endif
+
+    GetLayerTexCoord(   input.texCoord0.xy, input.texCoord1.xy, input.texCoord2.xy, input.texCoord3.xy,
+                        input.positionRWS, input.tangentToWorld[2].xyz, layerTexCoord);
+&#125;</code></pre></div></figure>
+<p>GenerateLayerTexCoordBasisTB用来计算切线空间<br />
+GetLayerTexCoord用来生成对应的UVMapping</p>
+<h2 id="高度图">高度图</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#if !defined(SHADER_STAGE_RAY_TRACING)
+    float depthOffset &#x3D; ApplyPerPixelDisplacement(input, V, layerTexCoord);
+    #ifdef _DEPTHOFFSET_ON
+    ApplyDepthOffsetPositionInput(V, depthOffset, GetViewForwardDir(), GetWorldToHClipMatrix(), posInput);
+    #endif
+#else
+    float depthOffset &#x3D; 0.0;
+#endif</code></pre></div></figure>
+<p>深度图相关，包含了深度偏移。</p>
+<h2 id="透明度裁切">透明度裁切</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">
+#if defined(_ALPHATEST_ON)
+    float alphaTex &#x3D; SAMPLE_UVMAPPING_TEXTURE2D(_BaseColorMap, sampler_BaseColorMap, layerTexCoord.base).a;
+    alphaTex &#x3D; lerp(_AlphaRemapMin, _AlphaRemapMax, alphaTex);
+    float alphaValue &#x3D; alphaTex * _BaseColor.a;
+
+    &#x2F;&#x2F; Perform alha test very early to save performance (a killed pixel will not sample textures)
+    #if SHADERPASS &#x3D;&#x3D; SHADERPASS_TRANSPARENT_DEPTH_PREPASS
+    float alphaCutoff &#x3D; _AlphaCutoffPrepass;
+    #elif SHADERPASS &#x3D;&#x3D; SHADERPASS_TRANSPARENT_DEPTH_POSTPASS
+    float alphaCutoff &#x3D; _AlphaCutoffPostpass;
+    #elif (SHADERPASS &#x3D;&#x3D; SHADERPASS_SHADOWS) || (SHADERPASS &#x3D;&#x3D; SHADERPASS_RAYTRACING_VISIBILITY)
+    float alphaCutoff &#x3D; _UseShadowThreshold ? _AlphaCutoffShadow : _AlphaCutoff;
+    #else
+    float alphaCutoff &#x3D; _AlphaCutoff;
+    #endif
+
+    GENERIC_ALPHA_TEST(alphaValue, alphaCutoff);
+#endif</code></pre></div></figure>
+<p>不是重点先略过</p>
+<h2 id="surfacedata">SurfaceData</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float3 normalTS;
+float3 bentNormalTS;
+float3 bentNormalWS;
+float alpha &#x3D; GetSurfaceData(input, layerTexCoord, surfaceData, normalTS, bentNormalTS);
+
+&#x2F;&#x2F; This need to be init here to quiet the compiler in case of decal, but can be override later.
+surfaceData.geomNormalWS &#x3D; input.tangentToWorld[2];
+surfaceData.specularOcclusion &#x3D; 1.0;</code></pre></div></figure>
+<p>来看看GetSurfaceData这个函数<br />
+主要就是采样各种贴图，获取SurfaceData。</p>
+<h2 id="贴花">贴花</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#if HAVE_DECALS &amp;&amp; (defined(DECAL_SURFACE_GRADIENT) &amp;&amp; defined(SURFACE_GRADIENT))
+    if (_EnableDecals)
+    &#123;
+        DecalSurfaceData decalSurfaceData &#x3D; GetDecalSurfaceData(posInput, input, alpha);
+        ApplyDecalToSurfaceData(decalSurfaceData, input.tangentToWorld[2], surfaceData, normalTS);
+    &#125;
+#endif</code></pre></div></figure>
+<p>也先略过吧。</p>
+<h2 id="次法线">次法线</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#ifdef _BENTNORMALMAP
+    GetNormalWS(input, bentNormalTS, bentNormalWS, doubleSidedConstants);
+#else
+    bentNormalWS &#x3D; surfaceData.normalWS;
+#endif</code></pre></div></figure>
+<p>获取次法线</p>
+<h2 id="高光遮挡">高光遮挡</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#if defined(_SPECULAR_OCCLUSION_FROM_BENT_NORMAL_MAP)
+    &#x2F;&#x2F; If we have bent normal and ambient occlusion, process a specular occlusion
+    surfaceData.specularOcclusion &#x3D; GetSpecularOcclusionFromBentAO(V, bentNormalWS, surfaceData.normalWS, surfaceData.ambientOcclusion, PerceptualSmoothnessToRoughness(surfaceData.perceptualSmoothness));
+    &#x2F;&#x2F; Don&#39;t do spec occ from Ambient if there is no mask mask
+#elif defined(_MASKMAP) &amp;&amp; !defined(_SPECULAR_OCCLUSION_NONE)
+    surfaceData.specularOcclusion &#x3D; GetSpecularOcclusionFromAmbientOcclusion(ClampNdotV(dot(surfaceData.normalWS, V)), surfaceData.ambientOcclusion, PerceptualSmoothnessToRoughness(surfaceData.perceptualSmoothness));
+#endif</code></pre></div></figure>
+<p>如果启用了次法线贴图的镜面遮挡，就修改specularOcclusion属性。</p>
+<h2 id="几何高光aa">几何高光AA</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">#if defined(_ENABLE_GEOMETRIC_SPECULAR_AA) &amp;&amp; !defined(SHADER_STAGE_RAY_TRACING)
+    &#x2F;&#x2F; Specular AA
+    #ifdef PROJECTED_SPACE_NDF_FILTERING
+    surfaceData.perceptualSmoothness &#x3D; ProjectedSpaceGeometricNormalFiltering(surfaceData.perceptualSmoothness, input.tangentToWorld[2], _SpecularAAScreenSpaceVariance, _SpecularAAThreshold);
+    #else
+    surfaceData.perceptualSmoothness &#x3D; GeometricNormalFiltering(surfaceData.perceptualSmoothness, input.tangentToWorld[2], _SpecularAAScreenSpaceVariance, _SpecularAAThreshold);
+    #endif
+#endif</code></pre></div></figure>
+<p>用来处理几何锐角附近的高光锯齿，是通过修改光滑度来实现的，看来这一步可以预先在SP等贴图软件中提前处理，能节省一些性能。</p>
+<h2 id="builtindata">BuiltinData</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">GetBuiltinData(input, V, posInput, surfaceData, alpha, bentNormalWS, depthOffset, layerTexCoord.base, builtinData);</code></pre></div></figure>
+<p>SurfaceDatas是和表面相关的属性，和材质相关。BuiltinData则是和环境相关，如全局光、阴影、透明度裁切阙值等。</p>
+<p>GI有三种方式，光照贴图，球谐函数，还是新退出的用3D贴图来采样的球谐函数。</p>
+<h2 id="postinitbuiltindata">PostInitBuiltinData</h2>
+<p>然后是最后的修改，<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">ModifyBakedDiffuseLighting(V, posInput, surfaceData, builtinData);
+float multiplier &#x3D; GetIndirectDiffuseMultiplier(builtinData.renderingLayers);
+builtinData.bakeDiffuseLighting *&#x3D; multiplier;</code></pre></div></figure><br />
+都是对GI的修改。<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">void ModifyBakedDiffuseLighting(float3 V, PositionInputs posInput, SurfaceData surfaceData, inout BuiltinData builtinData)
+&#123;
+    &#x2F;&#x2F; Since this is called early at PostInitBuiltinData and we need some fields from bsdfData and preLightData,
+    &#x2F;&#x2F; we get the whole structures redundantly earlier here - compiler should optimize out everything.
+    BSDFData bsdfData &#x3D; ConvertSurfaceDataToBSDFData(posInput.positionSS, surfaceData);
+    PreLightData preLightData &#x3D; GetPreLightData(V, posInput, bsdfData);
+    ModifyBakedDiffuseLighting(V, posInput, preLightData, bsdfData, builtinData);
+&#125;</code></pre></div></figure><br />
+又出现了两个结构体<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">struct BSDFData
+&#123;
+    uint materialFeatures;
+    real3 diffuseColor;
+    real3 fresnel0;
+    real ambientOcclusion;
+    real specularOcclusion;
+    float3 normalWS;
+    real perceptualRoughness;
+    real coatMask;
+    uint diffusionProfileIndex;
+    real subsurfaceMask;
+    real thickness;
+    bool useThickObjectMode;
+    real3 transmittance;
+    float3 tangentWS;
+    float3 bitangentWS;
+    real roughnessT;
+    real roughnessB;
+    real anisotropy;
+    real iridescenceThickness;
+    real iridescenceMask;
+    real coatRoughness;
+    real3 geomNormalWS;
+    real ior;
+    real3 absorptionCoefficient;
+    real transmittanceMask;
+&#125;;
+struct PreLightData
+&#123;
+    float NdotV;                     &#x2F;&#x2F; Could be negative due to normal mapping, use ClampNdotV()
+
+    &#x2F;&#x2F; GGX
+    float partLambdaV;
+    float energyCompensation;
+
+    &#x2F;&#x2F; IBL
+    float3 iblR;                     &#x2F;&#x2F; Reflected specular direction, used for IBL in EvaluateBSDF_Env()
+    float  iblPerceptualRoughness;
+
+    float3 specularFGD;              &#x2F;&#x2F; Store preintegrated BSDF for both specular and diffuse
+    float  diffuseFGD;
+
+    &#x2F;&#x2F; Area lights (17 VGPRs)
+    &#x2F;&#x2F; TODO: &#39;orthoBasisViewNormal&#39; is just a rotation around the normal and should thus be just 1x VGPR.
+    float3x3 orthoBasisViewNormal;   &#x2F;&#x2F; Right-handed view-dependent orthogonal basis around the normal (6x VGPRs)
+    float3x3 ltcTransformDiffuse;    &#x2F;&#x2F; Inverse transformation for Lambertian or Disney Diffuse        (4x VGPRs)
+    float3x3 ltcTransformSpecular;   &#x2F;&#x2F; Inverse transformation for GGX                                 (4x VGPRs)
+
+    &#x2F;&#x2F; Clear coat
+    float    coatPartLambdaV;
+    float3   coatIblR;
+    float    coatIblF;               &#x2F;&#x2F; Fresnel term for view vector
+    float    coatReflectionWeight;   &#x2F;&#x2F; like reflectionHierarchyWeight but used to distinguish coat contribution between SSR&#x2F;IBL lighting
+    float3x3 ltcTransformCoat;       &#x2F;&#x2F; Inverse transformation for GGX                                 (4x VGPRs)
+
+#if HAS_REFRACTION
+    &#x2F;&#x2F; Refraction
+    float3 transparentRefractV;      &#x2F;&#x2F; refracted view vector after exiting the shape
+    float3 transparentPositionWS;    &#x2F;&#x2F; start of the refracted ray after exiting the shape
+    float3 transparentTransmittance; &#x2F;&#x2F; transmittance due to absorption
+    float transparentSSMipLevel;     &#x2F;&#x2F; mip level of the screen space gaussian pyramid for rough refraction
+#endif
+&#125;;
+</code></pre></div></figure><br />
+前者是针对BSDF所需的全部参数的汇总，后者就是光源相关的属性。</p>
+<p>来看看这两个结构体的获取</p>
+<h1 id="convertsurfacedatatobsdfdata">ConvertSurfaceDataToBSDFData</h1>
+<p>也是顾名思义，填充一些bsdf相关的属性。<br />
+如ao，高光，粗糙，金属，菲涅尔等等。</p>
+<p>这里还根据材质需求的功能的不同，如是否需要SSS，曲面细分，各向异性，虹彩，清漆来填充不同的属性。</p>
+<h1 id="getprelightdata">GetPreLightData</h1>
+<p>同样的，根据不同的材质，会有针对性的修改，比如为了虹彩和清漆会修改菲涅尔，</p>
+<p>这里对于面光源，环境照明，的参数是从一张预处理的贴图中采样的：GetPreIntegratedFGDGGXAndDisneyDiffuse<br />
+还有一些奇怪的属性energyCompensation、面光源相关等等，等用到时再回过头来看吧。</p>
+<h1 id="lightloopoutput">LightLoopOutput</h1>
+<p>获取完大部分的属性后终于来到了光照计算<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">struct LightLoopOutput
+&#123;
+    float3 diffuseLighting;
+    float3 specularLighting;
+&#125;;</code></pre></div></figure><br />
+输出很直接漫反射和高光。</p>
+<h1 id="lightloopcontext">LightLoopContext</h1>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl"> struct LightLoopContext
+&#123;
+    int sampleReflection;
+#ifdef APPLY_FOG_ON_SKY_REFLECTIONS
+    float3 positionWS; &#x2F;&#x2F; For sky reflection, we need position to evalute height base fog
+#endif
+
+    HDShadowContext shadowContext;
+
+    uint contactShadow;         &#x2F;&#x2F; a bit mask of 24 bits that tell if the pixel is in a contact shadow or not
+    real contactShadowFade;     &#x2F;&#x2F; combined fade factor of all contact shadows
+    SHADOW_TYPE shadowValue;    &#x2F;&#x2F; Stores the value of the cascade shadow map
+    real splineVisibility;      &#x2F;&#x2F; Stores the value of the cascade shadow map (unbiased for splines)
+&#125;;
+struct HDShadowContext
+&#123;
+    StructuredBuffer&lt;HDShadowData&gt;  shadowDatas;
+    HDDirectionalShadowData         directionalShadowData;
+&#125;;
+struct HDShadowData
+&#123;
+    float3 rot0;
+    float3 rot1;
+    float3 rot2;
+    float3 pos;
+    float4 proj;
+    float2 atlasOffset;
+    float worldTexelSize;
+    float normalBias;
+    real4 zBufferParam;
+    float4 shadowMapSize;
+    float4 shadowFilterParams0;
+    float3 cacheTranslationDelta;
+    float isInCachedAtlas;
+    float4x4 shadowToWorld;
+&#125;;
+struct HDDirectionalShadowData
+&#123;
+    float4 sphereCascades[4];
+    real4 cascadeDirection;
+    real cascadeBorders[4];
+&#125;;</code></pre></div></figure>
+<p>一层套一层<br />
+大部分都是定义的阴影<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">StructuredBuffer&lt;HDShadowData&gt;              _HDShadowDatas;
+&#x2F;&#x2F; Only the first element is used since we only support one directional light
+StructuredBuffer&lt;HDDirectionalShadowData&gt;   _HDDirectionalShadowData;
+
+HDShadowContext InitShadowContext()
+&#123;
+    HDShadowContext         sc;
+
+    sc.shadowDatas &#x3D; _HDShadowDatas;
+    sc.directionalShadowData &#x3D; _HDDirectionalShadowData[0];
+
+    return sc;
+&#125;</code></pre></div></figure><br />
+结构体的值是整个获取的。</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hls" data-language="hls"><code class="language-hls">ApplyCameraRelativeXR(posInput.positionWS);
+
+&#x2F;&#x2F; Initialize the contactShadow and contactShadowFade fields
+InitContactShadow(posInput, context);</code></pre></div></figure>
+<p>适配XR中的摄像机相关世界坐标。<br />
+获取级联阴影参数。</p>
+<h2 id="平行光阴影">平行光阴影</h2>
+<figure><div class="code-wrapper"><pre class="language-none"><code class="language-none">        DirectionalLightData light = _DirectionalLightDatas[_DirectionalShadowIndex];</code></pre></div></figure>
+<p>获取平行光数据<br />
+float3 L = -light.forward;<br />
+方向<br />
+然后就是采样阴影贴图。结果存到shadowValue中。</p>
+<h2 id="点光附加光直接">点光、附加光直接</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">
+struct AggregateLighting
+&#123;
+    DirectLighting   direct;
+    IndirectLighting indirect;
+&#125;;</code></pre></div></figure>
+<p>这里其实存的是全部附加光照的总和。</p>
+<p>遍历全部的附加光<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">        while (v_lightListOffset &lt; lightCount)
+#endif
+        &#123;
+            v_lightIdx &#x3D; FetchIndex(lightStart, v_lightListOffset);
+#if SCALARIZE_LIGHT_LOOP
+            uint s_lightIdx &#x3D; ScalarizeElementIndex(v_lightIdx, fastPath);
+#else
+            uint s_lightIdx &#x3D; v_lightIdx;
+#endif
+            if (s_lightIdx &#x3D;&#x3D; -1)
+                break;
+
+            LightData s_lightData &#x3D; FetchLight(s_lightIdx);
+            &#x2F;&#x2F; If current scalar and vector light index match, we process the light. The v_lightListOffset for current thread is increased.
+            &#x2F;&#x2F; Note that the following should really be &#x3D;&#x3D;, however, since helper lanes are not considered by WaveActiveMin, such helper lanes could
+            &#x2F;&#x2F; end up with a unique v_lightIdx value that is smaller than s_lightIdx hence being stuck in a loop. All the active lanes will not have this problem.
+            if (s_lightIdx &gt;&#x3D; v_lightIdx)
+            &#123;
+                v_lightListOffset++;
+                if (IsMatchingLightLayer(s_lightData.lightLayers, builtinData.renderingLayers))
+                &#123;
+                    DirectLighting lighting &#x3D; EvaluateBSDF_Punctual(context, V, posInput, preLightData, s_lightData, bsdfData, builtinData);
+                    AccumulateDirectLighting(lighting, aggregateLighting);
+                &#125;
+            &#125;
+        &#125;</code></pre></div></figure></p>
+<p>遍历完累加到一起。</p>
+<h2 id="平行光直接">平行光直接</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">uint i &#x3D; 0; &#x2F;&#x2F; Declare once to avoid the D3D11 compiler warning.
+if (featureFlags &amp; LIGHTFEATUREFLAGS_DIRECTIONAL)
+&#123;
+    for (i &#x3D; 0; i &lt; _DirectionalLightCount; ++i)
+    &#123;
+        if (IsMatchingLightLayer(_DirectionalLightDatas[i].lightLayers, builtinData.renderingLayers))
+        &#123;
+            DirectLighting lighting &#x3D; EvaluateBSDF_Directional(context, V, posInput, preLightData, _DirectionalLightDatas[i], bsdfData, builtinData);
+            AccumulateDirectLighting(lighting, aggregateLighting);
+        &#125;
+    &#125;
+&#125;</code></pre></div></figure>
+<p>循环计算全部的平行光的直接照明</p>
+<h2 id="面光源直接">面光源直接</h2>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">
+#if SHADEROPTIONS_AREA_LIGHTS
+    if (featureFlags &amp; LIGHTFEATUREFLAGS_AREA)
+    &#123;
+        uint lightCount, lightStart;
+
+    #ifndef LIGHTLOOP_DISABLE_TILE_AND_CLUSTER
+        GetCountAndStart(posInput, LIGHTCATEGORY_AREA, lightStart, lightCount);
+    #else
+        lightCount &#x3D; _AreaLightCount;
+        lightStart &#x3D; _PunctualLightCount;
+    #endif
+
+        &#x2F;&#x2F; COMPILER BEHAVIOR WARNING!
+        &#x2F;&#x2F; If rectangle lights are before line lights, the compiler will duplicate light matrices in VGPR because they are used differently between the two types of lights.
+        &#x2F;&#x2F; By keeping line lights first we avoid this behavior and save substantial register pressure.
+        &#x2F;&#x2F; TODO: This is based on the current Lit.shader and can be different for any other way of implementing area lights, how to be generic and ensure performance ?
+
+        if (lightCount &gt; 0)
+        &#123;
+            i &#x3D; 0;
+
+            uint      last      &#x3D; lightCount - 1;
+            LightData lightData &#x3D; FetchLight(lightStart, i);
+
+            while (i &lt;&#x3D; last &amp;&amp; lightData.lightType &#x3D;&#x3D; GPULIGHTTYPE_TUBE)
+            &#123;
+                lightData.lightType &#x3D; GPULIGHTTYPE_TUBE; &#x2F;&#x2F; Enforce constant propagation
+                lightData.cookieMode &#x3D; COOKIEMODE_NONE;  &#x2F;&#x2F; Enforce constant propagation
+
+                if (IsMatchingLightLayer(lightData.lightLayers, builtinData.renderingLayers))
+                &#123;
+                    DirectLighting lighting &#x3D; EvaluateBSDF_Area(context, V, posInput, preLightData, lightData, bsdfData, builtinData);
+                    AccumulateDirectLighting(lighting, aggregateLighting);
+                &#125;
+
+                lightData &#x3D; FetchLight(lightStart, min(++i, last));
+            &#125;
+
+            while (i &lt;&#x3D; last) &#x2F;&#x2F; GPULIGHTTYPE_RECTANGLE
+            &#123;
+                lightData.lightType &#x3D; GPULIGHTTYPE_RECTANGLE; &#x2F;&#x2F; Enforce constant propagation
+
+                if (IsMatchingLightLayer(lightData.lightLayers, builtinData.renderingLayers))
+                &#123;
+                    DirectLighting lighting &#x3D; EvaluateBSDF_Area(context, V, posInput, preLightData, lightData, bsdfData, builtinData);
+                    AccumulateDirectLighting(lighting, aggregateLighting);
+                &#125;
+
+                lightData &#x3D; FetchLight(lightStart, min(++i, last));
+            &#125;
+        &#125;
+    &#125;
+#endif</code></pre></div></figure>
+<p>面光源，先略过吧</p>
+<h1 id="直接光照">直接光照</h1>
+<p>可以看出直接光照都是在类似<br />
+DirectLighting lighting = EvaluateBSDF_Directional(context, V, posInput,
+preLightData, _DirectionalLightDatas[i], bsdfData, builtinData);<br />
+这之类的函数中计算的<br />
+然后累加起来，所以这里来看看这个函数<br />
+ShadeSurface_Directional</p>
+<p>EvaluateLight_Directional<br />
+处理雾气和大气相关，修改light颜色</p>
+<figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">SHADOW_TYPE shadow &#x3D; EvaluateShadow_Directional(lightLoopContext, posInput, light, builtinData, GetNormalForShadowBias(bsdfData));
+float NdotL  &#x3D; dot(bsdfData.normalWS, L); &#x2F;&#x2F; No microshadowing when facing away from light (use for thin transmission as well)
+shadow *&#x3D; NdotL &gt;&#x3D; 0.0 ? ComputeMicroShadowing(GetAmbientOcclusionForMicroShadowing(bsdfData), NdotL, _MicroShadowOpacity) : 1.0;
+lightColor.rgb *&#x3D; ComputeShadowColor(shadow, light.shadowTint, light.penumbraTint);</code></pre></div></figure>
+<p>计算阴影</p>
+<p>ShadeSurface_Infinitesimal<br />
+处理反射与投射</p>
+<p>EvaluateBSDF<br />
+到这一步才用到了BSDF函数</p>
+<h1 id="总结">总结</h1>
+<p>为了之后的理解，还是按照HDRP的文件和函数分类结构，在URP中把URP的Lit重写一遍，最终目的是在URP中使用HDRP的Lit。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>AnalyzeHDRPLit</div>
+      <div>https://www.kuanmi.top/2023/07/03/AnalyzeHDRPLit/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年7月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/07/20/RThandle/" title="RThandle">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">RThandle</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/06/27/URP-Lit-BRDF/" title="URP-Lit-BRDF简析">
+                        <span class="hidden-mobile">URP-Lit-BRDF简析</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
