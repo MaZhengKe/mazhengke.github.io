@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.kuanmi.top/images/bloomMR.png">
 <meta property="article:published_time" content="2025-03-18T02:16:57.000Z">
-<meta property="article:modified_time" content="2025-03-18T09:00:35.796Z">
+<meta property="article:modified_time" content="2025-05-06T08:48:10.203Z">
 <meta property="article:author" content="KuanMi">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://www.kuanmi.top/images/bloomMR.png">
@@ -260,7 +260,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.2k 字
+          1.3k 字
         
       </span>
     
@@ -471,6 +471,9 @@ alpha &#x3D;  alpha +  bloom.w  * _Bloom_Alpha;</code></pre></div></figure>
 但如果这样做，又会导致MR相机的贴图被二次采样，势必会降低渲染质量。（目前meta和pico都给出了对应的SDK来获取相机图像，但都有一些限制）</p>
 <p>或者利用现有硬件的合成层功能，把这张bloom贴图提出来，单独给到头显，让头显来用颜色叠加模式来混合。<br />
 但目前pico或meta合成层仅仅支持常见的Quad、Cylinder、Equirect等几种模式，无法直接传入贴图应用到头显上。</p>
+<h3 id="年5月更新">2025年5月更新</h3>
+<p>根据和pico的沟通，现在pico可以修改默认eyeBuffer和透视图的混合方式了。<br />
+如果不需要其他透明度的混合，可以选择加法混合，就可以解决这里的问题了。</p>
 <h1 id="便于在编辑器调试的mr背景图">便于在编辑器调试的MR背景图</h1>
 <p>在编辑器中，MR背景图是黑色的，这样在调试时就看不到背景了，也就无法确认Bloom经过透明度混合后的效果。</p>
 <p>所以在<code>UberPost</code>中加入一张背景图，模仿alpha混合的效果。</p>
@@ -549,6 +552,12 @@ return half4(color, 1);
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2025/05/06/ToonShadingGrassTree/" title="风格化草地树木的实现">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">风格化草地树木的实现</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">

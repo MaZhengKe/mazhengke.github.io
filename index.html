@@ -466,7 +466,7 @@
     
       <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2022/06/23/OutlineInURP-VR/" target="_blank">
-          <img src="/images/All-slim.jpg" srcset="/img/loading.gif" lazyload alt="OutlineInURP VR">
+          <img src="/images/All-slim.jpg" srcset="/img/loading.gif" lazyload alt="URP下屏幕空间外轮廓的实现 支持VR">
         </a>
       </div>
     
@@ -474,7 +474,7 @@
       <h2 class="index-header">
         
         <a href="/2022/06/23/OutlineInURP-VR/" target="_blank">
-          OutlineInURP VR
+          URP下屏幕空间外轮廓的实现 支持VR
         </a>
       </h2>
 
@@ -539,7 +539,7 @@
     
       <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2022/06/27/LensFlare-SRP-in-VR/" target="_blank">
-          <img src="/images/Len_01-slim.jpg" srcset="/img/loading.gif" lazyload alt="LensFlare(SRP) in VR">
+          <img src="/images/Len_01-slim.jpg" srcset="/img/loading.gif" lazyload alt="镜头炫光LensFlare(SRP) 在 VR 下的偏移BUG修复">
         </a>
       </div>
     
@@ -547,7 +547,7 @@
       <h2 class="index-header">
         
         <a href="/2022/06/27/LensFlare-SRP-in-VR/" target="_blank">
-          LensFlare(SRP) in VR
+          镜头炫光LensFlare(SRP) 在 VR 下的偏移BUG修复
         </a>
       </h2>
 
@@ -600,6 +600,45 @@
               <a href="/tags/VR/">#VR</a>
             
           </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2025/05/06/ToonShadingGrassTree/" target="_blank">
+          <img src="/images/grass02.png" srcset="/img/loading.gif" lazyload alt="风格化草地树木的实现">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/05/06/ToonShadingGrassTree/" target="_blank">
+          风格化草地树木的实现
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/2025/05/06/ToonShadingGrassTree/" target="_blank">
+        <div>
+          概述 很早就想尝试风格化渲染，正好看到了一个使用Blender的教程，顺便就试了一下，移植到Unity上。 草地 先看草地，概括原版教程 Blender  首先创建单株草Mesh, 利用Blender中的几何节点，在平面上随机分布草Mesh 预生成不同层级的颜色贴图，用于在平面上赋予草颜色 利用同一张贴图，当作高度图，生成法线，同样按照世界坐标UV来采样，给每个草Mesh都加上法
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-05-06 16:52" pubdate>
+              2025-05-06
+            </time>
+          </div>
+        
+        
         
       </div>
     </article>
@@ -752,45 +791,6 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2023-08-09 05:36" pubdate>
               2023-08-09
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/08/07/HBAO/" target="_blank">
-          <img src="/images/HBAOS01.png" srcset="/img/loading.gif" lazyload alt="HBAO">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2023/08/07/HBAO/" target="_blank">
-          HBAO
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt " href="/2023/08/07/HBAO/" target="_blank">
-        <div>
-          今天来玩玩HBAO，目前URP仅有SSAO，HDRP则用的是GTAO。先在URP实现个HBAO，如果还有余力的话就再实现GTAO吧。 原理啥的就不详细写了，各种文章一大堆，就先简单说个大概。   HBAO in URP  SSAO 先看URP自带的SSAO，别看Shader里定义了一堆pass，除了第一个SSAO_Occlusion，其他全是各种模糊。 详细看看第一个pass 大
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-08-07 05:37" pubdate>
-              2023-08-07
             </time>
           </div>
         

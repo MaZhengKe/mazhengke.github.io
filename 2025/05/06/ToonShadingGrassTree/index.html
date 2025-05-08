@@ -1,0 +1,749 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="概述 很早就想尝试风格化渲染，正好看到了一个使用Blender的教程，顺便就试了一下，移植到Unity上。 草地 先看草地，概括原版教程 Blender  首先创建单株草Mesh, 利用Blender中的几何节点，在平面上随机分布草Mesh 预生成不同层级的颜色贴图，用于在平面上赋予草颜色 利用同一张贴图，当作高度图，生成法线，同样按照世界坐标UV来采样，给每个草Mesh都加上法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="风格化草地树木的实现">
+<meta property="og:url" content="https://www.kuanmi.top/2025/05/06/ToonShadingGrassTree/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="概述 很早就想尝试风格化渲染，正好看到了一个使用Blender的教程，顺便就试了一下，移植到Unity上。 草地 先看草地，概括原版教程 Blender  首先创建单株草Mesh, 利用Blender中的几何节点，在平面上随机分布草Mesh 预生成不同层级的颜色贴图，用于在平面上赋予草颜色 利用同一张贴图，当作高度图，生成法线，同样按照世界坐标UV来采样，给每个草Mesh都加上法">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.kuanmi.top/images/grass02.png">
+<meta property="article:published_time" content="2025-05-06T08:52:30.000Z">
+<meta property="article:modified_time" content="2025-05-08T01:12:10.189Z">
+<meta property="article:author" content="KuanMi">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.kuanmi.top/images/grass02.png">
+  
+  
+  
+  <title>风格化草地树木的实现 - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-4S8LRB89WS"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"gtag":null,"woyaola":null,"cnzz":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-4S8LRB89WS", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-4S8LRB89WS');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/images/grass02.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="风格化草地树木的实现"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-05-06 16:52" pubdate>
+          2025年5月6日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          874 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          8 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">风格化草地树木的实现</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="概述">概述</h1>
+<p>很早就想尝试风格化渲染，正好看到了一个使用Blender的教程，顺便就试了一下，移植到Unity上。</p>
+<h1 id="草地">草地</h1>
+<p>先看草地，概括原版教程</p>
+<h2 id="blender">Blender</h2>
+<ul>
+<li>首先创建单株草Mesh,</li>
+<li>利用Blender中的几何节点，在平面上随机分布草Mesh</li>
+<li>预生成不同层级的颜色贴图，用于在平面上赋予草颜色</li>
+<li>利用同一张贴图，当作高度图，生成法线，同样按照世界坐标UV来采样，给每个草Mesh都加上法线</li>
+<li>最后用简单的lambert光照模型来渲染，lerp下颜色，阴影地方给个深色来模拟阴影</li>
+<li>然后是风的动画，用顶点偏移，采样了两次噪声，一次频率低，模拟风浪，一次频率高，模拟草叶的抖动</li>
+<li>因为风倒伏大的地方会有阴影，所以在风浪的地方，给个深色来模拟阴影</li>
+</ul>
+<figure>
+<img src="blender01.png" srcset="/img/loading.gif" lazyload alt="Blender效果" />
+<figcaption aria-hidden="true">Blender效果</figcaption>
+</figure>
+<h1 id="unity">Unity</h1>
+<p>重点来看Unity的实现</p>
+<h2 id="草">草</h2>
+<p>首先是导出草的mesh。这里为了之后处理风，给mesh加上了UV。</p>
+<figure>
+<img src="mesh.png" srcset="/img/loading.gif" lazyload alt="草mesh" />
+<figcaption aria-hidden="true">草mesh</figcaption>
+</figure>
+<p>在Unity6中，地形上的草地是用GPU实例化的，所以我们可以直接把草的mesh放到地形上，使用GPU实例化来渲染。</p>
+<figure>
+<img src="GPUIns.png" srcset="/img/loading.gif" lazyload alt="GPU实例化的草" />
+<figcaption aria-hidden="true">GPU实例化的草</figcaption>
+</figure>
+<p>然后是渲染了。<br />
+首先准备预渲染的贴图。<br />
+这里本来想程序化生成的，但后续再用程序化的贴图取计算法线，需要模糊，采样消耗比较高，所以还是在预处理下。</p>
+<p>首先是一张类似高度图的用来颜色分级的贴图</p>
+<figure>
+<img src="colorMap.png" srcset="/img/loading.gif" lazyload alt="颜色贴图" />
+<figcaption aria-hidden="true">颜色贴图</figcaption>
+</figure>
+<p>然后把这张图再模糊一下，当作高度图来用。<br />
+<img src="height.png" srcset="/img/loading.gif" lazyload alt="模糊高度图" /></p>
+<p>这里直接用Unity从高度图生成法线的功能，直接生成法线贴图。<br />
+<img src="normal.png" srcset="/img/loading.gif" lazyload alt="法线贴图" /></p>
+<p>然后就ShaderGraph一通连连看，<br />
+首先是颜色</p>
+<figure>
+<img src="Frag.png" srcset="/img/loading.gif" lazyload alt="ShaderGraph" />
+<figcaption aria-hidden="true">ShaderGraph</figcaption>
+</figure>
+<figure>
+<img src="grass02.png" srcset="/img/loading.gif" lazyload alt="颜色" />
+<figcaption aria-hidden="true">颜色</figcaption>
+</figure>
+<p>然后是顶点动画</p>
+<figure>
+<img src="vert.png" srcset="/img/loading.gif" lazyload alt="ShaderGraph" />
+<figcaption aria-hidden="true">ShaderGraph</figcaption>
+</figure>
+<figure>
+<img src="vert.gif" srcset="/img/loading.gif" lazyload alt="风动画" />
+<figcaption aria-hidden="true">风动画</figcaption>
+</figure>
+<h3 id="改进">改进</h3>
+<p>这里的散布是使用的Unity的地形，后续剔除、hiz等不好实现了，最好改用ComputeShader来实现。</p>
+<p>然后是法线完全取决于预先生成的贴图，不能根据刷的疏密来动态调整。</p>
+<p>草的颜色这里是用的中心点位置来采样的，</p>
+<h1 id="树">树</h1>
+<p>然后来看看树</p>
+<h2 id="blender-1">Blender</h2>
+<p>总体思路是用球体来模拟一簇树叶。<br />
+在球体基础上，使用几何节点，放置若干密度的面片，然后面片使用广告牌，每个面片依照球体上的位置来充当法线，<br />
+然后用lambert光照模型来渲染，用得到的颜色来分级采样预定的色带，每个面片再采样预先绘制的贴图充当alpha，再裁切一下就行了。</p>
+<figure>
+<img src="TreeItem.png" srcset="/img/loading.gif" lazyload alt="Blender树" />
+<figcaption aria-hidden="true">Blender树</figcaption>
+</figure>
+<h2 id="unity-1">Unity</h2>
+<p>这里有多种实现方式，首先是最灵活的，用VFX来实现（普通的Cpu粒子应该也行）</p>
+<p>这里就没必要局限于球体了，可以采样任意Mesh。</p>
+<figure>
+<img src="UnityTreeItem.png" srcset="/img/loading.gif" lazyload alt="单簇" />
+<figcaption aria-hidden="true">单簇</figcaption>
+</figure>
+<p>粒子图很简单，就采样Mesh的位置和法线，传给粒子，最后渲染要面向相机。<br />
+<img src="TreeVFX.png" srcset="/img/loading.gif" lazyload alt="粒子图" /></p>
+<p>然后是渲染</p>
+<p>附带的alpha图<br />
+<img src="Leave_alpha.png" srcset="/img/loading.gif" lazyload alt="alpha图" /></p>
+<p>shader就半兰伯特，用最后的颜色来采样一个色带<br />
+<img src="TreeSG.png" srcset="/img/loading.gif" lazyload alt="shader" /></p>
+<h1 id="不足与改进">不足与改进</h1>
+<p>使用SG来写shader目前还是有很多局限的，比如这里要采样阴影就很麻烦了。</p>
+<p>这里面向相机的方式，静态或者角度不太刁钻时都还好，但特定角度下旋转相机，叶片也会跟着转动，导致看起来不太自然。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>风格化草地树木的实现</div>
+      <div>https://www.kuanmi.top/2025/05/06/ToonShadingGrassTree/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年5月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/03/18/HDR-Bloom-URP/" title="MR环境下在URP中实现HDR Bloom">
+                        <span class="hidden-mobile">MR环境下在URP中实现HDR Bloom</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
