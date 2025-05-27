@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>Apple Hello 字体动效(Blender几何节点实现)</title>
+    <link href="/2025/05/27/BlenderAppleHello/"/>
+    <url>/2025/05/27/BlenderAppleHello/</url>
+    
+    <content type="html"><![CDATA[<h1 id="前述">前述</h1><p>前面实现的Apple Hello效果是静态网格，配合shader来实现的。<br />很难实现原版AVP中的光照和阴影效果。<br />所以再尝试一下用Blender几何节点的方式来动态修改网格并添加光照和阴影。<br /># 实现思路<br />和Unity一样，为了在折线处平滑，锐角折线分成两个spline。<br /><img src="spline.png" alt="spline" /></p><p>首先是重采样曲线，用高密度，长度小于设定参数的部分就删除掉。<br />然后给个半径，再用一个圆环曲线当作轮廓转换为网格。</p><figure><img src="del.png" alt="重采样转换为网格" /><figcaption aria-hidden="true">重采样转换为网格</figcaption></figure><p>然后是两端的半圆封口。</p><p>用经纬球，删除一半面<br /><img src="banqiu.png" alt="经纬球" /></p><p>采样曲线两端的半径，作为经纬球的半径。<br /><img src="banjing.png" alt="半径" /></p><p>同时也要采样两端的切向和法向，作为经纬球的旋转，最后实例化在两端即可。<br /><img src="banjing.png" alt="实例化" /></p><p>然后合并、按距离合并顶点、平滑着色、给材质、实现实例。<br /><img src="hebing.png" alt="实例化" /></p><p>为了实现起始点较粗、随时间变细的效果，根据长度给半径增加一个系数。<br /><img src="ani.png" alt="半径系数" /></p><p>完工。<br /><img src="result.png" alt="效果" /></p><p>K个动画，渲染下看看效果。<br /><img src="blenderapple.gif" alt="动画" /></p><h1 id="导出">导出</h1><p>有两种方式可以使用，一种就在Blender中直接渲染成序列帧。<br />给到Unity当作Sprite使用。</p><p>另一种是导出为abc文件(不支持移动端)。相当于每帧导出一个网格。然后在Unity中渲染。</p><p>前者画面效果比较好，但没有立体感。后者就很吃Unity本身的渲染能力了。</p><figure><img src="unityRender.gif" alt="导出" /><figcaption aria-hidden="true">导出</figcaption></figure>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Apple Hello 字体动效</title>
     <link href="/2025/05/26/AppleHello/"/>
     <url>/2025/05/26/AppleHello/</url>
@@ -346,9 +359,9 @@
     
     <tags>
       
-      <tag>视差</tag>
-      
       <tag>视差遮蔽映射</tag>
+      
+      <tag>视差</tag>
       
     </tags>
     
@@ -425,13 +438,13 @@
     
     <tags>
       
-      <tag>模拟</tag>
-      
       <tag>悬链线</tag>
       
       <tag>弹簧质点</tag>
       
       <tag>绳索</tag>
+      
+      <tag>模拟</tag>
       
     </tags>
     
@@ -558,9 +571,9 @@
     
     <tags>
       
-      <tag>布料</tag>
-      
       <tag>模拟</tag>
+      
+      <tag>布料</tag>
       
     </tags>
     
@@ -928,9 +941,9 @@
     
     <tags>
       
-      <tag>高度贴图</tag>
-      
       <tag>视差</tag>
+      
+      <tag>高度贴图</tag>
       
     </tags>
     
@@ -1368,9 +1381,9 @@
     
     <tags>
       
-      <tag>Shader</tag>
-      
       <tag>体积云</tag>
+      
+      <tag>Shader</tag>
       
     </tags>
     
@@ -1395,9 +1408,9 @@
     
     <tags>
       
-      <tag>水面</tag>
-      
       <tag>Shader</tag>
+      
+      <tag>水面</tag>
       
     </tags>
     

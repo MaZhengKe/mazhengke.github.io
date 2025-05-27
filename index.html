@@ -380,9 +380,9 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/tags/%E8%A7%86%E5%B7%AE/">#视差</a>
-            
               <a href="/tags/%E8%A7%86%E5%B7%AE%E9%81%AE%E8%94%BD%E6%98%A0%E5%B0%84/">#视差遮蔽映射</a>
+            
+              <a href="/tags/%E8%A7%86%E5%B7%AE/">#视差</a>
             
           </div>
         
@@ -609,6 +609,45 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2025/05/27/BlenderAppleHello/" target="_blank">
+          <img src="/images/blenderapple.gif" srcset="/img/loading.gif" lazyload alt="Apple Hello 字体动效(Blender几何节点实现)">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/05/27/BlenderAppleHello/" target="_blank">
+          Apple Hello 字体动效(Blender几何节点实现)
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/2025/05/27/BlenderAppleHello/" target="_blank">
+        <div>
+          前述 前面实现的Apple Hello效果是静态网格，配合shader来实现的。 很难实现原版AVP中的光照和阴影效果。 所以再尝试一下用Blender几何节点的方式来动态修改网格并添加光照和阴影。 # 实现思路 和Unity一样，为了在折线处平滑，锐角折线分成两个spline。  首先是重采样曲线，用高密度，长度小于设定参数的部分就删除掉。 然后给个半径，再用一个圆环曲线当作轮廓
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-05-27 14:02" pubdate>
+              2025-05-27
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2025/05/26/AppleHello/" target="_blank">
           <img src="/images/applehello2.gif" srcset="/img/loading.gif" lazyload alt="Apple Hello 字体动效">
         </a>
@@ -752,45 +791,6 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2025-05-06 16:52" pubdate>
               2025-05-06
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2025/03/18/HDR-Bloom-URP/" target="_blank">
-          <img src="/images/bloomMR.png" srcset="/img/loading.gif" lazyload alt="MR环境下在URP中实现HDR Bloom">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/03/18/HDR-Bloom-URP/" target="_blank">
-          MR环境下在URP中实现HDR Bloom
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt " href="/2025/03/18/HDR-Bloom-URP/" target="_blank">
-        <div>
-          概述 在MR环境下，HDR Bloom是一个很重要的效果，很多美术效果尤其是光效都需要HDR Bloom来提升画面的质感。 但是在URP中，启用HDR默认是用的B10G11R11_UFloatPack32的格式，这个格式会牺牲透明通道，导致MR失效。 所以翻看Pico或者Meta的文档，他们都不允许开启HDR。 然后是Bloom。URP的bloom是按照RGBM编码在rgba四个通道中
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-03-18 10:16" pubdate>
-              2025-03-18
             </time>
           </div>
         
