@@ -4,6 +4,32 @@
   
   
   <entry>
+    <title>liquidGlass</title>
+    <link href="/2025/06/11/liquidGlass/"/>
+    <url>/2025/06/11/liquidGlass/</url>
+    
+    <content type="html"><![CDATA[<h1 id="前述">前述</h1><p>液体玻璃效果，模仿苹果的液体玻璃效果。</p><h1 id="实现思路">实现思路</h1><p>主要特点</p><ul><li>四边圆角</li><li>透明-高斯模糊</li><li>反射-最边缘有高光，而且可以反射出按钮周围的环境</li><li>折射-中心到弯角的部分有弯曲的折射效果</li><li>液态融合-距离靠近的按钮会融合在一起，形成液态的效果。</li></ul><p>这里的折射有两种方式</p><ul><li>一是算法线，根据折射公式来计算，要算两次，首先是空气到玻璃的折射，然后是玻璃到空气的折射。再结合玻璃不同位置的厚度，玻璃地面到屏幕像素平面的距离即可。</li><li>二是简单扭曲一下UV坐标，根据sdf，越靠近边缘扭曲程度越大，直接采样屏幕像素。</li></ul><p>前者物理上正确，可以与光线追踪的结果对比，像素级精确，后者简单粗暴。<br />但后者性能更好，而且效果更可控，不会出现发生全反射导致的黑色区域。<br /># 实现步骤</p><p>圆角没啥好说的，用SDF就行，而且后续的液体效果也需要用sdf实现。</p><p>然后生成三种遮罩，分别对应三种效果。</p><p>接着是要计算法线，还是用sdf当高度，边缘想象成四分之一球体，得出法线。</p><p>最外圈的高光，如果要简单一点，就边缘给个亮色就行。复杂的话就就法线采样个cube贴图。</p><p>然后是高斯模糊，这也很简单，多采样几次完事。</p><p>折射部分也是用法线来计算折射角度，厚度也从SDF中获取，采样屏幕像素即可。</p><p>折射要计算两次，首先是空气到玻璃的折射，然后是玻璃到空气的折射。</p><p>第一次的折射长度就用玻璃的厚度，第二次就把参数暴露出来方便调整。<br />两次折射加上原本的位置，转成屏幕空间去模糊采样就行了。</p><p>view dir 是朝向相机的！！！！</p><h1 id="生成法线">生成法线</h1><p>首先box的SDF</p><figure><img src="BoxSDF.png" alt="boxSDF" /><figcaption aria-hidden="true">boxSDF</figcaption></figure><p>然后是圆角的SDF<br /><img src="RoundBoxSDF.png" alt="cornerSDF" /></p><p>然后从SDF生成高度<br /><img src="Height.png" alt="height" /></p><p>然后是法线，从高度生成法线，再将法线、高度和SDF结合，得到光线的出射位置<br /><img src="pos.png" alt="pos" /></p><p>这里要考虑两次折射，首先是空气到玻璃的折射，然后是玻璃到空气的折射。<br /><img src="image.png" alt="两次折射" /></p><p>然后是一个非常粗暴的高斯模糊，采样屏幕像素。<br /><img src="image-1.png" alt="模糊" /></p><figure><div class="code-wrapper"><pre class="line-numbers language-hlsl" data-language="hlsl"><code class="language-hlsl">float2 UV &#x3D; ScreenPosition;float2 texelSize &#x3D; 1.0 &#x2F; SceneSize;float weightSum &#x3D; 0.0;float3 result &#x3D; float3(0, 0, 0);for (int x &#x3D; -kernelRadius; x &lt;&#x3D; kernelRadius; x++) &#123;    for (int y &#x3D; -kernelRadius; y &lt;&#x3D; kernelRadius; y++) &#123;        float2 offset &#x3D; float2(x, y) * texelSize;        &#x2F;&#x2F; 内联高斯函数：weight &#x3D; e^(-(x^2 + y^2)&#x2F;(2*sigma^2))        float dist2 &#x3D; x * x + y * y;        float weight &#x3D; exp(-dist2 &#x2F; (2.0 * sigma * sigma));        float3 sample &#x3D; SHADERGRAPH_SAMPLE_SCENE_COLOR(UV + offset).xyz;        result +&#x3D; sample * weight;        weightSum +&#x3D; weight;    &#125;&#125;Out &#x3D; result &#x2F; weightSum;</code></pre></div></figure><p>结果<br /><img src="SDF.gif" alt="SDF结果" /></p><h1 id="模型">模型</h1><p>换一个思路，直接建模，从模型取法线和高度，也可以实现。</p><p>首先是折射<br /><img src="ref.png" alt="折射" /></p><p>然后是反射<br /><img src="reflection.png" alt="反射" /></p><p>再加上边缘高光<br /><img src="highlight.png" alt="高光" /></p><p>完工<br /><img src="result.png" alt="模型" /></p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>electricityVFX</title>
+    <link href="/2025/06/11/electricityVFX/"/>
+    <url>/2025/06/11/electricityVFX/</url>
+    
+    <content type="html"><![CDATA[<h1 id="前述">前述</h1><p>总结两种生成电流效果的方式。</p><p>一种当成波来实现，通过各种余弦函数叠加形成主波形，再通过噪声函数来形成细节。</p><p>另一种是通过二维或三维噪声，配合lerp，把数值高的地方Lerp出来。</p><h1 id="第一种">第一种</h1><p>首先是极坐标<br />从UV坐标转换成极坐标，计算出角度和半径。<br /><img src="polar.png" alt="极坐标" /></p><p>再计算一个沿着角度可以无缝循环的噪声<br /><img src="noise.png" alt="噪声" /></p><p>三个不同周期的波形叠加<br /><img src="wave.png" alt="波形" /></p><p>最后用sin取一下再step<br /><img src="step.png" alt="step" /></p><p>完活<br /><img src="ele.gif" alt="效果" /></p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Apple Hello 字体动效(Blender几何节点实现)</title>
     <link href="/2025/05/27/BlenderAppleHello/"/>
     <url>/2025/05/27/BlenderAppleHello/</url>
