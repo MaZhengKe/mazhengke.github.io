@@ -687,45 +687,6 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2025/06/11/electricityVFX/" target="_blank">
-          <img src="/images/ele.gif" srcset="/img/loading.gif" lazyload alt="环形电流">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/2025/06/11/electricityVFX/" target="_blank">
-          环形电流
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt " href="/2025/06/11/electricityVFX/" target="_blank">
-        <div>
-          前述 总结两种生成电流效果的方式。 一种当成波来实现，通过各种余弦函数叠加形成主波形，再通过噪声函数来形成细节。 另一种是通过二维或三维噪声，配合lerp，把数值高的地方Lerp出来。 第一种 首先是极坐标 从UV坐标转换成极坐标，计算出角度和半径。.  再计算一个沿着角度可以无缝循环的噪声  三个不同周期的波形叠加  最后用sin取一下再step  完活
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-06-11 15:14" pubdate>
-              2025-06-11
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2025/05/27/BlenderAppleHello/" target="_blank">
           <img src="/images/blenderapple.gif" srcset="/img/loading.gif" lazyload alt="Apple Hello 字体动效(Blender几何节点实现)">
         </a>
@@ -781,7 +742,7 @@
       
       <a class="index-excerpt " href="/2025/05/26/AppleHello/" target="_blank">
         <div>
-          AppleHello 最近产品又要实现苹果的经典的Hello打字动画，总结一下实现的思路。 大致搜了一下，有很多版本。基本都是以连体字母，一笔画的效果。 比如  但每个版本都会有一些差异，比如渐变、轮廓、阴影等。 比如这个apple version pro的版本  可以看到有光照、阴影、AO等效果。 实现目标 梳理下要实现的目标：  字体是连体的，随时间变化，逐渐显示出来。
+          AppleHello 最近看到了苹果的经典的Hello打字动画，总结一下实现的思路。 大致搜了一下，有很多版本。基本都是以连体字母，一笔画的效果。 比如  但每个版本都会有一些差异，比如渐变、轮廓、阴影等。 比如这个apple version pro的版本  可以看到有光照、阴影、AO等效果。 实现目标 梳理下要实现的目标：  字体是连体的，随时间变化，逐渐显示出来。 依
         </div>
       </a>
 
@@ -791,6 +752,45 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2025-05-26 13:16" pubdate>
               2025-05-26
+            </time>
+          </div>
+        
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2025/05/23/ColorSpace/" target="_blank">
+          <img src="/images/gamma.png" srcset="/img/loading.gif" lazyload alt="颜色空间相关">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2025/05/23/ColorSpace/" target="_blank">
+          颜色空间相关
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/2025/05/23/ColorSpace/" target="_blank">
+        <div>
+          颜色空间相关 一直以来对颜色空间的理解都不够深入，今天稍微整理了一下。 主要针对Unity中的Gamma和Linear两种颜色空间进行分析。 首先是为什么会有Gamma这个东西。 早期的显示器（CRT）是基于电子束扫描的，亮度的变化也是非线性的，即输入两倍的电压，并不能得到两倍的亮度，而是大概输入电压的2.2次方。 这导致了显示的亮度偏暗。 因此在输出到显示器之前，先对颜色进行Gamm
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2025-05-23 09:28" pubdate>
+              2025-05-23
             </time>
           </div>
         

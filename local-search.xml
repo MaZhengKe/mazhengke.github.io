@@ -30,19 +30,6 @@
   
   
   <entry>
-    <title>环形电流</title>
-    <link href="/2025/06/11/electricityVFX/"/>
-    <url>/2025/06/11/electricityVFX/</url>
-    
-    <content type="html"><![CDATA[<h1 id="前述">前述</h1><p>总结两种生成电流效果的方式。</p><p>一种当成波来实现，通过各种余弦函数叠加形成主波形，再通过噪声函数来形成细节。</p><p>另一种是通过二维或三维噪声，配合lerp，把数值高的地方Lerp出来。</p><h1 id="第一种">第一种</h1><p>首先是极坐标<br />从UV坐标转换成极坐标，计算出角度和半径。.<br /><img src="polar.png" alt="极坐标" /></p><p>再计算一个沿着角度可以无缝循环的噪声<br /><img src="noise.png" alt="噪声" /></p><p>三个不同周期的波形叠加<br /><img src="wave.png" alt="波形" /></p><p>最后用sin取一下再step<br /><img src="step.png" alt="step" /></p><p>完活<br /><img src="ele.gif" alt="效果" /></p>]]></content>
-    
-    
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>Apple Hello 字体动效(Blender几何节点实现)</title>
     <link href="/2025/05/27/BlenderAppleHello/"/>
     <url>/2025/05/27/BlenderAppleHello/</url>
@@ -60,7 +47,7 @@
     <link href="/2025/05/26/AppleHello/"/>
     <url>/2025/05/26/AppleHello/</url>
     
-    <content type="html"><![CDATA[<h1 id="applehello">AppleHello</h1><p>最近产品又要实现苹果的经典的Hello打字动画，总结一下实现的思路。</p><p>大致搜了一下，有很多版本。基本都是以连体字母，一笔画的效果。</p><p>比如<br /><img src="2048-dark.jpeg" alt="Hello" /></p><p>但每个版本都会有一些差异，比如渐变、轮廓、阴影等。</p><p>比如这个apple version pro的版本<br /><img src="2048.jpeg" alt="AppleHello" /><br />可以看到有光照、阴影、AO等效果。</p><h1 id="实现目标">实现目标</h1><p>梳理下要实现的目标：</p><ol type="1"><li>字体是连体的，随时间变化，逐渐显示出来。</li><li>依据长度采样渐变色</li><li>开头结尾要有圆角</li><li>线条粗细随时间变化，先出现的线条略微粗一些，随时间变细。</li><li>消失时从头部开始消失，逐渐变细。</li><li>阴影和AO暂时没想到好的实现方式，唯一想到的方式是在外部软件烘焙成贴图。</li></ol><h1 id="实现思路">实现思路</h1><p>首先用Spline构造网格</p><figure><img src="spline.png" alt="样条线与网格" /><figcaption aria-hidden="true">样条线与网格</figcaption></figure><p>因为要控制线条的宽度，所以用横向的UV，顺便给个边缘半透明当作抗锯齿，颜色就按长度采样个色带。<br /><img src="line.gif" alt="宽度与抗锯齿" /></p><p>然后是起始和结束的圆角，利用纵向的UV，判断是否是起始或结束的点，显示半圆。</p><figure><img src="round.png" alt="圆角" /><figcaption aria-hidden="true">圆角</figcaption></figure><p>随时间变化，控制线条不同长度位置的宽度和透明度</p><figure><img src="t.gif" alt="宽度与抗锯齿" /><figcaption aria-hidden="true">宽度与抗锯齿</figcaption></figure><p>最后给个timeline去K一下各个时机的参数就完工了<br /><img src="timeline.png" alt="timeline" /></p><p>最后在稍微加个Bloom看看效果。<br /><img src="applehello2.gif" alt="效果" /></p>]]></content>
+    <content type="html"><![CDATA[<h1 id="applehello">AppleHello</h1><p>最近看到了苹果的经典的Hello打字动画，总结一下实现的思路。</p><p>大致搜了一下，有很多版本。基本都是以连体字母，一笔画的效果。</p><p>比如<br /><img src="2048-dark.jpeg" alt="Hello" /></p><p>但每个版本都会有一些差异，比如渐变、轮廓、阴影等。</p><p>比如这个apple version pro的版本<br /><img src="2048.jpeg" alt="AppleHello" /><br />可以看到有光照、阴影、AO等效果。</p><h1 id="实现目标">实现目标</h1><p>梳理下要实现的目标：</p><ol type="1"><li>字体是连体的，随时间变化，逐渐显示出来。</li><li>依据长度采样渐变色</li><li>开头结尾要有圆角</li><li>线条粗细随时间变化，先出现的线条略微粗一些，随时间变细。</li><li>消失时从头部开始消失，逐渐变细。</li><li>阴影和AO暂时没想到好的实现方式，唯一想到的方式是在外部软件烘焙成贴图。</li></ol><h1 id="实现思路">实现思路</h1><p>首先用Spline构造网格</p><figure><img src="spline.png" alt="样条线与网格" /><figcaption aria-hidden="true">样条线与网格</figcaption></figure><p>因为要控制线条的宽度，所以用横向的UV，顺便给个边缘半透明当作抗锯齿，颜色就按长度采样个色带。<br /><img src="line.gif" alt="宽度与抗锯齿" /></p><p>然后是起始和结束的圆角，利用纵向的UV，判断是否是起始或结束的点，显示半圆。</p><figure><img src="round.png" alt="圆角" /><figcaption aria-hidden="true">圆角</figcaption></figure><p>随时间变化，控制线条不同长度位置的宽度和透明度</p><figure><img src="t.gif" alt="宽度与抗锯齿" /><figcaption aria-hidden="true">宽度与抗锯齿</figcaption></figure><p>最后给个timeline去K一下各个时机的参数就完工了<br /><img src="timeline.png" alt="timeline" /></p><p>最后在稍微加个Bloom看看效果。<br /><img src="applehello2.gif" alt="效果" /></p>]]></content>
     
     
     
