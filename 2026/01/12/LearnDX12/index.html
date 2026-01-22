@@ -1,0 +1,931 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="序 最近开始学习DirectX 12，记录一些学习笔记和心得。 主要来源是微软的 图形示例库 DirectX-Graphics-Samples 和一些相关的教程。 一些公共类介绍 Win32Application 这个例子中把win32相关的内容单独封装在了Win32Application类中，主要负责创建窗口和消息循环。 都是一些win32的API调用，比较标准的做法。没啥好说的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DX12 学习笔记">
+<meta property="og:url" content="https://www.kuanmi.top/2026/01/12/LearnDX12/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="序 最近开始学习DirectX 12，记录一些学习笔记和心得。 主要来源是微软的 图形示例库 DirectX-Graphics-Samples 和一些相关的教程。 一些公共类介绍 Win32Application 这个例子中把win32相关的内容单独封装在了Win32Application类中，主要负责创建窗口和消息循环。 都是一些win32的API调用，比较标准的做法。没啥好说的。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.kuanmi.top/2026/01/12/LearnDX12/image.png">
+<meta property="article:published_time" content="2026-01-12T07:27:46.000Z">
+<meta property="article:modified_time" content="2026-01-22T08:17:53.425Z">
+<meta property="article:author" content="KuanMi">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.kuanmi.top/2026/01/12/LearnDX12/image.png">
+  
+  
+  
+  <title>DX12 学习笔记 - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-4S8LRB89WS"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"gtag":null,"woyaola":null,"cnzz":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-4S8LRB89WS", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-4S8LRB89WS');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/2026/01/12/LearnDX12/image.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="DX12 学习笔记"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-12 15:27" pubdate>
+          2026年1月12日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          28 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">DX12 学习笔记</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="序">序</h1>
+<p>最近开始学习DirectX 12，记录一些学习笔记和心得。</p>
+<p>主要来源是微软的 图形示例库 <a
+target="_blank" rel="noopener" href="https://github.com/microsoft/DirectX-Graphics-Samples/tree/master/Samples/Desktop/D3D12HelloWorld">DirectX-Graphics-Samples</a>
+和一些相关的教程。</p>
+<h1 id="一些公共类介绍">一些公共类介绍</h1>
+<h2 id="win32application">Win32Application</h2>
+<p>这个例子中把win32相关的内容单独封装在了Win32Application类中，主要负责创建窗口和消息循环。<br />
+都是一些win32的API调用，比较标准的做法。没啥好说的。（其实换其他的窗口库也是可以的，比如NVidia的NRI库就是用GLFW来创建窗口的）</p>
+<h2 id="dxsample">DXSample</h2>
+<p>DXSample是一个抽象类，封装了一些DX12的初始化和渲染的基本流程。主要包括：</p>
+<p>公共方法：<br />
+OnInit：初始化<br />
+OnUpdate：更新<br />
+OnRender：渲染<br />
+OnDestroy：销毁<br />
+OnKeyDown 和 OnKeyUp：键盘输入处理<br />
+GetWidth 和 GetHeight：获取窗口尺寸<br />
+GetTitle：获取窗口标题<br />
+ParseCommandLineArgs：解析命令行参数</p>
+<p>以及封装了一些常用的工具方法，比如</p>
+<p>GetAssetFullPath：获取资源文件的完整路径<br />
+GetHardwareAdapter：获取硬件适配器</p>
+<h1 id="hellowindow">HelloWindow</h1>
+<p>最基础的HelloWorld例子，实现了一个简单的窗口和渲染循环。</p>
+<p>D3D12HelloWorld类，继承自DXSample，实现了具体的初始化和渲染逻辑。</p>
+<p>首先是OnInit的实现，主要包括：</p>
+<ul>
+<li>LoadPipeline</li>
+<li>LoadAssets</li>
+</ul>
+<h2 id="loadpipeline">LoadPipeline()</h2>
+<p>故名思议，负责初始化DX12的渲染管线。<br />
+这里的渲染管线和Unity中的渲染管线概念不太一样。<br />
+Unity中的渲染管线是指渲染的整体流程和配置，如URP、HDRP等，定义了渲染的各个阶段和效果，如光照、阴影、后处理等。<br />
+而DX12中的渲染管线更底层一些，指的是从顶点处理到像素输出的整个过程，包括输入布局、着色器阶段、光栅化状态、混合状态等。</p>
+<p>一个DX12程序大多会有多个渲染管线状态对象（PSO），每个PSO定义了一组固定的渲染状态，用于不同的渲染任务。</p>
+<p>主要步骤包括：</p>
+<ol type="1">
+<li>创建DXGI工厂（IDXGIFactory）</li>
+<li>选择硬件适配器（IDXGIAdapter）</li>
+<li>创建D3D12设备（ID3D12Device）</li>
+<li>创建命令队列（ID3D12CommandQueue）</li>
+<li>创建交换链（IDXGISwapChain）
+这里注意，创建交换链时，传入了一个命令队列，因为交换链需要与命令队列关联，以便在呈现图像时使用该命令队列。</li>
+<li>创建RTV描述符堆（ID3D12DescriptorHeap）</li>
+<li>创建每个帧的RTV（Render Target View）（ID3D12Resource）</li>
+<li>创建命令分配器（ID3D12CommandAllocator）</li>
+</ol>
+<h2 id="loadassets">LoadAssets()</h2>
+<p>负责加载和创建渲染所需的资源。<br />
+主要步骤包括：</p>
+<ol type="1">
+<li>创建命令列表（ID3D12GraphicsCommandList）</li>
+<li>创建围栏（ID3D12Fence）</li>
+<li>创建事件句柄（HANDLE）</li>
+</ol>
+<h2 id="onrender">OnRender()</h2>
+<p>渲染流程主要在OnRender方法中实现，主要包括：</p>
+<ol type="1">
+<li>重置命令分配器和命令列表</li>
+<li>设置渲染目标</li>
+<li>清除渲染目标</li>
+<li>执行命令列表</li>
+<li>显示交换链</li>
+<li>等待GPU完成工作</li>
+</ol>
+<p>这里着重说一下等待GPU完成工作的部分。<br />
+在DX12中，CPU和GPU是异步执行的，CPU会提前提交命令给GPU执行，而GPU可能还在处理之前提交的命令。为了确保GPU完成当前帧的渲染工作，通常会使用围栏（Fence）来同步CPU和GPU的工作。<br />
+围栏是一个同步对象，CPU可以等待围栏达到某个值，表示GPU已经完成了对应的工作。具体步骤包括：</p>
+<p>第一帧：</p>
+<ol type="1">
+<li>初始时m_frameIndex为0，提交命令列表给GPU执行，这里用的是BackBuffer0</li>
+<li>要求交换链显示BackBuffer0，这里其实并没有立刻显示，而是将显示请求加入到之前交换链绑定的命令队列中</li>
+<li>调用m_commandQueue-&gt;Signal(m_fence.Get(),
+1)方法。意思是让命令队列在执行完之前提交的所有命令后，将围栏的值设置为1。</li>
+<li>获取了m_fence-&gt;GetCompletedValue()，此时应该是0，因为这是第一帧，GPU还没有执行任何命令。</li>
+<li>所以要等待，直到围栏的值达到1，表示GPU已经完成了第一帧的渲染工作。通过调用m_fence-&gt;SetEventOnCompletion(1,
+m_fenceEvent)来设置一个事件，当围栏值达到1时触发该事件。然后调用WaitForSingleObject(m_fenceEvent,
+INFINITE)等待事件触发。</li>
+</ol>
+<p>这是最简单的同步方式，确保CPU在继续执行下一帧之前，GPU已经完成了当前帧的渲染工作。<br />
+正因为如此，我们只需要一个CommandAllocator就可以了，因为我们确保每一帧GPU完成后，才会重用CommandAllocator。</p>
+<h1 id="hellotriangle">HelloTriangle</h1>
+<p>在HelloWindow的基础上，增加了绘制一个简单三角形的功能。</p>
+<h2 id="loadpipeline-1">LoadPipeline()</h2>
+<p>与HelloWindow完全相同。</p>
+<h2 id="loadassets-1">LoadAssets()</h2>
+<p>增加了创建根签名和渲染管线状态对象（PSO）的步骤。</p>
+<ol type="1">
+<li>创建根签名（ID3D12RootSignature）<br />
+根签名定义了着色器访问资源的方式，包括常量缓冲区、纹理、采样器等。但这里的根签名是空的，因为这个例子中没有使用任何资源。</li>
+<li>编译了顶点着色器和像素着色器<br />
+使用D3DCompileFromFile函数从文件编译HLSL着色器代码，生成顶点着色器和像素着色器的字节码。</li>
+<li>定义输入布局<br />
+定义了顶点数据的格式和布局，这里只包含位置和颜色两个属性。</li>
+<li>创建渲染管线状态对象（ID3D12PipelineState）<br />
+渲染管线状态对象（PSO）封装了渲染管线的各种状态设置，包括输入布局、根签名、着色器字节码、光栅化状态、混合状态、深度模板状态等。</li>
+<li>创建命令列表<br />
+与HelloWindow相同。</li>
+<li>创建顶点缓冲区资源/顶点缓冲区视图
+<ol type="1">
+<li>定义顶点数据</li>
+<li>创建和上传堆（CPU可访问内存）</li>
+<li>使用map/unmap将顶点数据复制到顶点缓冲区</li>
+<li>创建顶点缓冲区视图（D3D12_VERTEX_BUFFER_VIEW）</li>
+</ol></li>
+<li>创建围栏和事件句柄<br />
+与HelloWindow相同。</li>
+</ol>
+<p>这里记录下DX12中堆的概念：<br />
+在DirectX
+12中，堆（Heap）是用于管理GPU内存的一种机制。堆允许开发者更灵活地分配和管理内存资源，以满足不同的性能和使用需求。堆可以分为几种类型，主要包括：</p>
+<ol type="1">
+<li>默认堆（Default Heap）<br />
+默认堆是GPU专用的内存区域，通常用于存储需要频繁访问的资源，如纹理、顶点缓冲区等。默认堆的内存访问速度较快，但CPU无法直接访问，需要通过命令列表进行数据传输。</li>
+<li>上传堆（Upload Heap）<br />
+上传堆是CPU可访问的内存区域，主要用于将数据从CPU传输到GPU。上传堆通常用于存储临时数据，如动态顶点缓冲区、常量缓冲区等。上传堆的内存访问速度较慢，但可以直接由CPU写入数据。</li>
+<li>读取回堆（Readback Heap）<br />
+读取回堆是用于将数据从GPU传输回CPU的内存区域。读取回堆通常用于存储需要从GPU读取的结果数据，如计算着色器的输出等。读取回堆的内存访问速度较慢，但可以直接由CPU读取数据。</li>
+</ol>
+<h2 id="onrender-1">OnRender()</h2>
+<p>在HelloWindow的基础上，增加了绘制三角形的命令。</p>
+<p>主要步骤包括：</p>
+<ol type="1">
+<li>重置命令分配器</li>
+<li>重置命令列表并设置渲染状态</li>
+<li>设置根签名</li>
+<li>设置视区和裁剪矩形</li>
+<li>设置资源屏障，转换渲染目标状态至RENDER_TARGET</li>
+<li>指定渲染目标</li>
+<li>清除渲染目标</li>
+<li>指定绘制三角形</li>
+<li>绑定顶点缓冲区</li>
+<li>绘制调用</li>
+<li>设置资源屏障，转换渲染目标状态至PRESENT</li>
+</ol>
+<h1 id="hellobundles">HelloBundles</h1>
+<p>在HelloTriangle的基础上，增加了使用命令捆绑（Command
+Bundles）的功能。<br />
+大致就是在<br />
+LoadPipeline时创建一个命令捆绑分配器（ID3D12CommandAllocator）<br />
+在LoadAssets时创建命令捆绑（ID3D12GraphicsCommandList）<br />
+并记录下以下命令：</p>
+<ol type="1">
+<li>设置根签名</li>
+<li>设置绘制基本图元</li>
+<li>绑定顶点缓冲区</li>
+<li>绘制调用<br />
+然后在OnRender中，执行命令捆绑。m_commandList-&gt;ExecuteBundle(m_bundle.Get());</li>
+</ol>
+<h1 id="helloconstbuffer">HelloConstBuffer</h1>
+<p>在HelloTriangle的基础上，增加了使用常量缓冲区（Constant
+Buffer）的功能。</p>
+<p>在LoadPipeline()中<br />
+增加了创建常量缓冲区视图描述符堆（ID3D12DescriptorHeap）cbvHeap
+的步骤。</p>
+<p>首先是根签名的修改</p>
+<ol type="1">
+<li>先定义一个常量缓冲区描述符范围（D3D12_DESCRIPTOR_RANGE）<br />
+设置类型为常量缓冲区视图（CBV），数量为1，基址寄存器为0。</li>
+<li>然后定义一个根参数（D3D12_ROOT_PARAMETER）<br />
+设置类型为描述符表，包含上面定义的描述符范围。</li>
+<li>设置根签名Flags<br />
+设置为允许输入布局和着色器访问。</li>
+<li>创建根签名描述</li>
+<li>创建根签名</li>
+</ol>
+<p>然后是常量缓冲区的创建</p>
+<ol type="1">
+<li>定义常量缓冲区结构体（ConstantBuffer）</li>
+<li>在上传堆创建一个常量缓冲区资源</li>
+<li>映射常量缓冲区资源，获取CPU可访问的指针</li>
+<li>初始化常量缓冲区数据</li>
+<li>创建常量缓冲区视图描述 CBVDesc</li>
+<li>在cbvHeap（常量缓冲区视图描述符堆）中创建常量缓冲区视图</li>
+</ol>
+<p>最后是在OnRender中绑定常量缓冲区</p>
+<ol type="1">
+<li>设置描述符堆</li>
+<li>设置根描述符表，绑定常量缓冲区视图<br />
+之后的流程与HelloTriangle相同。</li>
+</ol>
+<h1 id="hellotexture">HelloTexture</h1>
+<p>然后是纹理。</p>
+<p>大致流程是</p>
+<ol type="1">
+<li>描述并创建SRV描述符堆</li>
+<li>根签名增加一个描述符表，绑定SRV</li>
+<li>同时定义一个静态采样器一块放到根签名描述中</li>
+<li>描述一个2D纹理资源</li>
+<li>创建一个默认堆资源用于存储纹理</li>
+<li>创建一个上传堆资源用于上传纹理数据</li>
+<li>使用UpdateSubresources函数将纹理数据从上传堆复制到默认堆</li>
+<li>将默认堆资源的状态从COPY_DEST转换为PIXEL_SHADER_RESOURCE</li>
+<li>创建SRV描述符，绑定到SRV描述符堆</li>
+<li>在OnRender中绑定SRV描述符堆和设置根描述符表</li>
+</ol>
+<h1 id="helloframebuffering">HelloFrameBuffering</h1>
+<p>在HelloTexture的基础上，增加了多帧缓冲（Frame
+Buffering）的功能。<br />
+之前的同步方式是每帧等待GPU完成工作，效率较低。<br />
+这里改为使用多个帧资源，每帧使用不同的命令分配器和围栏值，来实现更高效的CPU-GPU并行工作。</p>
+<p>首先是初始化时<br />
+m_frameIndex为0，记作A缓冲区。<br />
+此时A的围栏值为0。<br />
+A的围栏值加一，变为1。<br />
+在WaitForGpu中。<br />
+插入信号，完成后将围栏值设置为1。<br />
+然后围栏设定事件，当围栏值达到1时触发事件。<br />
+等待事件触发。<br />
+这里就确保了初始化中的GPU工作完成。<br />
+然后A的围栏值再加一，变为2。</p>
+<p>接着到了OnRender中。<br />
+第一帧：<br />
+填充命令列表，提交命令列表。<br />
+要求交换链显示A缓冲区。<br />
+在MoveToNextFrame中。<br />
+获取当前帧A的围栏值，应该是2。<br />
+插入信号，完成后将围栏值设置为2。</p>
+<p>更新m_frameIndex，变为1，记作B缓冲区。<br />
+此时B的围栏值为0。<br />
+而此时围栏值为2，大于B的围栏值0，所以不需要等待，直接继续执行。<br />
+B的围栏值加一，变为3。</p>
+<p>第二帧：<br />
+填充命令列表，提交命令列表。<br />
+要求交换链显示B缓冲区。<br />
+在MoveToNextFrame中。<br />
+获取当前帧B的围栏值，应该是3。<br />
+插入信号，完成后将围栏值设置为3。</p>
+<p>更新m_frameIndex，及将要操作的帧，变为0，记作A缓冲区。<br />
+此时缓冲区A的围栏值为2。<br />
+此时围栏值有三种可能：</p>
+<ol type="1">
+<li>围栏值为1，说明第一帧的命令还没有完成，需要等待。</li>
+<li>围栏值为2，大于等于A的围栏值2，说明第一帧的命令已经完成，可以继续执行。</li>
+<li>围栏值为3，说明第二帧的命令都已经完成，也可以继续执行。</li>
+</ol>
+<h1 id="hellotransformation">HelloTransformation</h1>
+<p>这里增加了两块内容。<br />
+一是深度模板视图相关的。<br />
+二是内联常量缓冲区相关的。</p>
+<h2 id="深度模板视图">深度模板视图</h2>
+<p>和RTV类似，首先需要创建一个DSV描述符堆。<br />
+但是RTV是由交换链提供的，而深度模板缓冲区需要我们自己创建。<br />
+先定义深度模板缓冲区的描述（D3D12_DEPTH_STENCIL_VIEW_DESC），</p>
+<p>然后创建一个默认堆资源用于存储深度模板缓冲区。<br />
+最后创建深度模板视图（ID3D12DepthStencilView），放到DSV描述符堆中。</p>
+<h2 id="内联常量缓冲区">内联常量缓冲区</h2>
+<p>这里因为要渲染两个物体，而且由两个RTV，所以常量缓冲区的大小是c_numDrawCalls
+* FrameCount * sizeof(ConstantBuffer);</p>
+<p>在上传堆创建一个常量缓冲区资源。<br />
+这里并没有创建描述符堆和CBV，而是直接使用GPU虚拟地址来绑定常量缓冲区。</p>
+<p>在PopulateCommandList中，依据当前帧序号和要绘制的物体序号，计算出对应的常量缓冲区偏移</p>
+<figure><div class="code-wrapper"><pre class="language-none"><code class="language-none">unsigned int constantBufferIndex = c_numDrawCalls * (m_frameIndex % FrameCount);</code></pre></div></figure>
+<p>然后填充常量缓冲区数据<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">ConstantBuffer cbParameters &#x3D; &#123;&#125;;
+
+XMStoreFloat4x4(&amp;cbParameters.worldMatrix,XMMatrixTranspose(m_worldMatrix));
+XMStoreFloat4x4(&amp;cbParameters.viewMatrix,XMMatrixTranspose(m_viewMatrix));
+XMStoreFloat4x4(&amp;cbParameters.projectionMatrix,XMMatrixTranspose(m_projectionMatrix));
+
+memcpy(&amp;m_mappedConstantData[constantBufferIndex], &amp;cbParameters, sizeof(cbParameters));</code></pre></div></figure><br />
+填充后获取对应的GPU虚拟地址，并绑定常量缓冲区<br />
+<figure><div class="code-wrapper"><pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">auto baseGpuAddress &#x3D; m_constantDataGpuAddr + constantBufferIndex * sizeof(ConstantBuffer);
+m_commandList-&gt;SetGraphicsRootConstantBufferView(0, baseGpuAddress);</code></pre></div></figure></p>
+<h1 id="总结">总结</h1>
+<p>至此，常见的DX12基础功能都已经了解了一遍。<br />
+接下来的目标是实现一个最简单的渲染器，加载一个模型并使用前向渲染进行PBR渲染。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>DX12 学习笔记</div>
+      <div>https://www.kuanmi.top/2026/01/12/LearnDX12/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年1月12日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/01/22/UnityNRD/" title="NRDSample 在 Unity 中的实现">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">NRDSample 在 Unity 中的实现</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/08/04/predictIK/" title="预测落地的脚步IK实现">
+                        <span class="hidden-mobile">预测落地的脚步IK实现</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

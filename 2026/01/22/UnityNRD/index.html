@@ -1,0 +1,750 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/avatar.png">
+  <link rel="icon" href="/images/avatar.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="KuanMi">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="序 之前偶然看到了Nvidia的各种RTX实时路径追踪在UE中的项目，手痒难耐，想在Unity中实现一个类似的实时路径追踪，于是就有了这篇文章。 随便从一个NRD的示例入手，NRDSample，这是一个Nvidia提供的开源项目，展示了如何使用NRD库实现各种降噪技术。 其中也包含了路径追踪的实现，非常适合用来学习和实验。 降噪所需资源 NRD包含了多种降噪算法，每种算法对输入数据的要求">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NRDSample 在 Unity 中的实现">
+<meta property="og:url" content="https://www.kuanmi.top/2026/01/22/UnityNRD/index.html">
+<meta property="og:site_name" content="KuanMi">
+<meta property="og:description" content="序 之前偶然看到了Nvidia的各种RTX实时路径追踪在UE中的项目，手痒难耐，想在Unity中实现一个类似的实时路径追踪，于是就有了这篇文章。 随便从一个NRD的示例入手，NRDSample，这是一个Nvidia提供的开源项目，展示了如何使用NRD库实现各种降噪技术。 其中也包含了路径追踪的实现，非常适合用来学习和实验。 降噪所需资源 NRD包含了多种降噪算法，每种算法对输入数据的要求">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.kuanmi.top/2026/01/22/UnityNRD/image-8.png">
+<meta property="article:published_time" content="2026-01-22T07:29:12.000Z">
+<meta property="article:modified_time" content="2026-01-22T08:15:49.824Z">
+<meta property="article:author" content="KuanMi">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.kuanmi.top/2026/01/22/UnityNRD/image-8.png">
+  
+  
+  
+  <title>NRDSample 在 Unity 中的实现 - KuanMi</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"www.kuanmi.top","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":{"measurement_id":"G-4S8LRB89WS"},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"gtag":null,"woyaola":null,"cnzz":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+    <!-- Google tag (gtag.js) -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        Fluid.utils.createScript("https://www.googletagmanager.com/gtag/js?id=G-4S8LRB89WS", function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', 'G-4S8LRB89WS');
+        });
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>KuanMi</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/2026/01/22/UnityNRD/image-8.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="NRDSample 在 Unity 中的实现"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        KuanMi
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-22 15:29" pubdate>
+          2026年1月22日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          11 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">NRDSample 在 Unity 中的实现</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="序">序</h1>
+<p>之前偶然看到了Nvidia的各种RTX实时路径追踪在UE中的项目，手痒难耐，想在Unity中实现一个类似的实时路径追踪，于是就有了这篇文章。</p>
+<p>随便从一个NRD的示例入手，NRDSample，这是一个Nvidia提供的开源项目，展示了如何使用NRD库实现各种降噪技术。</p>
+<p>其中也包含了路径追踪的实现，非常适合用来学习和实验。</p>
+<h1 id="降噪所需资源">降噪所需资源</h1>
+<p>NRD包含了多种降噪算法，每种算法对输入数据的要求不同。<br />
+先从最简单的阴影降噪器 SIGMA_SHADOW 出发试试水。</p>
+<p>根据文档，SIGMA_SHADOW 需要以下输入资源：</p>
+<ul>
+<li>IN_PENUMBRA (半影遮挡率)</li>
+<li>OUT_SHADOW_TRANSLUCENCY (输出阴影)</li>
+</ul>
+<p>除了这些，还需要一些通用资源：</p>
+<ul>
+<li>IN_MV (运动矢量)</li>
+<li>IN_NORMAL_ROUGHNESS (法线和粗糙度)</li>
+<li>IN_VIEWZ (视图深度)</li>
+</ul>
+<h1 id="unity-实现步骤">Unity 实现步骤</h1>
+<p>因为Unity截至6.3版本，仍然没有适配bindless，所以无法使用计算着色器+内联光追+Bindless的方式来获取GBuffer数据。<br />
+只能改用光追管线。</p>
+<p>剩下就没啥说的了，一发光追，拿到GBuffer数据。<br />
+IN_PENUMBRA这里要输入的是主表面沿着光线方向的遮挡距离，示例建议使用蓝噪去采样。<br />
+<img src="image.png" srcset="/img/loading.gif" lazyload alt="噪声阴影" /><br />
+然后把这些数据传给NRD进行降噪。<br />
+问题是怎么传递呢？</p>
+<h1 id="传递数据给nrd">传递数据给NRD</h1>
+<p>NRD提供的相关接口都是C++的，Unity中无法直接调用。<br />
+所以需要通过Native Plugin的方式来调用C++代码。</p>
+<p>而且NRD提供了一个包装好的类，省去了自己管理帧间资源的麻烦。<br />
+所以要引入NRI库。</p>
+<p>将Unity端的纹理全部获取到原生指针，一发
+natCmd.IssuePluginEventAndData 就可以把数据传给NRD进行降噪了。</p>
+<p>C++端还要将这些纹理包装成NRI的纹理对象，然后传给NRD进行处理。</p>
+<p>尤其要注意这里的屏障转换，Unity在6.3版本中新添加了可以声明的资源状态转换API。</p>
+<figure>
+<img src="image-1.png" srcset="/img/loading.gif" lazyload alt="降噪后阴影" />
+<figcaption aria-hidden="true">降噪后阴影</figcaption>
+</figure>
+<p>这样就算是完整跑通了一个降噪流程。</p>
+<h1 id="漫反射与镜面反射降噪">漫反射与镜面反射降噪</h1>
+<p>接下来是 Diffuse Specular 降噪器。<br />
+同理，准备好需要的噪声资源：<br />
+<img src="image-2.png" srcset="/img/loading.gif" lazyload alt="Diffuse" /></p>
+<figure>
+<img src="image-3.png" srcset="/img/loading.gif" lazyload alt="Specular" />
+<figcaption aria-hidden="true">Specular</figcaption>
+</figure>
+<p>然后传给NRD进行降噪：<br />
+<img src="image-4.png" srcset="/img/loading.gif" lazyload alt="Denoised Diffuse" /></p>
+<figure>
+<img src="image-5.png" srcset="/img/loading.gif" lazyload alt="Denoised Specular" />
+<figcaption aria-hidden="true">Denoised Specular</figcaption>
+</figure>
+<p>静态效果还是很不错的。</p>
+<h1 id="合成">合成</h1>
+<p>最后就是合成了，因为是分开降噪的漫反射和镜面反射，所以要把它们合成到一起。<br />
+这里就不赘述了，直接上效果图：<br />
+<img src="image-6.png" srcset="/img/loading.gif" lazyload alt="Composed" /></p>
+<h1 id="透明处理">透明处理</h1>
+<p>透明物体的处理比较麻烦一些，因为NRD并没有专门针对透明物体的降噪器。<br />
+所以这里还要来一发光追管线，专门处理透明物体的反射与折射。<br />
+这里的反射与折射会使用降噪后的不透明物体的结果进行采样，所以噪点会少一点。</p>
+<h1 id="taa">TAA</h1>
+<p>最后还要加上一个TAA，一是配合抖动抗锯齿，二是对透明物体的噪点进行进一步的平滑处理。<br />
+这就是最终的效果了：<br />
+<img src="image-7.png" srcset="/img/loading.gif" lazyload alt="TAA" /></p>
+<h1 id="dlss-rr">DLSS RR</h1>
+<p>看到了赛博朋克2077的技术分享，他们最初也是采用的NRD降噪，但是最新的版本已经换成RestirDI+GI+DLSS
+RR了。</p>
+<p>所以这里也尝试了一下DLSS RR。</p>
+<p>即不使用NRD降噪，而是直接合成，透明物体的反射与折射也是直接在噪声图片上采样。<br />
+然后直接一发DLSS RR，大力出奇迹。<br />
+效果如下：<br />
+<img src="image-8.png" srcset="/img/loading.gif" lazyload alt="DLSS RR" /></p>
+<p>也许静态效果二者差别不大，但是动态效果NRD的降噪会有明显的模糊，而DLSS
+RR则会好很多。</p>
+<p>最后看看性能：<br />
+<img src="p.png" srcset="/img/loading.gif" lazyload alt="性能" /><br />
+在4060上，1080P分辨率下，大概50帧左右，勉强能用。<br />
+可以看到大头是在DLSS
+RR上，这个东西没有任何优化的空间，但是可以调整DLSS的质量等级来换取性能。稍微调低一些质量，性能会有明显提升。</p>
+<h1 id="sharc-缓存">Sharc 缓存</h1>
+<p>NRDSample中还包含了Sharc缓存的实现，可以缓存一些光照信息，减少每帧的计算量。<br />
+这里也一并实现了，尤其是透明物体的反射与折射，使用缓存的话，性能提升还是比较明显的。<br />
+不过Sharc缓存的实现比较复杂，这里就不展开讲了。</p>
+<h1 id="总结">总结</h1>
+<p>这次在Unity中复刻NRDSample的过程还是比较顺利的，主要是因为NRD本身设计得比较好，接口也比较清晰。<br />
+通过Native Plugin的方式调用C++代码，也比较方便。<br />
+唯一可惜的是Unity目前还不支持bindless，所以只能用光追管线来获取GBuffer数据，性能上会有一些损失。<br />
+不过整体效果还是不错的，尤其是使用DLSS
+RR之后，动态效果有了明显提升。</p>
+<p>后续又适配了VR，效果也还不错，只是性能压力更大一些，DLSS
+RR在4060上必须要开到质量挡位才能勉强跑起来，如果是5080应该可以双目4000*2000原生分辨率跑满60帧没问题。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>NRDSample 在 Unity 中的实现</div>
+      <div>https://www.kuanmi.top/2026/01/22/UnityNRD/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>KuanMi</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年1月22日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/01/12/LearnDX12/" title="DX12 学习笔记">
+                        <span class="hidden-mobile">DX12 学习笔记</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/components/prism-core.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/autoloader/prism-autoloader.min.js" ></script>
+
+  <script  src="https://lib.baomitu.com/prism/1.27.0/plugins/line-numbers/prism-line-numbers.min.js" ></script>
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
