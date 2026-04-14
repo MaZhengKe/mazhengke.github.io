@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>Rtxdi 在 Unity 中的实现</title>
+    <link href="/2026/04/14/UnityRtxdi/"/>
+    <url>/2026/04/14/UnityRtxdi/</url>
+    
+    <content type="html"><![CDATA[<h1 id="序">序</h1><p>复刻一下Nvidia的RTXDI在Unity中的实现。</p><p>具体的Restir相关的介绍这里就不细说了，主要看看Unity端的实现细节。</p><h1 id="灯光收集">灯光收集</h1><p>首先第一步就是灯光收集，尤其是自发光物体的灯光收集。</p><p>因为Unity没有Bindless的支持，只能通过NativePlugin的方式来构建一个Bindless的资源访问接口。</p><p>cpu端搜集全部的自发光物体，展开其顶点数据，按三角形平铺开，构造一个StructuredBuffer，传给GPU端。<br />纹理也全部搜集到原生指针，先传到C++端，再创建一个DescriptorHeap，把这些纹理创建成SRV，存入DescriptorHeap中。<br />然后在计算着色器中通过Bindless方式访问这些贴图，进行灯光采样和计算。</p><p>后续这里看来完全没必要在CPU端展开顶点数据，直接传递网格数据和索引数据，在GPU端按照BindlessBuffer的方式访问就好了，减少CPU端的开销和内存占用。后续有机会再改一下。</p><h1 id="sdk实现">SDK实现</h1><p>Nvidia提供了一个完整的便于移植的SDK，但是C++接口的SDK在Unity中无法直接调用，这里没有用dll的方式来调用，而是直接把SDK的源码用C#重写了一遍，直接在Unity中调用。</p><p>shader方面，Nvidia也给了一个库，利用Rtxdi ApplicationBridge的方式约定了接口的名称。</p><p>所以最大的工作量就是补全这些接口的实现了，主要是一些资源比如各类GBuffer、Rtxdi相关的资源（灯光、pdfTexture、各类储层以及一些为了优化实现的缓存）以及参数的管理了。</p><p>RAB相关接口的实现就不细说了，这里为计算着色器和光追着色器分别都实现了一套，计算着色器版本效率高，但是因为读不了纹理，所以透明度裁切不支持。光追着色器版本效率低，但是支持透明度裁切。</p><h1 id="渲染pass">渲染pass</h1><p>首先是灯光收集pass，主要是采样自发光贴图，计算每个三角形的灯光信息，存储在一个StructuredBuffer中。<br />然后Pdf纹理的构建，以及为pdf纹理创建特定的mipmap。<br />然后是预采样，使用pdf纹理先按照其功率分布进行预采样。<br />再然后是Regir，按照空间分布再预采样一次。</p><p>接着是Gbuffer的构建。<br />分别实现了光追和光栅两个版本。</p><p>接着就到了 DI和GI了。</p><p>DI比较简单，<br />见生成初始采样，然后时序重采样，再空间重采样，最后渲染结果即可。</p><p>GI就比较麻烦了，首先是brdf采样一次，在这次采样中，还能用类似DI的方式去空间重采样甚至复用之前DI的储层。</p><p>然后就是GI的时空重采样，最后和DI合并渲染结果。</p><h1 id="降噪">降噪</h1><p>原版示例中是用的NRD去降噪的，我图省事，直接dlssrr了，效果还可以。</p><h1 id="总结">总结</h1><p>目前看下来，当场景内光源数量非常非常多，比如几千上万，DI效果还是比较好的，但如果只有几个光源，不如直接NEE了。<br />GI的话，这里只能计算一次反弹的结果，效果也很有限。</p><p>又去看了RtxPT，发现里面虽然集成了Rtxdi，但是默认不开启，而且专门提示和DLSSRR的集成效果不佳，看来是和NRD强制绑定的了。</p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>NRDSample 在 Unity 中的实现</title>
     <link href="/2026/01/22/UnityNRD/"/>
     <url>/2026/01/22/UnityNRD/</url>
